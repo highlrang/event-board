@@ -1,0 +1,28 @@
+spring:
+  profiles:
+    include: db
+
+#  datasource:
+#    driver-class-name: com.mysql.cj.jdbc.Driver
+#    url: jdbc:mysql://localhost:3306/spring?serverTimezone=UTC&characterEncoding=UTF-8
+#    username:
+#    password:
+
+  jpa:
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        ddl-auto: create
+
+  devtools:
+    restart:
+      enabled: true
+
+logging:
+  level:
+    org:
+      hibernate:
+        type:
+          descriptor:
+            sql: trace
