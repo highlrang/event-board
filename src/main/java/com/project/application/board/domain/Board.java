@@ -11,6 +11,7 @@ import org.springframework.boot.context.properties.bind.DefaultValue;
 import org.springframework.data.annotation.CreatedDate;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,12 +24,13 @@ public class Board {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotNull
     private String title;
 
-    @Column(columnDefinition = "text")
+    @Column(columnDefinition = "text", nullable = false)
     private String content;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "user_id")
     private User writer;
 
@@ -38,12 +40,39 @@ public class Board {
     @Column(columnDefinition = "boolean default false")
     private Boolean isBest;
 
+    @NotNull
+    private LocalDateTime startDate;
+
+    @NotNull
+    private LocalDateTime endDate;
+
+    @NotNull
+    @Enumerated(EnumType.STRING)
+    private BoardType boardType;
+
+    private Integer recruitingCnt;
+
     @CreatedDate
     private LocalDateTime createdDate;
 
     @Builder
-    public Board(String title, String content){
+    public Board(User writer, BoardType boardType, String title, String content,
+                 Integer recruitingCnt, LocalDateTime startDate, LocalDateTime endDate){
+        this.writer = writer;
+        this.boardType = boardType;
         this.title = title;
         this.content = content;
+        this.recruitingCnt = recruitingCnt;
+        this.startDate = startDate;
+        this.endDate = endDate;
     }
+
+    public void update(String title, String content, Integer recruitingCnt, LocalDateTime startDate, LocalDateTime endDate){
+        this.title = title;
+        this.content = content;
+        this.recruitingCnt = recruitingCnt;
+        this.startDate = startDate;
+        this.endDate = endDate;
+    }
+
 }
