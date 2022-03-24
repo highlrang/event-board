@@ -26,11 +26,13 @@ public class BoardResponseDto {
     private LocalDateTime endDate;
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDateTime createdDate;
-    private Boolean isBest;
+
+    private Boolean topFix;
+    private int views;
 
     @QueryProjection
     public BoardResponseDto(Long id, BoardType boardType, String title, String content,
-                            Long writerId, String writerName, Integer recruitingCnt, Boolean isBest,
+                            Long writerId, String writerName, Integer recruitingCnt, Boolean topFix, int views,
                             LocalDateTime startDate, LocalDateTime endDate, LocalDateTime createdDate) {
         this.id = id;
         this.boardType = boardType;
@@ -39,7 +41,8 @@ public class BoardResponseDto {
         this.writerId = writerId;
         this.writerName = writerName;
         this.recruitingCnt = recruitingCnt;
-        this.isBest = isBest;
+        this.topFix = topFix;
+        this.views = views;
         this.startDate = startDate;
         this.endDate = endDate;
         this.createdDate = createdDate;
@@ -53,7 +56,7 @@ public class BoardResponseDto {
         this.writerId = entity.getWriter().getId();
         this.writerName = entity.getWriter().getName();
         this.recruitingCnt = entity.getRecruitingCnt();
-        this.isBest = entity.getIsBest();
+        this.views = entity.getViews();
         this.startDate = entity.getStartDate();
         this.endDate = entity.getEndDate();
         this.createdDate = entity.getCreatedDate();

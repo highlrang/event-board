@@ -2,6 +2,7 @@ package com.project.application.board.service;
 
 import com.project.application.board.domain.Board;
 import com.project.application.board.domain.BoardType;
+import com.project.application.board.domain.dto.BoardRequestDto;
 import com.project.application.board.domain.dto.BoardResponseDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -11,8 +12,11 @@ import java.util.List;
 
 public interface BoardService {
 
+    BoardResponseDto findById(Long id);
+
     Page<BoardResponseDto> findPaging(BoardType boardType, Pageable pageable);
 
-    void updateAllToBest(List<Long> ids);
+    Long save(BoardRequestDto dto);
 
+    void updateAllToBest(List<Long> ids);
 }

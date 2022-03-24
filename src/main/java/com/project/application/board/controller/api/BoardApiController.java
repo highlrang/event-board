@@ -1,6 +1,7 @@
 package com.project.application.board.controller.api;
 
 import com.project.application.board.domain.BoardType;
+import com.project.application.board.domain.dto.BoardRequestDto;
 import com.project.application.board.domain.dto.BoardResponseDto;
 import com.project.application.board.service.BoardService;
 import lombok.RequiredArgsConstructor;
@@ -8,10 +9,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import javax.validation.Valid;
 
 @RestController
 @RequiredArgsConstructor
@@ -19,6 +20,16 @@ import org.springframework.web.bind.annotation.RestController;
 public class BoardApiController {
 
     private final BoardService boardService;
+
+    @GetMapping("/{id}")
+    public ResponseEntity<?> findById(@PathVariable("id") Long id){
+        try{
+            return new ResponseEntity<>(boardService.findById(id), HttpStatus.OK);
+
+        }catch(Exception e){
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 
     @GetMapping("/list")
     public ResponseEntity<?> list(@RequestParam("boardType") String boardType, Pageable pageable){
@@ -29,4 +40,6 @@ public class BoardApiController {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+
 }

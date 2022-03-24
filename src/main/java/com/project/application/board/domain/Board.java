@@ -38,7 +38,10 @@ public class Board {
     private List<Registration> registrations = new ArrayList<>();
 
     @Column(columnDefinition = "boolean default false")
-    private Boolean isBest;
+    private Boolean topFix;
+
+    @Column(columnDefinition = "int default 0")
+    private int views;
 
     @NotNull
     private LocalDateTime startDate;
@@ -52,13 +55,16 @@ public class Board {
 
     private Integer recruitingCnt;
 
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "board_file_id")
+    private BoardFile file;
+
     @CreatedDate
     private LocalDateTime createdDate;
 
     @Builder
-    public Board(User writer, BoardType boardType, String title, String content,
+    public Board(BoardType boardType, String title, String content,
                  Integer recruitingCnt, LocalDateTime startDate, LocalDateTime endDate){
-        this.writer = writer;
         this.boardType = boardType;
         this.title = title;
         this.content = content;
@@ -73,6 +79,18 @@ public class Board {
         this.recruitingCnt = recruitingCnt;
         this.startDate = startDate;
         this.endDate = endDate;
+    }
+
+    public void setWriter(User writer){
+        this.writer = writer;
+    }
+
+    public void changeTopFix(){
+        this.topFix = !this.topFix;
+    }
+
+    public void increaseViews(){
+        this.views += 1;
     }
 
 }
