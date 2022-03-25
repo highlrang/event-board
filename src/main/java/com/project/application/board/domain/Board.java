@@ -25,6 +25,10 @@ public class Board {
     private Long id;
 
     @NotNull
+    @Enumerated(EnumType.STRING)
+    private BoardType boardType;
+
+    @NotNull
     private String title;
 
     @Column(columnDefinition = "text", nullable = false)
@@ -48,10 +52,6 @@ public class Board {
 
     @NotNull
     private LocalDateTime endDate;
-
-    @NotNull
-    @Enumerated(EnumType.STRING)
-    private BoardType boardType;
 
     private Integer recruitingCnt;
 

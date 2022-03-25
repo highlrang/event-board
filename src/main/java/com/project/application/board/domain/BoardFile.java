@@ -23,13 +23,13 @@ public class BoardFile {
 
     private String name;
 
-    private String fullName;
+    private String fullPath;
 
     @Builder
-    public BoardFile(String originalName, String path, String name, String fullName){
+    public BoardFile(String originalName, String path, String name, String fullPath){
         this.originalName = originalName;
         this.path = path;
         this.name = name;
-        this.fullName = fullName;
+        this.fullPath = fullPath;
     }
 }

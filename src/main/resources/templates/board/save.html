@@ -1,0 +1,75 @@
+<html>
+<head>
+
+</head>
+<body>
+
+    <div>
+
+        <div>
+            <select id="boardType">
+                <option value="meeting">모임</option>
+                <option value="event">이벤트</option>
+            </select>
+        </div>
+
+        <div>
+            <input type="text" id="title" placeholder="제목">
+        </div>
+
+        <div>
+            <textarea id="content" placeholder="내용"></textarea>
+        </div>
+
+        <div>
+            <span class="datepicker"></span>
+            <span class="datepicker"></span>
+        </div>
+
+        <div>
+            <input type="text" placeholder="참여 가능한 인원 수">
+        </div>
+
+        <div>
+            <input type="file" id="file">
+        </div>
+
+        <div>
+            <input type="button" class="" id="board-save" value="게시글 등록">
+        </div>
+
+    </div>
+
+
+    <script>
+        $("#board-save").click(function(){
+            let data = {
+                "boardType": $("#boardType").val(),
+                // "writerId": security에서 getUserId,
+                "title" : $("#title").val(),
+                "content" : $("#content").val(),
+                "startDate": $("#startDate").val(),
+                "endDate": $("#endDate").val(),
+                "recruitingCnt": $("#recruitingCnt").val(),
+                "file": $("#file").val() // MultipartFile -> form submit?
+            };
+
+            $.ajax({
+                type: "POST",
+                url: "/api/board",
+                data: data,
+                contentType: "application/json;charset=utf8",
+                dataType: "text", // default
+                success: function(result){
+                    location.href=`/board/detail/${result}`
+                },
+                fail: function(){
+
+                }
+            });
+
+        });
+    </script>
+</body>
+
+</html>
