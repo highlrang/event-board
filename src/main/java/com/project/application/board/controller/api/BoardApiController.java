@@ -41,5 +41,10 @@ public class BoardApiController {
         }
     }
 
-
+    @PostMapping
+    public ResponseEntity<?> save(@Valid @RequestBody BoardRequestDto dto,
+                                  @RequestPart MultipartFile file){
+        // 이렇게 되면 진행 안 되면 form으로 받기
+        return null;
+    }
 }

@@ -3,6 +3,8 @@ spring:
     include: db
 
   devtools:
+    livereload:
+      enabled: true
     restart:
       enabled: true
 
@@ -19,6 +21,9 @@ spring:
       hibernate:
         format_sql: true
         ddl-auto: create
+
+  mvc:
+    static-path-pattern: /static/**
 
 logging:
   level:

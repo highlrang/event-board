@@ -1,75 +1,87 @@
-<html>
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="layout/default">
+
 <head>
-
+    <title>게시글 저장</title>
 </head>
-<body>
 
-    <div>
-
-        <div>
-            <select id="boardType">
-                <option value="meeting">모임</option>
-                <option value="event">이벤트</option>
-            </select>
-        </div>
-
-        <div>
-            <input type="text" id="title" placeholder="제목">
-        </div>
-
-        <div>
-            <textarea id="content" placeholder="내용"></textarea>
-        </div>
-
-        <div>
-            <span class="datepicker"></span>
-            <span class="datepicker"></span>
-        </div>
-
-        <div>
-            <input type="text" placeholder="참여 가능한 인원 수">
-        </div>
-
-        <div>
-            <input type="file" id="file">
-        </div>
-
-        <div>
-            <input type="button" class="" id="board-save" value="게시글 등록">
-        </div>
-
-    </div>
-
-
+<th:block layout:fragment="style">
+    <link rel="stylesheet" href="http://code.jquery.com/ui/1.8.18/themes/base/jquery-ui.css" type="text/css" />
+</th:block>
+<th:block layout:fragment="script">
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+    <script src="http://code.jquery.com/ui/1.8.18/jquery-ui.min.js"></script>
     <script>
-        $("#board-save").click(function(){
-            let data = {
-                "boardType": $("#boardType").val(),
-                // "writerId": security에서 getUserId,
-                "title" : $("#title").val(),
-                "content" : $("#content").val(),
-                "startDate": $("#startDate").val(),
-                "endDate": $("#endDate").val(),
-                "recruitingCnt": $("#recruitingCnt").val(),
-                "file": $("#file").val() // MultipartFile -> form submit?
-            };
-
-            $.ajax({
-                type: "POST",
-                url: "/api/board",
-                data: data,
-                contentType: "application/json;charset=utf8",
-                dataType: "text", // default
-                success: function(result){
-                    location.href=`/board/detail/${result}`
-                },
-                fail: function(){
-
-                }
+        $(function(){
+            $(".datepicker").datepicker({
+                changeMonth: false,
+                changeYear: false,
+                dateFormat: "yy-mm-dd",
+                dayNamesMin: ["일", "월", "화", "수", "목", "금", "토"],
+                monthNames: ["1월", "2월", "3월", "4월", "5월", "6월", "7월", "8월", "9월", "10월", "11월", "12월"],
+                monthNamesShort: ["1월", "2월", "3월", "4월", "5월", "6월", "7월", "8월", "9월", "10월", "11월", "12월"]
             });
 
+            // $("#startDate").datepicker({
+            //     onClose: function(selectDate){
+            //         $("#endDate").datepicker({
+            //             'minDate': selectDate
+            //         });
+            //         $("#endDate").datepicker("setDate", selectDate);
+            //     }
+            // });
         });
     </script>
-</body>
+    <script src="/static/js/board.js"></script>
+</th:block>
+
+
+<div layout:fragment="content">
+    <div class="">
+        <h3>게시글 저장</h3>
+    </div>
+
+    <div class="input-group mb-3">
+        <select class="form-select" id="boardType">
+            <option selected>종류</option>
+            <option value="meeting">스터디 모임</option>
+            <option value="event">이벤트</option>
+        </select>
+    </div>
+
+    <div class="input-group mb-3">
+        <input type="text" class="form-control" id="title" placeholder="제목">
+    </div>
+
+    <div class="input-group mb-3">
+        <textarea class="form-control" id="content" placeholder="내용"></textarea>
+    </div>
+
+    <div class="input-group mb-3">
+        <input type="text" class="form-control" placeholder="참여 인원 수">
+    </div>
+
+    <div class="input-group mb-3">
+        <div class="row">
+            <div class="col">
+                <input type="text" class="form-control datepicker" id="startDate" placeholder="시작 날짜" readonly="readonly">
+            </div>
+            <div class="col">
+                <input type="text" class="form-control datepicker" id="endDate" placeholder="종료 날짜" readonly="readonly">
+            </div>
+        </div>
+    </div>
+
+    <div class="input-group mb-3">
+        <input class="form-control" type="file" id="file">
+    </div>
+
+    <div>
+        <input type="button" class="btn btn-outline-primary" onclick="board.save()" value="게시글 등록">
+    </div>
+
+</div>
 
 </html>

@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+
+<head th:replace="layout/fragments/head :: headFragment">
+    <title layout:title-pattern="$LAYOUT_TITLE - $CONTENT_TITLE">
+        커뮤니티 by 정혜우
+    </title>
+</head>
+
+<body>
+
+<header th:replace="layout/fragments/header :: headerFragment"></header>
+<div layout:fragment="content" class="container"></div>
+<footer th:replace="layout/fragments/footer :: footerFragment"></footer>
+
+</body>
+
+
+</html>
