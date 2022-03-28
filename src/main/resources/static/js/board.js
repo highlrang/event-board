@@ -1,27 +1,21 @@
 const board = {
 
     save: function () {
-        const data = {
-            "boardType": $("#boardType").val(),
-            "writerId": 1, // security에서 getUserId,
-            "title" : $("#title").val(),
-            "content" : $("#content").val(),
-            "startDate": $("#startDate").val(),
-            "endDate": $("#endDate").val(),
-            "recruitingCnt": $("#recruitingCnt").val(),
-            "file": $("#file").val() // MultipartFile -> form submit?
-        };
+        const form = new FormData($("form")[0]);
 
         $.ajax({
             type: "POST",
             url: "/api/board",
-            data: JSON.stringify(data),
-            contentType: "application/json;charset=utf8",
-            dataType: "text", // default
+            data: form,
+            enctype: "multipart/form-data",
+            contentType: false,
+            processData: false,
             success: function(result){
+                alert(`저장 성공 id = ${result}`);
                 // location.href=`/board/detail/${result}`;
             },
-            fail: function(){
+            error: function(error){
+                console.log();
                 alert("게시글이 저장되지 않았습니다.");
             }
 

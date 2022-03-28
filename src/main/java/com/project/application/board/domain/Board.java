@@ -85,6 +85,10 @@ public class Board {
         this.writer = writer;
     }
 
+    public void setFile(BoardFile file){
+        this.file = file;
+    }
+
     public void changeTopFix(){
         this.topFix = !this.topFix;
     }

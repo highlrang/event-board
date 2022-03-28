@@ -16,23 +16,23 @@ import java.time.LocalDateTime;
 @Setter @Getter
 public class BoardRequestDto {
 
-    @NotNull
-    private BoardType boardType;
+    @NotNull(message = "게시글 종류를 선택해주세요")
+    private String boardType;
 
-    @NotNull
+    @NotNull(message = "사용자에 대한 정보가 없습니다")
     private Long writerId;
 
-    @NotNull
+    @NotNull(message = "제목을 입력해주세요")
     private String title;
 
-    @NotNull
+    @NotNull(message = "내용을 입력해주세요")
     private String content;
 
-    @NotNull
+    @NotNull(message = "시작일을 설정해주세요")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDateTime startDate;
 
-    @NotNull
+    @NotNull(message = "종료일을 설정해주세요")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDateTime endDate;
 
@@ -42,11 +42,12 @@ public class BoardRequestDto {
 
     public Board toEntity(){
         return Board.builder()
-                .boardType(boardType)
+                .boardType(BoardType.valueOf(boardType))
                 .title(title)
                 .content(content)
                 .startDate(startDate)
                 .endDate(endDate)
+                .recruitingCnt(recruitingCnt)
                 .build();
     }
 
