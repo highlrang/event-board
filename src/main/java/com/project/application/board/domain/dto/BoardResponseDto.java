@@ -6,8 +6,8 @@ import com.project.application.board.domain.BoardType;
 import com.project.application.registration.domain.dto.RegistrationResponseDto;
 import com.querydsl.core.annotations.QueryProjection;
 import lombok.Getter;
-import org.springframework.format.annotation.DateTimeFormat;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -26,9 +26,9 @@ public class BoardResponseDto {
     private int registrationCnt;
 
     @JsonFormat(pattern = "yyyy-MM-dd")
-    private LocalDateTime startDate;
+    private LocalDate startDate;
     @JsonFormat(pattern = "yyyy-MM-dd")
-    private LocalDateTime endDate;
+    private LocalDate endDate;
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDateTime createdDate;
 
@@ -43,7 +43,7 @@ public class BoardResponseDto {
     public BoardResponseDto(Long id, BoardType boardType, String title,
                             Long writerId, String writerName, int recruitingCnt,
                             int registrationCnt, Boolean topFix, int views,
-                            LocalDateTime startDate, LocalDateTime endDate, LocalDateTime createdDate) {
+                            LocalDate startDate, LocalDate endDate, LocalDateTime createdDate) {
         this.id = id;
         this.boardType = boardType;
         this.title = title;

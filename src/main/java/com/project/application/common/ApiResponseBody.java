@@ -1,5 +1,8 @@
 package com.project.application.common;
 
+import lombok.Getter;
+
+@Getter
 public class ApiResponseBody<T> {
     
     private String statusCode;

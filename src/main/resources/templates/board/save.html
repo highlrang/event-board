@@ -21,17 +21,16 @@
                 dateFormat: "yy-mm-dd",
                 dayNamesMin: ["일", "월", "화", "수", "목", "금", "토"],
                 monthNames: ["1월", "2월", "3월", "4월", "5월", "6월", "7월", "8월", "9월", "10월", "11월", "12월"],
-                monthNamesShort: ["1월", "2월", "3월", "4월", "5월", "6월", "7월", "8월", "9월", "10월", "11월", "12월"]
+                monthNamesShort: ["1월", "2월", "3월", "4월", "5월", "6월", "7월", "8월", "9월", "10월", "11월", "12월"],
+                onClose: function(date){
+                    let name = $(this).attr('name');
+                    if(name === 'startDate'){
+                        $("input[name='endDate']").datepicker('option', 'minDate', date);
+                    }else{
+                        $("input[name='startDate']").datepicker('option', 'maxDate', date);
+                    }
+                }
             });
-
-            // $("#startDate").datepicker({
-            //     onClose: function(selectDate){
-            //         $("#endDate").datepicker({
-            //             'minDate': selectDate
-            //         });
-            //         $("#endDate").datepicker("setDate", selectDate);
-            //     }
-            // });
         });
     </script>
     <script src="/static/js/board.js"></script>
@@ -43,13 +42,13 @@
         <h3>게시글 저장</h3>
     </div>
 
-    <form>
+    <form enctype="multipart/form-data" method="post">
         <input type="hidden" name="writerId" value="1"><!--security-->
 
         <div class="input-group mb-3">
             <select class="form-select" name="boardType">
                 <option value="" selected>종류</option>
-                <option value="meeting">스터디 모임</option>
+                <option value="meeting">모집</option>
                 <option value="event">이벤트</option>
             </select>
         </div>

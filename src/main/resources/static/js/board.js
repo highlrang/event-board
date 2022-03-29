@@ -10,13 +10,17 @@ const board = {
             enctype: "multipart/form-data",
             contentType: false,
             processData: false,
+            dataType: "json",
             success: function(result){
                 alert(`저장 성공 id = ${result}`);
                 // location.href=`/board/detail/${result}`;
             },
             error: function(error){
-                console.log();
-                alert("게시글이 저장되지 않았습니다.");
+                let errRes = JSON.parse(error.responseText);
+                alert(errRes.body[0]);
+                // $.each(errRes.body, function(idx, msg){
+                //     alert(msg);
+                // });
             }
 
         });

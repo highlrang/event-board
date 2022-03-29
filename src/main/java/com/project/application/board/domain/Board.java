@@ -12,6 +12,7 @@ import org.springframework.data.annotation.CreatedDate;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -48,10 +49,10 @@ public class Board {
     private int views;
 
     @NotNull
-    private LocalDateTime startDate;
+    private LocalDate startDate;
 
     @NotNull
-    private LocalDateTime endDate;
+    private LocalDate endDate;
 
     private Integer recruitingCnt;
 
@@ -64,7 +65,7 @@ public class Board {
 
     @Builder
     public Board(BoardType boardType, String title, String content,
-                 Integer recruitingCnt, LocalDateTime startDate, LocalDateTime endDate){
+                 Integer recruitingCnt, LocalDate startDate, LocalDate endDate){
         this.boardType = boardType;
         this.title = title;
         this.content = content;
@@ -73,7 +74,7 @@ public class Board {
         this.endDate = endDate;
     }
 
-    public void update(String title, String content, Integer recruitingCnt, LocalDateTime startDate, LocalDateTime endDate){
+    public void update(String title, String content, Integer recruitingCnt, LocalDate startDate, LocalDate endDate){
         this.title = title;
         this.content = content;
         this.recruitingCnt = recruitingCnt;
