@@ -51,6 +51,7 @@ public class BoardServiceImpl implements BoardService{
         return boardRepository.save(board).getId();
     }
 
+    @Transactional
     @Override
     public void updateAllToBest(List<Long> ids) {
         boardRepository.updateAllToBest(ids);

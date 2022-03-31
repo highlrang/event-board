@@ -6,22 +6,20 @@ import static com.project.application.user.domain.QUser.user;
 import com.project.application.board.domain.Board;
 import com.project.application.board.domain.BoardType;
 import com.project.application.board.domain.dto.BoardResponseDto;
-import com.querydsl.core.types.Projections;
-import com.querydsl.jpa.impl.JPAQuery;
+import com.querydsl.core.types.*;
+import com.querydsl.core.types.dsl.PathBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
+import java.util.ArrayList;
 import java.util.List;
 
 @RequiredArgsConstructor
-public class BoardRepositoryImpl implements BoardRepositoryCustom{
+public class BoardRepositoryCustomImpl implements BoardRepositoryCustom{
 
     private final EntityManager em;
     private final JPAQueryFactory jpaQueryFactory;
@@ -33,6 +31,18 @@ public class BoardRepositoryImpl implements BoardRepositoryCustom{
                 .where(board.boardType.eq(boardType))
                 .fetchFirst();
 
+        // 시작
+        List<OrderSpecifier<?>> orderSpecifier = new ArrayList<>();
+        orderSpecifier.add(new OrderSpecifier<>(Order.ASC, board.topFix));
+
+        // createdDate desc를 sort 기본으로
+        pageable.getSort().forEach(o -> {
+            Order direction = o.isAscending() ? Order.ASC : Order.DESC;
+            PathBuilder<?> pathBuilder = new PathBuilder(Board.class, "board");
+            orderSpecifier.add(new OrderSpecifier(direction, pathBuilder.get(o.getProperty())));
+        });
+        // 끝
+
         List<BoardResponseDto> results = jpaQueryFactory.select(
                     Projections.constructor(BoardResponseDto.class,
                             board.id,
@@ -42,7 +52,7 @@ public class BoardRepositoryImpl implements BoardRepositoryCustom{
                             user.id,
                             user.name,
                             board.recruitingCnt,
-                            board.isBest,
+
                             board.startDate,
                             board.endDate,
                             board.createdDate
@@ -53,17 +63,17 @@ public class BoardRepositoryImpl implements BoardRepositoryCustom{
                 .where(board.boardType.eq(boardType))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
-                .orderBy(board.isBest.asc(), board.createdDate.desc()) // asc true부터인지 확인
+                .orderBy(orderSpecifier.toArray(OrderSpecifier[]::new))
+                // asc true부터인지 확인
                 .fetch();
 
          return new PageImpl<>(results, pageable, totalCnt);
     }
 
-    @Transactional
     @Override
     public void updateAllToBest(List<Long> ids) {
         jpaQueryFactory.update(board)
-                .set(board.isBest, true)
+                .set(board.topFix, true)
                 .where(board.id.in(ids))
                 .execute();
 
