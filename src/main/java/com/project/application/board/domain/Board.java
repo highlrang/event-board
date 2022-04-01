@@ -86,6 +86,10 @@ public class Board {
         this.writer = writer;
     }
 
+    public Boolean isWriter(Long id){
+        return id.equals(writer.getId());
+    }
+
     public void setFile(BoardFile file){
         this.file = file;
     }

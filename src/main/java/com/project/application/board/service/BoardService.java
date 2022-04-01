@@ -12,7 +12,7 @@ import java.util.List;
 
 public interface BoardService {
 
-    BoardResponseDto findById(Long id);
+    BoardResponseDto findById(Long id, Long userId);
 
     Page<BoardResponseDto> findPaging(BoardType boardType, Pageable pageable);
 
