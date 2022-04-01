@@ -69,8 +69,10 @@ public class BoardResponseDto {
         this.recruitingCnt = entity.getRecruitingCnt();
         this.views = entity.getViews();
         this.topFix = entity.getTopFix();
-        this.fileName = entity.getFile().getOriginalName();
-        this.filePath = entity.getFile().getFullPath();
+        if(entity.getFile() != null) {
+            this.fileName = entity.getFile().getOriginalName();
+            this.filePath = entity.getFile().getFullPath();
+        }
         this.startDate = entity.getStartDate();
         this.endDate = entity.getEndDate();
         this.createdDate = entity.getCreatedDate();

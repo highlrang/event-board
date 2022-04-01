@@ -54,7 +54,7 @@ public class Board {
     @NotNull
     private LocalDate endDate;
 
-    private Integer recruitingCnt;
+    private int recruitingCnt;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "board_file_id")
@@ -65,7 +65,7 @@ public class Board {
 
     @Builder
     public Board(BoardType boardType, String title, String content,
-                 Integer recruitingCnt, LocalDate startDate, LocalDate endDate){
+                 int recruitingCnt, LocalDate startDate, LocalDate endDate){
         this.boardType = boardType;
         this.title = title;
         this.content = content;
@@ -74,7 +74,7 @@ public class Board {
         this.endDate = endDate;
     }
 
-    public void update(String title, String content, Integer recruitingCnt, LocalDate startDate, LocalDate endDate){
+    public void update(String title, String content, int recruitingCnt, LocalDate startDate, LocalDate endDate){
         this.title = title;
         this.content = content;
         this.recruitingCnt = recruitingCnt;

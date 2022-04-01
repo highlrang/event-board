@@ -34,6 +34,7 @@ public class BoardServiceImpl implements BoardService{
     public BoardResponseDto findById(Long id){
         Board board = boardRepository.findById(id)
                 .orElseThrow(() -> new CustomException(BOARD_NOT_FOUND.getCode(), BOARD_NOT_FOUND.getMessage()));
+        board.increaseViews();
         return new BoardResponseDto(board);
     }
 
