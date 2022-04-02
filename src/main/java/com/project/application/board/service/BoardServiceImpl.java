@@ -7,6 +7,7 @@ import com.project.application.board.domain.dto.BoardRequestDto;
 import com.project.application.board.domain.dto.BoardResponseDto;
 import com.project.application.board.repository.BoardRepository;
 import com.project.application.exception.CustomException;
+import com.project.application.file.service.FileService;
 import com.project.application.user.domain.User;
 import com.project.application.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.EntityManager;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -31,6 +33,7 @@ public class BoardServiceImpl implements BoardService{
 
     private final UserRepository userRepository;
     private final BoardRepository boardRepository;
+    private final FileService fileService;
 
     @Override
     public BoardResponseDto findById(Long id, Long userId){
@@ -46,7 +49,7 @@ public class BoardServiceImpl implements BoardService{
     }
 
     @Override
-    public Long save(BoardRequestDto dto){
+    public Long save(BoardRequestDto dto) throws IOException {
         Board board = dto.toEntity();
 
         /** 작성자 매핑 */
@@ -55,7 +58,7 @@ public class BoardServiceImpl implements BoardService{
         board.setWriter(writer);
 
         /** 첨부파일 매핑 */
-        board.setFile(BoardFile.convert(dto.getFile()));
+        board.setFile(fileService.upload(dto.getFile()));
 
         return boardRepository.save(board).getId();
     }

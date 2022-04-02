@@ -11,7 +11,11 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import java.io.File;
+import java.io.IOException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+
+import static com.project.application.common.Constants.FILE_BASE_PATH;
 
 @Entity @Getter
 @NoArgsConstructor
@@ -35,14 +39,5 @@ public class BoardFile {
         this.path = path;
         this.name = name;
         this.fullPath = fullPath;
-    }
-
-    public static BoardFile convert(MultipartFile file){
-        if(file == null) return null;
-        if(file.isEmpty()) return null;
-
-        return BoardFile.builder()
-                .originalName(file.getOriginalFilename())
-                .build();
     }
 }
