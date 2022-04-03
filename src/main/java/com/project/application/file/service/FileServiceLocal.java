@@ -1,6 +1,7 @@
 package com.project.application.file.service;
 
 import com.project.application.board.domain.BoardFile;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -12,6 +13,7 @@ import java.time.LocalDateTime;
 
 import static com.project.application.common.Constants.FILE_BASE_PATH;
 
+@Slf4j
 @Service
 @Transactional(readOnly = true)
 public class FileServiceLocal implements FileService{
@@ -30,7 +32,9 @@ public class FileServiceLocal implements FileService{
         if(!dirPath.exists()) dirPath.mkdirs();
 
         File uploadFile = new File(dirPath.getAbsolutePath() + "/" + name);
-        file.transferTo(uploadFile);
+        // file.transferTo(uploadFile);
+
+        log.info("=== file service LOCAL ===");
 
         return BoardFile.builder()
                 .originalName(file.getName())
