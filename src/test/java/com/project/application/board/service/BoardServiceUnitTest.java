@@ -17,13 +17,17 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import com.project.application.user.domain.User;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.validation.BindException;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
 
@@ -34,8 +38,37 @@ public class BoardServiceUnitTest {
     @InjectMocks BoardServiceImpl boardService;
     @Mock FileServiceLocal fileService;
 
+    @Test @DisplayName("게시글 저장 시 데이터 검증 테스트")
+    public void requestDto(){
+        BoardRequestDto dto = new BoardRequestDto();
+        dto.setBoardType(BoardType.event.getName());
+        dto.setWriterId(1L);
+        dto.setTitle("test tile");
+        dto.setContent("test content");
+        LocalDate givenDate = LocalDate.now();
+        dto.setStartDate(
+                LocalDate.parse(
+                        givenDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")),
+                        DateTimeFormatter.ofPattern("yyyy-MM-dd")
+                        )
+        );
+        dto.setEndDate(
+                LocalDate.parse(
+                        givenDate.minusDays(1L).format(DateTimeFormatter.ofPattern("yyyy-MM-dd")),
+                        DateTimeFormatter.ofPattern("yyyy-MM-dd")
+                )
+        );
+
+        BindException exception = assertThrows(BindException.class,
+                dto::toEntity);
+        assertThat(exception.getAllErrors().get(0).getDefaultMessage())
+                .isEqualTo("시작 날짜가 종료 날짜보다 앞서거나 같아야합니다");
+
+    }
+
+
     @Test @DisplayName("게시글 저장 시 파일 저장 기능까지")
-    public void save() throws IOException {
+    public void save() throws IOException, BindException {
         /** given */
         Board givenBoard = Board.builder().build();
         User givenWriter = new User();

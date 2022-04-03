@@ -16,6 +16,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.BindException;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -39,7 +40,7 @@ class BoardServiceTest {
      * jpa 연관관계 저장 확인
      */
     @Test @DisplayName("게시글 저장 시 파일 기능 작동 확인")
-    public void save() throws IOException {
+    public void save() throws IOException, BindException {
         /** given */
         BoardRequestDto dto = new BoardRequestDto();
         dto.setBoardType(BoardType.event.toString());

@@ -22,9 +22,10 @@ public class BoardApiController {
     private final BoardService boardService;
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> findById(@PathVariable("id") Long id){
+    public ResponseEntity<?> findById(@PathVariable("id") Long id,
+                                      @RequestParam(value = "userId", required = false) Long userId){
         try{
-            return new ResponseEntity<>(boardService.findById(id), HttpStatus.OK);
+            return new ResponseEntity<>(boardService.findById(id, userId), HttpStatus.OK);
 
         }catch(Exception e){
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);

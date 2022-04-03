@@ -15,6 +15,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.BindException;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.EntityManager;
@@ -49,7 +50,7 @@ public class BoardServiceImpl implements BoardService{
     }
 
     @Override
-    public Long save(BoardRequestDto dto) throws IOException {
+    public Long save(BoardRequestDto dto) throws IOException, BindException {
         Board board = dto.toEntity();
 
         /** 작성자 매핑 */

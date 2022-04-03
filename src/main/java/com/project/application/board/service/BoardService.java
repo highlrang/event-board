@@ -7,6 +7,7 @@ import com.project.application.board.domain.dto.BoardResponseDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.BindException;
 
 import java.io.IOException;
 import java.util.List;
@@ -17,7 +18,7 @@ public interface BoardService {
 
     Page<BoardResponseDto> findPaging(BoardType boardType, Pageable pageable);
 
-    Long save(BoardRequestDto dto) throws IOException;
+    Long save(BoardRequestDto dto) throws IOException, BindException;
 
     void updateAllToBest(List<Long> ids);
 }
