@@ -40,7 +40,7 @@ out/
 application-db.yml
 
 # querydsl
-/generated/
+src/main/generated
 
 # upload file
-/upload/
+src/main/resources/static/upload

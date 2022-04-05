@@ -56,7 +56,7 @@ public class Board {
 
     private int recruitingCnt;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "board_file_id")
     private BoardFile file;
 
@@ -87,7 +87,7 @@ public class Board {
     }
 
     public Boolean isWriter(Long id){
-        return id.equals(writer.getId());
+        return writer.getId().equals(id);
     }
 
     public void setFile(BoardFile file){

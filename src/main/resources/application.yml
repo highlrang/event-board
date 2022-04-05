@@ -17,10 +17,11 @@ spring:
   jpa:
     show-sql: true
     generate-ddl: true
+    hibernate:
+      ddl-auto: update
     properties:
       hibernate:
         format_sql: true
-        ddl-auto: create
 
   mvc:
     static-path-pattern: /static/**

@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 @Getter
 public class BoardResponseDto {
     private Long id;
-    private BoardType boardType;
+    private String boardType;
     private String title;
     private String content;
 
@@ -35,7 +35,7 @@ public class BoardResponseDto {
     private Boolean topFix;
     private int views;
     private String fileName;
-    private String filePath;
+    private Long fileId;
     private List<RegistrationResponseDto> registrations;
 
     /** 목록용 dto */
@@ -45,7 +45,7 @@ public class BoardResponseDto {
                             int registrationCnt, Boolean topFix, int views,
                             LocalDate startDate, LocalDate endDate, LocalDateTime createdDate) {
         this.id = id;
-        this.boardType = boardType;
+        this.boardType = boardType.getName();
         this.title = title;
         this.writerId = writerId;
         this.writerName = writerName;
@@ -61,7 +61,7 @@ public class BoardResponseDto {
     /** 상세용 dto */
     public BoardResponseDto(Board entity){
         this.id = entity.getId();
-        this.boardType = entity.getBoardType();
+        this.boardType = entity.getBoardType().getName();
         this.title = entity.getTitle();
         this.content = entity.getContent();
         this.writerId = entity.getWriter().getId();
@@ -71,7 +71,7 @@ public class BoardResponseDto {
         this.topFix = entity.getTopFix();
         if(entity.getFile() != null) {
             this.fileName = entity.getFile().getOriginalName();
-            this.filePath = entity.getFile().getFullPath();
+            this.fileId = entity.getFile().getId();
         }
         this.startDate = entity.getStartDate();
         this.endDate = entity.getEndDate();

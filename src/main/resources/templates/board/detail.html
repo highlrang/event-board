@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="layout/default">
+
+<head>
+  <title>게시글 상세</title>
+</head>
+
+<th:block layout:fragment="script">
+  <script src="/static/js/board.js"></script>
+  <script>
+    callAjax("get", "/api/board/" + [[${boardId}]], null,
+            (result) => {
+              $("#boardType").text(result.boardType);
+              $("#title").text(result.title);
+              $("#writer").text(result.writerName);
+              $("#content").text(result.content);
+              $("#datePeriod").text(result.startDate + " ~ " + result.endDate);
+              result.recruitingCnt != null ? $("#recruitingCnt").text(result.recruitingCnt) : $("#recruitingCnt").text("제한 없음");
+              result.fileId != null ? $("#file").html(`<span onclick="board.downloadFile(${result.fileId})">${result.fileName}</span>`) : $("#file").text("-");
+              $("#views").text(result.views);
+              result.regitrations != null && result.registrations.length > 0 ? $("#registrationArea").text("-") : $("#registrationArea").html(`<button type="button" class="badge bg-light text-dark" data-bs-toggle="modal" data-bs-target="registrationList">${result.registrations.length}</button>`);
+
+              let registrationModal = "<div class=\"modal fade\" id=\"registrationList\" tabindex=\"-1\" aria-labelledby=\"registrationListLabel\" aria-hidden=\"true\">\n" +
+                      "  <div class=\"modal-dialog\">\n" +
+                      "    <div class=\"modal-content\">\n" +
+                      "      <div class=\"modal-header\">\n" +
+                      "        <h5 class=\"modal-title\" id=\"registrationListLabel\">등록자 정보</h5>\n" +
+                      "        <button type=\"button\" class=\"btn-close\" data-bs-dismiss=\"modal\" aria-label=\"닫기\"></button>\n" +
+                      "      </div>\n" +
+                      "      <div class=\"modal-body\">\n";
+
+              $.each(result.registrations, function(index, item){
+                registrationModal += `<div>${item.user.name} - ${item.status.name}</div>`;
+              });
+
+              registrationModal += "      </div>\n" +
+                      "      <div class=\"modal-footer\">\n" +
+                      "        <button type=\"button\" class=\"btn btn-secondary\" data-bs-dismiss=\"modal\">Close</button>\n" +
+                      "      </div>\n" +
+                      "    </div>\n" +
+                      "  </div>\n" +
+                      "</div>";
+              $("#registrationModal").html(registrationModal);
+            });
+  </script>
+</th:block>
+
+<div layout:fragment="content">
+  <div class="">
+    <h3>게시글 상세</h3>
+  </div>
+
+  <table class="table">
+    <tbody>
+      <tr>
+        <td>게시글 종류</td>
+        <td id="boardType"></td>
+      </tr>
+
+      <tr>
+        <td>제목</td>
+        <td id="title"></td>
+      </tr>
+
+      <tr>
+        <td>작성자</td>
+        <td id="writer"></td>
+      </tr>
+
+      <tr>
+        <td>내용</td>
+        <td id="content"></td>
+      </tr>
+
+      <tr>
+        <td>기간</td>
+        <td id="datePeriod"></td>
+      </tr>
+
+      <tr>
+        <td>인원 제한</td>
+        <td id="recruitingCnt"></td>
+      </tr>
+
+      <tr>
+        <td>첨부파일</td>
+        <td id="file"></td>
+      </tr>
+
+      <tr>
+        <td>조회수</td>
+        <td id="views"></td>
+      </tr>
+
+      <tr>
+        <td>등록 인원</td>
+        <td id="registrationArea"></td>
+      </tr>
+
+    </tbody>
+  </table>
+
+  <span id="registrationModal"></span>
+</div>
+
+</html>

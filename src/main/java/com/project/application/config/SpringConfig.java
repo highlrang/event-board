@@ -1,8 +1,10 @@
 package com.project.application.config;
 
+import com.project.application.board.repository.BoardRepositoryCustom;
+import com.project.application.board.repository.BoardRepositoryCustomImpl;
+import com.project.application.file.repository.BoardFileRepository;
 import com.project.application.file.service.FileService;
 import com.project.application.file.service.FileServiceLocal;
-import com.project.application.file.service.FileServiceS3;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import nz.net.ultraq.thymeleaf.layoutdialect.LayoutDialect;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,8 +30,15 @@ public class SpringConfig {
         return new LayoutDialect();
     }
 
+//    @Bean
+//    public BoardRepositoryCustom boardRepositoryCustom(){
+//        return new BoardRepositoryCustomImpl(em, jpaQueryFactory());
+//    }
+
+    @Autowired private BoardFileRepository boardFileRepository;
+
     @Bean
     public FileService fileService(){
-        return new FileServiceLocal();
+        return new FileServiceLocal(boardFileRepository);
     }
 }

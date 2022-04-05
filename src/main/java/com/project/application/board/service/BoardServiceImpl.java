@@ -11,6 +11,7 @@ import com.project.application.file.service.FileService;
 import com.project.application.user.domain.User;
 import com.project.application.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -27,6 +28,7 @@ import java.util.stream.Collectors;
 import static com.project.application.common.StatusCode.BOARD_NOT_FOUND;
 import static com.project.application.common.StatusCode.USER_NOT_FOUND;
 
+@Slf4j
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -49,6 +51,7 @@ public class BoardServiceImpl implements BoardService{
         return boardRepository.findPaging(boardType, pageable);
     }
 
+    @Transactional
     @Override
     public Long save(BoardRequestDto dto) throws IOException, BindException {
         Board board = dto.toEntity();
@@ -61,7 +64,8 @@ public class BoardServiceImpl implements BoardService{
         /** 첨부파일 매핑 */
         board.setFile(fileService.upload(dto.getFile()));
 
-        return boardRepository.save(board).getId();
+        Board result = boardRepository.save(board);
+        return result.getId();
     }
 
     @Transactional

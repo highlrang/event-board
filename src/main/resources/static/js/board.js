@@ -12,19 +12,20 @@ const board = {
             processData: false,
             dataType: "json",
             success: function(result){
-                alert(`저장 성공 id = ${result}`);
-                // location.href=`/board/detail/${result}`;
+                alert("게시글이 저장되었습니다.");
+                location.href=`/board/${result}`;
             },
             error: function(error){
                 let errRes = JSON.parse(error.responseText);
-                alert(errRes.body[0]);
-                // $.each(errRes.body, function(idx, msg){
-                //     alert(msg);
-                // });
+                Array.isArray(errRes.body) && alert(errRes.body[0]);
             }
 
         });
     },
+
+    downloadFile: function(id){
+        callAjax("GET", `/api/board/file-download/${id}`, null, null);
+    }
 
 
 }
