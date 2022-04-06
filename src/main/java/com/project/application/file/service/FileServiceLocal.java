@@ -19,6 +19,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import static com.project.application.common.Constants.FILE_BASE_PATH;
+import static com.project.application.common.StatusCode.FILE_DOWNLOAD_FAILED;
 import static com.project.application.common.StatusCode.FILE_NOT_FOUND;
 
 @Slf4j
@@ -48,7 +49,7 @@ public class FileServiceLocal implements FileService{
         log.info("=== file service LOCAL ===");
 
         return BoardFile.builder()
-                .originalName(file.getName())
+                .originalName(file.getName() + extension)
                 .path(path)
                 .name(name)
                 .fullPath(uploadFile.getAbsolutePath())
@@ -72,7 +73,7 @@ public class FileServiceLocal implements FileService{
             UrlResource urlResource = new UrlResource("file", file.getFullPath());
             return new FileDownloadDto(file.getOriginalName(), urlResource);
         } catch (MalformedURLException e) {
-            throw new CustomException("");
+            throw new CustomException(FILE_DOWNLOAD_FAILED.getCode(), FILE_DOWNLOAD_FAILED.getMessage());
         }
     }
 }

@@ -21,4 +21,9 @@ public class FileServiceS3 implements FileService {
 
         return new BoardFile();
     }
+
+    @Override
+    public Object download(Long id) {
+        return null;
+    }
 }

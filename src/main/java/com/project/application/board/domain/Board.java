@@ -9,6 +9,7 @@ import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.engine.profile.Fetch;
 import org.springframework.boot.context.properties.bind.DefaultValue;
 import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -19,6 +20,7 @@ import java.util.List;
 
 @Entity @Getter
 @NoArgsConstructor
+@EntityListeners(AuditingEntityListener.class)
 public class Board {
 
     @Id

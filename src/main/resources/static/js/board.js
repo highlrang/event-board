@@ -23,9 +23,5 @@ const board = {
         });
     },
 
-    downloadFile: function(id){
-        callAjax("GET", `/api/board/file-download/${id}`, null, null);
-    }
-
 
 }

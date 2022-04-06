@@ -23,6 +23,7 @@ public enum StatusCode {
 
     FILE_NOT_FOUND("3101", "파일을 찾을 수 없습니다."),
     FILE_SAVE_FAILED("3102", "파일 업로드에 실패했습니다."),
+    FILE_DOWNLOAD_FAILED("3103", "파일 다운로드에 실패했습니다."),
 
     /**
      * Registration
