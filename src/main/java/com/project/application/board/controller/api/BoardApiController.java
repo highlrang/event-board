@@ -12,6 +12,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.UrlResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.*;
 import org.springframework.validation.BindException;
 import org.springframework.web.bind.annotation.*;
@@ -56,8 +58,9 @@ public class BoardApiController {
                 .body(dto.getResource());
     }
 
-    @GetMapping("/list")
-    public ResponseEntity<?> list(@RequestParam("boardType") String boardType, Pageable pageable){
+    @GetMapping
+    public ResponseEntity<?> list(@RequestParam("boardType") String boardType,
+                                  @PageableDefault(sort = "createdDate", direction = Sort.Direction.DESC) Pageable pageable){
         Page<BoardResponseDto> boardPaging = boardService.findPaging(BoardType.valueOf(boardType), pageable);
         return new ResponseEntity<>(boardPaging, HttpStatus.OK);
     }

@@ -8,7 +8,6 @@
 </head>
 
 <th:block layout:fragment="script">
-  <script src="/static/js/board.js"></script>
   <script>
     callAjax("get", "/api/board/" + [[${boardId}]], null,
             (result) => {

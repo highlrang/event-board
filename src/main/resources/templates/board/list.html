@@ -1,10 +1,126 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="layout/default">
 
-</body>
+<head>
+    <title>게시글 목록</title>
+</head>
+
+<th:block layout:fragment="script">
+    <script th:inline="javascript">
+        let field = null;
+        const directions = ["nothing", "asc", "desc"];
+        let nowDirection = directions[0];
+
+        /* javascript 변수를 html에서 쓸 수 있는지 확인하고 지우기
+        $("#size").onchange(function(){
+            callList(0, field, direction);
+        });
+         */
+
+        $("input[name='page']").click(function(){
+            callList($(this).val(), field, nowDirection)
+        });
+
+        $("input[name='filter']").click(function(){
+            let index = directions.indexOf(nowDirection) === directions.length - 1 ? 0 : directions.indexOf(nowDirection) + 1;
+            nowDirection = directions[index];
+            field = nowDirection === "nothing" ? null : $(this).val();
+            callList(0, field, nowDirection);
+        });
+
+        function callList(page, field, direction) {
+            let params = {
+                "boardType": [[${boardType}]],
+                "page": page,
+                "size": $("#size option:selected").val(),
+                "sort": field != null ? field + "," + direction : null
+            }
+
+            callAjax("GET", "/api/board/", params,
+                (result) => {
+                /*
+                    $("#size").each(function(index, item){
+                        result.size === $(item).val() && $(item).prop("selected", true);
+                    });
+                 */
+                    $("#size").val(result.size).prop("selected", true);
+
+
+                    // 코드 기니까 분리하기
+                    let tbody = "";
+                    // filter도 추가
+                    $.each(result.content, function(index, item){
+                        tbody += `<tr><td>(${result.number} * ${result.size}) + ${index} + 1</td>`
+                            + `<td>${item.title}</td>`
+                            + `<td>${item.writerName}</td>`
+                            + `<td>${item.recrutingCnt}/${registrationCnt}</td>`
+                            + `<td>${startDate}~${endDate}</td>`
+                            + `<td>${views}</td>`
+                            + "</tr>";
+                    });
+                    $("#tbody").html(tbody);
+
+
+
+
+                    // 페이징 분리하기
+                    let start = result.number < 10 ? 1 : (result.page - (result.page / 10)) + 1; // result.page 존재하는지 확인
+                    let last = result.totalPages > 10 ? start + 10 : result.totalPages;
+
+                    let pageList = "<a onclick='callList(0, field, nowDirection)'><<</a>";
+                    if(result.hasPrevious === true)
+                        pageList += `<a onclick='callList(result.number - 1, field, nowDirection)'><</a>`;
+
+                    for(var i=start; i < last; i++){
+                        pageList += `<input type="button" value="${i}" name="page">`;
+                    }
+
+                    if(result.hasNext === true)
+                        pageList += `<a onclick='callList(result.number + 1, field, nowDirection)'></a>`;
+                    pageList += `<a onclick='callList(result.totalPages, field, nowDirection)'>>></a>`;
+
+                    $("#pageList").html(pageList);
+                }
+            );
+        }
+
+        /* 최초 접속 시 ajax 호출 */
+        callList(0, field, nowDirection);
+
+    </script>
+</th:block>
+
+<div layout:fragment="content">
+    <select id="size" onchange="callList(0, field, nowDirection)">
+        <option value="10" selected="selected">10</option>
+        <option value="30">30</option>
+        <option value="50">50</option>
+    </select>
+
+    <table class="table">
+        <thead>
+        <tr>
+            <th scope="col">NO.</th>
+            <th scope="col">제목</th>
+            <th scope="col">작성자</th>
+            <th scope="col">모집인원/등록인원</th>
+            <th scope="col">기간</th>
+            <th scope="col">조회수</th>
+        </tr>
+        </thead>
+        <tbody id="tbody">
+        <!--
+        <tr>
+            <th scope="row">1</th>
+            <td></td>
+        </tr>
+        -->
+        </tbody>
+    </table>
+
+    <div id="pageList"></div>
+</div>
+
 </html>

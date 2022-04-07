@@ -44,7 +44,7 @@ public class Board {
     @OneToMany(mappedBy = "board")
     private List<Registration> registrations = new ArrayList<>();
 
-    @Column(columnDefinition = "boolean default false")
+    @Column(columnDefinition = "boolean default 0")
     private Boolean topFix;
 
     @Column(columnDefinition = "int default 0")

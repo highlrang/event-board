@@ -1,6 +1,7 @@
 package com.project.application.board.repository;
 
 import static com.project.application.board.domain.QBoard.board;
+import static com.project.application.registration.domain.QRegistration.registration;
 import static com.project.application.user.domain.QUser.user;
 
 import com.project.application.board.domain.Board;
@@ -13,11 +14,14 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+// @Repository
 @RequiredArgsConstructor
 public class BoardRepositoryCustomImpl implements BoardRepositoryCustom{
 
@@ -28,14 +32,15 @@ public class BoardRepositoryCustomImpl implements BoardRepositoryCustom{
     public Page<BoardResponseDto> findPaging(BoardType boardType, Pageable pageable){
         long totalCnt = jpaQueryFactory.select(board.count())
                 .from(board)
-                .where(board.boardType.eq(boardType))
+                .where(board.boardType.eq(boardType)
+                        .and(board.endDate.after(LocalDate.now().minusDays(1L))))
                 .fetchFirst();
 
         // 시작
         List<OrderSpecifier<?>> orderSpecifier = new ArrayList<>();
         orderSpecifier.add(new OrderSpecifier<>(Order.ASC, board.topFix));
 
-        // createdDate desc를 sort 기본으로
+        // createdDate views startDate
         pageable.getSort().forEach(o -> {
             Order direction = o.isAscending() ? Order.ASC : Order.DESC;
             PathBuilder<?> pathBuilder = new PathBuilder(Board.class, "board");
@@ -48,11 +53,12 @@ public class BoardRepositoryCustomImpl implements BoardRepositoryCustom{
                             board.id,
                             board.boardType,
                             board.title,
-                            board.content,
                             user.id,
                             user.name,
                             board.recruitingCnt,
-
+                            registration.count(),
+                            board.topFix,
+                            board.views,
                             board.startDate,
                             board.endDate,
                             board.createdDate
@@ -60,11 +66,13 @@ public class BoardRepositoryCustomImpl implements BoardRepositoryCustom{
                 )
                 .from(board)
                 .innerJoin(board.writer, user)
-                .where(board.boardType.eq(boardType))
+                .innerJoin(board.registrations, registration)
+                .where(board.boardType.eq(boardType)
+                        .and(board.endDate.after(LocalDate.now().minusDays(1L))))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
-                .orderBy(orderSpecifier.toArray(OrderSpecifier[]::new))
-                // asc true부터인지 확인
+                .orderBy(orderSpecifier.toArray(OrderSpecifier[]::new)) // asc면 false부터
+                .groupBy(board)
                 .fetch();
 
          return new PageImpl<>(results, pageable, totalCnt);

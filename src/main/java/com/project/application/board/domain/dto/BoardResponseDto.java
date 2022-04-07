@@ -23,7 +23,7 @@ public class BoardResponseDto {
     private String writerName;
 
     private int recruitingCnt;
-    private int registrationCnt;
+    private Long registrationCnt;
 
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate startDate;
@@ -42,7 +42,7 @@ public class BoardResponseDto {
     @QueryProjection
     public BoardResponseDto(Long id, BoardType boardType, String title,
                             Long writerId, String writerName, int recruitingCnt,
-                            int registrationCnt, Boolean topFix, int views,
+                            Long registrationCnt, Boolean topFix, int views,
                             LocalDate startDate, LocalDate endDate, LocalDateTime createdDate) {
         this.id = id;
         this.boardType = boardType.getName();
