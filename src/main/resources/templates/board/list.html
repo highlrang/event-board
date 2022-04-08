@@ -13,22 +13,48 @@
         const directions = ["nothing", "asc", "desc"];
         let nowDirection = directions[0];
 
-        /* javascript 변수를 html에서 쓸 수 있는지 확인하고 지우기
-        $("#size").onchange(function(){
-            callList(0, field, direction);
-        });
-         */
+        $(function(){
+            $("input[name='filter']").click(function(){
+                let index = directions.indexOf(nowDirection) === directions.length - 1 ? 0 : directions.indexOf(nowDirection) + 1;
+                nowDirection = directions[index];
+                field = nowDirection === "nothing" ? null : $(this).next().val();
 
-        $("input[name='page']").click(function(){
-            callList($(this).val(), field, nowDirection)
+                let fieldStatus = $(this).val();
+                if(["△", "▽"].includes(fieldStatus.charAt(fieldStatus.length - 1)))
+                    fieldStatus = fieldStatus.slice(0, fieldStatus.length - 1);
+                if(nowDirection === "asc")
+                    fieldStatus += "△"
+                else if(nowDirection === "desc")
+                    fieldStatus += "▽";
+                $(this).val(fieldStatus);
+                callList(0, field, nowDirection);
+            });
         });
 
-        $("input[name='filter']").click(function(){
-            let index = directions.indexOf(nowDirection) === directions.length - 1 ? 0 : directions.indexOf(nowDirection) + 1;
-            nowDirection = directions[index];
-            field = nowDirection === "nothing" ? null : $(this).val();
-            callList(0, field, nowDirection);
-        });
+        function addPaging(result){
+            let start = result.number < 10 ? 1 : ((result.number + 1) - ((result.number + 1) / 10)) + 1;
+            let last = result.totalPages < 10 ? result.totalPages + 1 : start + 10;
+
+            let pageList = "";
+            if(start !== 1) {
+                pageList += "<a class=\"btn btn-light\" onclick=\"callList(0, field, nowDirection)\"><<</a>"
+                    + `<a class="btn btn-light" onclick="callList(${result.number - 1}, field, nowDirection)"><</a>`;
+            }
+
+            let aClass = "btn btn-light";
+            for(var i=start; i < last; i++){
+                if(i === result.number + 1)
+                    aClass = "btn btn-black";
+                pageList += `<a class="${aClass}" onclick="callList(${i - 1}, field, nowDirection)">${i}</a>`;
+            }
+
+            if(result.number !== result.totalPages - 1) {
+                pageList += `<a class="btn btn-light" onclick="callList(${result.number + 1}, field, nowDirection)">></a>`
+                        + `<a class=\"btn btn-light\" onclick=\"callList(${result.totalPages}, field, nowDirection)\">>></a>`;
+            }
+
+            $("#pageList").html(pageList);
+        }
 
         function callList(page, field, direction) {
             let params = {
@@ -40,48 +66,30 @@
 
             callAjax("GET", "/api/board/", params,
                 (result) => {
-                /*
-                    $("#size").each(function(index, item){
-                        result.size === $(item).val() && $(item).prop("selected", true);
-                    });
-                 */
-                    $("#size").val(result.size).prop("selected", true);
-
-
-                    // 코드 기니까 분리하기
                     let tbody = "";
-                    // filter도 추가
+                    let no;
                     $.each(result.content, function(index, item){
-                        tbody += `<tr><td>(${result.number} * ${result.size}) + ${index} + 1</td>`
-                            + `<td>${item.title}</td>`
+                        no = (result.number * result.size) + index + 1;
+                        let trClass = "";
+                        if(item.topFix === true)
+                            trClass = "table-info";
+                        let recruitingCnt = item.recruitingCnt !== 0 ? item.recruitingCnt : "제한없음";
+                        tbody += `<tr class=\"${trClass}\">`
+                            + `<td>${no}</td>`
+                            + `<td><a style="text-decoration: none; color: navy" href="/board/${item.id}">${item.title}</a></td>`
                             + `<td>${item.writerName}</td>`
-                            + `<td>${item.recrutingCnt}/${registrationCnt}</td>`
-                            + `<td>${startDate}~${endDate}</td>`
-                            + `<td>${views}</td>`
+                            + `<td>${item.registrationCnt}/${recruitingCnt}</td>`
+                            + `<td>${item.startDate}</td>`
+                            + `<td>${item.endDate}</td>`
+                            + `<td>${item.views}</td>`
+                            + `<td>${item.createdDate}</td>`
                             + "</tr>";
                     });
                     $("#tbody").html(tbody);
 
 
-
-
-                    // 페이징 분리하기
-                    let start = result.number < 10 ? 1 : (result.page - (result.page / 10)) + 1; // result.page 존재하는지 확인
-                    let last = result.totalPages > 10 ? start + 10 : result.totalPages;
-
-                    let pageList = "<a onclick='callList(0, field, nowDirection)'><<</a>";
-                    if(result.hasPrevious === true)
-                        pageList += `<a onclick='callList(result.number - 1, field, nowDirection)'><</a>`;
-
-                    for(var i=start; i < last; i++){
-                        pageList += `<input type="button" value="${i}" name="page">`;
-                    }
-
-                    if(result.hasNext === true)
-                        pageList += `<a onclick='callList(result.number + 1, field, nowDirection)'></a>`;
-                    pageList += `<a onclick='callList(result.totalPages, field, nowDirection)'>>></a>`;
-
-                    $("#pageList").html(pageList);
+                    if(result.totalElements !== 0)
+                        addPaging(result);
                 }
             );
         }
@@ -93,7 +101,7 @@
 </th:block>
 
 <div layout:fragment="content">
-    <select id="size" onchange="callList(0, field, nowDirection)">
+    <select class="form-select" style="width: 30%" id="size" onchange="callList(0, field, nowDirection)">
         <option value="10" selected="selected">10</option>
         <option value="30">30</option>
         <option value="50">50</option>
@@ -105,22 +113,30 @@
             <th scope="col">NO.</th>
             <th scope="col">제목</th>
             <th scope="col">작성자</th>
-            <th scope="col">모집인원/등록인원</th>
-            <th scope="col">기간</th>
-            <th scope="col">조회수</th>
+            <th scope="col">등록인원/모집인원</th>
+            <th scope="col">
+                <input type="button" style="border: none; background-color: white;" name="filter" value="모집 시작">
+                <input type="hidden" value="startDate">
+            </th>
+            <th scope="col">
+                <input type="button" style="border: none; background-color: white;" name="filter" value="모집 종료">
+                <input type="hidden" value="endDate">
+            </th>
+            <th scope="col">
+                <input type="button" style="border: none; background-color: white;" name="filter" value="조회수">
+                <input type="hidden" value="views">
+            </th>
+            <th scope="col">
+                <input type="button" style="border: none; background-color: white;" name="filter" value="작성일">
+                <input type="hidden" value="createdDate">
+            </th>
         </tr>
         </thead>
         <tbody id="tbody">
-        <!--
-        <tr>
-            <th scope="row">1</th>
-            <td></td>
-        </tr>
-        -->
         </tbody>
     </table>
 
-    <div id="pageList"></div>
+    <div id="pageList" style="text-align: center;"></div>
 </div>
 
 </html>

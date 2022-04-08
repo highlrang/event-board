@@ -30,17 +30,20 @@ public class BoardRepositoryCustomImpl implements BoardRepositoryCustom{
 
     @Override
     public Page<BoardResponseDto> findPaging(BoardType boardType, Pageable pageable){
+        LocalDate today = LocalDate.now().minusDays(1L);
+        today = LocalDate.of(2022, 4, 1);
+
         long totalCnt = jpaQueryFactory.select(board.count())
                 .from(board)
                 .where(board.boardType.eq(boardType)
-                        .and(board.endDate.after(LocalDate.now().minusDays(1L))))
+                        .and(board.endDate.after(today)))
                 .fetchFirst();
 
         // 시작
         List<OrderSpecifier<?>> orderSpecifier = new ArrayList<>();
-        orderSpecifier.add(new OrderSpecifier<>(Order.ASC, board.topFix));
+        orderSpecifier.add(new OrderSpecifier<>(Order.DESC, board.topFix));
 
-        // createdDate views startDate
+        // views date test하기
         pageable.getSort().forEach(o -> {
             Order direction = o.isAscending() ? Order.ASC : Order.DESC;
             PathBuilder<?> pathBuilder = new PathBuilder(Board.class, "board");
@@ -53,10 +56,10 @@ public class BoardRepositoryCustomImpl implements BoardRepositoryCustom{
                             board.id,
                             board.boardType,
                             board.title,
-                            user.id,
-                            user.name,
+                            user.id.as("writerId"),
+                            user.name.as("writerName"),
                             board.recruitingCnt,
-                            registration.count(),
+                            registration.count().as("registrationCnt"),
                             board.topFix,
                             board.views,
                             board.startDate,
@@ -66,12 +69,12 @@ public class BoardRepositoryCustomImpl implements BoardRepositoryCustom{
                 )
                 .from(board)
                 .innerJoin(board.writer, user)
-                .innerJoin(board.registrations, registration)
+                .leftJoin(board.registrations, registration)
                 .where(board.boardType.eq(boardType)
-                        .and(board.endDate.after(LocalDate.now().minusDays(1L))))
+                        .and(board.endDate.after(today)))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
-                .orderBy(orderSpecifier.toArray(OrderSpecifier[]::new)) // asc면 false부터
+                .orderBy(orderSpecifier.toArray(OrderSpecifier[]::new))
                 .groupBy(board)
                 .fetch();
 

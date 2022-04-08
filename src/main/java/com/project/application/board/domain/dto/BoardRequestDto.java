@@ -14,6 +14,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.MapBindingResult;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.validation.constraints.Digits;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
@@ -46,6 +47,7 @@ public class BoardRequestDto {
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate endDate;
 
+    @Digits(message = "모집 인원은 숫자여야합니다.", integer = 3, fraction = 0)
     private int recruitingCnt;
 
     private MultipartFile file;

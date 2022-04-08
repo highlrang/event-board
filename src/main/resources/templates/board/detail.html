@@ -16,10 +16,12 @@
               $("#writer").text(result.writerName);
               $("#content").text(result.content);
               $("#datePeriod").text(result.startDate + " ~ " + result.endDate);
-              result.recruitingCnt != null ? $("#recruitingCnt").text(result.recruitingCnt) : $("#recruitingCnt").text("제한 없음");
+              result.recruitingCnt !== 0 ? $("#recruitingCnt").text(result.recruitingCnt) : $("#recruitingCnt").text("제한 없음");
               result.fileId != null ? $("#file").html(`<a target="_blank" class="badge bg-light text-dark" href="/api/board/file-download/${result.fileId}">${result.fileName}</a>`) : $("#file").text("-");
               $("#views").text(result.views);
-              result.regitrations != null && result.registrations.length > 0 ? $("#registrationArea").text("-") : $("#registrationArea").html(`<button type="button" class="badge bg-light text-dark" data-bs-toggle="modal" data-bs-target="registrationList">${result.registrations.length}</button>`);
+              result.regitrations != null && result.registrations.length > 0 ?
+                      $("#registrationArea").html(`<button type="button" class="badge bg-light text-dark" data-bs-toggle="modal" data-bs-target="registrationList">${result.registrations.length}</button>`)
+                      : $("#registrationArea").text("-");
 
               let registrationModal = "<div class=\"modal fade\" id=\"registrationList\" tabindex=\"-1\" aria-labelledby=\"registrationListLabel\" aria-hidden=\"true\">\n" +
                       "  <div class=\"modal-dialog\">\n" +
