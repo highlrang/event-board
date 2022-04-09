@@ -8,6 +8,7 @@
 </head>
 
 <th:block layout:fragment="script">
+    <script src="/static/js/board.js"></script>
     <script th:inline="javascript">
         let field = null;
         const directions = ["nothing", "asc", "desc"];
@@ -16,7 +17,7 @@
         $(function(){
             $("input[name='filter']").click(function(){
                 let index = directions.indexOf(nowDirection) === directions.length - 1 ? 0 : directions.indexOf(nowDirection) + 1;
-                nowDirection = directions[index];
+                nowDirection = field !== $(this).next().val() ? directions[1] : directions[index];
                 field = nowDirection === "nothing" ? null : $(this).next().val();
 
                 let fieldStatus = $(this).val();
@@ -27,34 +28,18 @@
                 else if(nowDirection === "desc")
                     fieldStatus += "▽";
                 $(this).val(fieldStatus);
+
+                $("input[name='filter']").each(function(idx, item){
+                    let val = $(item).val();
+                    if(val !== fieldStatus &&
+                        ["△", "▽"].includes(val.charAt(val.length - 1)))
+                        $(item).val(val.slice(0, val.length - 1));
+
+                });
+
                 callList(0, field, nowDirection);
             });
         });
-
-        function addPaging(result){
-            let start = result.number < 10 ? 1 : ((result.number + 1) - ((result.number + 1) / 10)) + 1;
-            let last = result.totalPages < 10 ? result.totalPages + 1 : start + 10;
-
-            let pageList = "";
-            if(start !== 1) {
-                pageList += "<a class=\"btn btn-light\" onclick=\"callList(0, field, nowDirection)\"><<</a>"
-                    + `<a class="btn btn-light" onclick="callList(${result.number - 1}, field, nowDirection)"><</a>`;
-            }
-
-            let aClass = "btn btn-light";
-            for(var i=start; i < last; i++){
-                if(i === result.number + 1)
-                    aClass = "btn btn-black";
-                pageList += `<a class="${aClass}" onclick="callList(${i - 1}, field, nowDirection)">${i}</a>`;
-            }
-
-            if(result.number !== result.totalPages - 1) {
-                pageList += `<a class="btn btn-light" onclick="callList(${result.number + 1}, field, nowDirection)">></a>`
-                        + `<a class=\"btn btn-light\" onclick=\"callList(${result.totalPages}, field, nowDirection)\">>></a>`;
-            }
-
-            $("#pageList").html(pageList);
-        }
 
         function callList(page, field, direction) {
             let params = {
@@ -89,7 +74,7 @@
 
 
                     if(result.totalElements !== 0)
-                        addPaging(result);
+                        board.addPaging(result);
                 }
             );
         }
@@ -107,27 +92,37 @@
         <option value="50">50</option>
     </select>
 
-    <table class="table">
+    <table class="table" style="width: 100%">
+        <colgroup>
+            <col style="width: 10%">
+            <col style="width: 30%">
+            <col style="width: 10%">
+            <col style="width: 10%">
+            <col style="width: 10%">
+            <col style="width: 10%">
+            <col style="width: 10%">
+            <col style="width: 10%">
+        </colgroup>
         <thead>
         <tr>
             <th scope="col">NO.</th>
             <th scope="col">제목</th>
             <th scope="col">작성자</th>
-            <th scope="col">등록인원/모집인원</th>
+            <th scope="col">등록/모집</th>
             <th scope="col">
-                <input type="button" style="border: none; background-color: white;" name="filter" value="모집 시작">
+                <input type="button" style="border: none; background-color: white; font-weight: bold;" name="filter" value="모집 시작">
                 <input type="hidden" value="startDate">
             </th>
             <th scope="col">
-                <input type="button" style="border: none; background-color: white;" name="filter" value="모집 종료">
+                <input type="button" style="border: none; background-color: white; font-weight: bold;" name="filter" value="모집 종료">
                 <input type="hidden" value="endDate">
             </th>
             <th scope="col">
-                <input type="button" style="border: none; background-color: white;" name="filter" value="조회수">
+                <input type="button" style="border: none; background-color: white; font-weight: bold;" name="filter" value="조회수">
                 <input type="hidden" value="views">
             </th>
             <th scope="col">
-                <input type="button" style="border: none; background-color: white;" name="filter" value="작성일">
+                <input type="button" style="border: none; background-color: white; font-weight: bold;" name="filter" value="작성일">
                 <input type="hidden" value="createdDate">
             </th>
         </tr>

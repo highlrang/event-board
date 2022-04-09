@@ -30,27 +30,16 @@ public class BoardRepositoryCustomImpl implements BoardRepositoryCustom{
 
     @Override
     public Page<BoardResponseDto> findPaging(BoardType boardType, Pageable pageable){
-        LocalDate today = LocalDate.now().minusDays(1L);
-        today = LocalDate.of(2022, 4, 1);
+        /* where endDate 기준 */
+        LocalDate criteriaDate = LocalDate.now().minusDays(1L);
 
-        long totalCnt = jpaQueryFactory.select(board.count())
-                .from(board)
-                .where(board.boardType.eq(boardType)
-                        .and(board.endDate.after(today)))
-                .fetchFirst();
+        /* totalCnt */
+        long totalCnt = getTotalCnt(boardType, criteriaDate);
 
-        // 시작
-        List<OrderSpecifier<?>> orderSpecifier = new ArrayList<>();
-        orderSpecifier.add(new OrderSpecifier<>(Order.DESC, board.topFix));
+        /* order by */
+        List<OrderSpecifier<?>> orderSpecifier = getOrderSpecifiers(pageable);
 
-        // views date test하기
-        pageable.getSort().forEach(o -> {
-            Order direction = o.isAscending() ? Order.ASC : Order.DESC;
-            PathBuilder<?> pathBuilder = new PathBuilder(Board.class, "board");
-            orderSpecifier.add(new OrderSpecifier(direction, pathBuilder.get(o.getProperty())));
-        });
-        // 끝
-
+        /* list 쿼리 */
         List<BoardResponseDto> results = jpaQueryFactory.select(
                     Projections.constructor(BoardResponseDto.class,
                             board.id,
@@ -71,7 +60,7 @@ public class BoardRepositoryCustomImpl implements BoardRepositoryCustom{
                 .innerJoin(board.writer, user)
                 .leftJoin(board.registrations, registration)
                 .where(board.boardType.eq(boardType)
-                        .and(board.endDate.after(today)))
+                        .and(board.endDate.after(criteriaDate)))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .orderBy(orderSpecifier.toArray(OrderSpecifier[]::new))
@@ -79,6 +68,27 @@ public class BoardRepositoryCustomImpl implements BoardRepositoryCustom{
                 .fetch();
 
          return new PageImpl<>(results, pageable, totalCnt);
+    }
+
+    private List<OrderSpecifier<?>> getOrderSpecifiers(Pageable pageable) {
+        List<OrderSpecifier<?>> orderSpecifier = new ArrayList<>();
+        orderSpecifier.add(new OrderSpecifier<>(Order.DESC, board.topFix));
+
+        pageable.getSort().forEach(o -> {
+            Order direction = o.isAscending() ? Order.ASC : Order.DESC;
+            PathBuilder<?> pathBuilder = new PathBuilder(Board.class, "board");
+            orderSpecifier.add(new OrderSpecifier(direction, pathBuilder.get(o.getProperty())));
+        });
+        return orderSpecifier;
+    }
+
+    private long getTotalCnt(BoardType boardType, LocalDate criteriaDate) {
+        long totalCnt = jpaQueryFactory.select(board.count())
+                .from(board)
+                .where(board.boardType.eq(boardType)
+                        .and(board.endDate.after(criteriaDate)))
+                .fetchFirst();
+        return totalCnt;
     }
 
     @Override

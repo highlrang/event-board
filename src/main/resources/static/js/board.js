@@ -23,5 +23,30 @@ const board = {
         });
     },
 
+    addPaging: function(result) {
+        let start = result.number < 10 ? 1 : ((result.number + 1) - ((result.number + 1) / 10)) + 1;
+        let last = result.totalPages < 10 ? result.totalPages + 1 : start + 10;
+
+        let pageList = "";
+        if (result.number !== 0) {
+            pageList += "<a class=\"btn btn-light\" onclick=\"callList(0, field, nowDirection)\"><<</a>"
+                + `<a class="btn btn-light" onclick="callList(${result.number - 1}, field, nowDirection)"><</a>`;
+        }
+
+        let aClass;
+        for (var i = start; i < last; i++) {
+            aClass = "btn btn-light";
+            if (i === result.number + 1)
+                aClass = "btn btn-dark";
+            pageList += `<a class="${aClass}" onclick="callList(${i - 1}, field, nowDirection)">${i}</a>`;
+        }
+
+        if (result.number !== result.totalPages - 1) {
+            pageList += `<a class="btn btn-light" onclick="callList(${result.number + 1}, field, nowDirection)">></a>`
+                + `<a class=\"btn btn-light\" onclick=\"callList(${result.totalPages - 1}, field, nowDirection)\">>></a>`;
+        }
+
+        $("#pageList").html(pageList);
+    }
 
 }
