@@ -8,6 +8,7 @@ import com.project.application.board.domain.dto.BoardResponseDto;
 import com.project.application.board.repository.BoardRepository;
 import com.project.application.exception.CustomException;
 import com.project.application.file.service.FileService;
+import com.project.application.registration.repository.RegistrationRepository;
 import com.project.application.user.domain.User;
 import com.project.application.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -36,6 +37,7 @@ public class BoardServiceImpl implements BoardService{
 
     private final UserRepository userRepository;
     private final BoardRepository boardRepository;
+    private final RegistrationRepository registrationRepository;
     private final FileService fileService;
 
     @Override
@@ -43,7 +45,10 @@ public class BoardServiceImpl implements BoardService{
         Board board = boardRepository.findById(id)
                 .orElseThrow(() -> new CustomException(BOARD_NOT_FOUND.getCode(), BOARD_NOT_FOUND.getMessage()));
         if(!board.isWriter(userId)) board.increaseViews();
-        return new BoardResponseDto(board);
+
+        BoardResponseDto dto = new BoardResponseDto(board);
+        dto.setRegistrations(registrationRepository.findAllByBoardId(dto.getId()));
+        return dto;
     }
 
     @Override

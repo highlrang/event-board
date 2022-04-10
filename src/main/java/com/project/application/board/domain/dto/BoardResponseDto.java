@@ -76,8 +76,9 @@ public class BoardResponseDto {
         this.startDate = entity.getStartDate();
         this.endDate = entity.getEndDate();
         this.createdDate = entity.getCreatedDate();
-        this.registrations = entity.getRegistrations().stream()
-                .map(RegistrationResponseDto::new)
-                .collect(Collectors.toList());
+    }
+
+    public void setRegistrations(List<RegistrationResponseDto> registrations){
+        this.registrations = registrations;
     }
 }

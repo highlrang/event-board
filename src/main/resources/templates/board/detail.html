@@ -19,31 +19,22 @@
               result.recruitingCnt !== 0 ? $("#recruitingCnt").text(result.recruitingCnt) : $("#recruitingCnt").text("제한 없음");
               result.fileId != null ? $("#file").html(`<a target="_blank" class="badge bg-light text-dark" href="/api/board/file-download/${result.fileId}">${result.fileName}</a>`) : $("#file").text("-");
               $("#views").text(result.views);
-              result.regitrations != null && result.registrations.length > 0 ?
-                      $("#registrationArea").html(`<button type="button" class="badge bg-light text-dark" data-bs-toggle="modal" data-bs-target="registrationList">${result.registrations.length}</button>`)
-                      : $("#registrationArea").text("-");
 
-              let registrationModal = "<div class=\"modal fade\" id=\"registrationList\" tabindex=\"-1\" aria-labelledby=\"registrationListLabel\" aria-hidden=\"true\">\n" +
-                      "  <div class=\"modal-dialog\">\n" +
-                      "    <div class=\"modal-content\">\n" +
-                      "      <div class=\"modal-header\">\n" +
-                      "        <h5 class=\"modal-title\" id=\"registrationListLabel\">등록자 정보</h5>\n" +
-                      "        <button type=\"button\" class=\"btn-close\" data-bs-dismiss=\"modal\" aria-label=\"닫기\"></button>\n" +
-                      "      </div>\n" +
-                      "      <div class=\"modal-body\">\n";
+              if(result.registrations != null && result.registrations.length > 0){
+                $("#registrationArea").html(`<button type="button" class="badge bg-light text-dark" data-bs-toggle="modal" data-bs-target="#registrationList">${result.registrations.length}</button>`);
 
-              $.each(result.registrations, function(index, item){
-                registrationModal += `<div>${item.user.name} - ${item.status.name}</div>`;
-              });
+                let modalContent = "";
+                $.each(result.registrations, function(index, item){
+                  // table 형식으로 넣기
+                  modalContent += `<div>${item.userName} - ${item.status}</div>`;
+                });
 
-              registrationModal += "      </div>\n" +
-                      "      <div class=\"modal-footer\">\n" +
-                      "        <button type=\"button\" class=\"btn btn-secondary\" data-bs-dismiss=\"modal\">Close</button>\n" +
-                      "      </div>\n" +
-                      "    </div>\n" +
-                      "  </div>\n" +
-                      "</div>";
-              $("#registrationModal").html(registrationModal);
+                $("#modalContent").html(modalContent);
+
+              }else{
+                $("#registrationArea").text("-");
+              }
+
             });
   </script>
 </th:block>
@@ -103,7 +94,17 @@
     </tbody>
   </table>
 
-  <span id="registrationModal"></span>
+  <div class="modal fade" id="registrationList" tabindex="-1" aria-labelledby="registrationListLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="registrationListLabel">등록자 정보</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="닫기"></button>
+        </div>
+        <div id="modalContent" class="modal-body"></div>
+      </div>
+    </div>
+  </div>
 </div>
 
 </html>
