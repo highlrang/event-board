@@ -7,6 +7,15 @@
     <title>로그인</title>
 </head>
 
+<th:block layout:fragment="script">
+    <script>
+        $(function () {
+            if(location.search.includes('error'))
+                $("#errorMsg").text("로그인 실패. 아이디와 비밀번호를 확인해주세요.");
+        });
+    </script>
+</th:block>
+
 <div layout:fragment="content">
 
     <form action="/login" method="post">
@@ -21,9 +30,12 @@
                     <input type="password" name="password" class="form-control" placeholder="비밀번호" required="required">
                 </div>
 
-                <div>
+                <div class="mb-3">
                     <input type="submit" value="로그인" class="btn btn-outline-primary">
+                    <input type="button" class="btn btn-outline-dark" value="회원가입" onclick="location.href='/join'">
                 </div>
+
+                <div id="errorMsg" style="color: red"></div>
             </div>
         </div>
     </form>

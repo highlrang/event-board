@@ -10,8 +10,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequiredArgsConstructor
 public class UserController {
 
-    private final UserService userService;
-
     @GetMapping("/login")
     public String login(){
         return "user/login";

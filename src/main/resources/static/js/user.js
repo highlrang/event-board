@@ -18,12 +18,14 @@ const user = {
     },
 
     checkId: function(){
-        callAjax("POST", "/api/user/validate-user-id", { "userId" : $("#userId").val() },
+        callJsonAjax("POST", "/api/user/validate-user-id", { "userId" : $("#userId").val() },
             (result) => {
-                console.log(result);
-                if(result.code !== "1001") {
+                if(result.statusCode !== "1001") {
                     $("#errorMsg").text(result.message);
                 }else {
+                    $("#id-check").val("완료");
+                    $("#id-check").attr("disabled", true);
+                    $("#id-check").attr("class", "btn btn-outline-secondary");
                     $("#errorMsg").text("");
                     isIdPossible = true;
                 }
@@ -33,14 +35,26 @@ const user = {
     save: function(){
         let data = {
             "userId": $("#userId").val(),
-            "nikName": $("#name").val(),
+            "nikName": $("#nickName").val(),
             "password": $("#password").val(),
-            "isAdmin": false
+            "isAdmin": false //
         }
 
-        callAjax("POST", "/api/user", data, () => {
+        callJsonAjax("POST", "/api/user", data, (result) => {
+            if(result.statusCode === "2002"){
+                alert(result.message);
+                return;
+            }
+            alert("회원가입이 완료되었습니다.");
             location.href = "/login";
         });
     },
+
+    info: function(){
+        callAjax("GET", "/api/user/info", null, (result)=>{
+            authenticationUser = result;
+            console.log('result = ', result, ' user = ', authenticationUser);
+        });
+    }
 
 }

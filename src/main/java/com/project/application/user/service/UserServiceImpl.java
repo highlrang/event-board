@@ -18,24 +18,23 @@ import static com.project.application.common.StatusCode.USER_ALREADY_EXIST;
 import static com.project.application.common.StatusCode.USER_NOT_FOUND;
 
 @Slf4j
-@Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-public class UserServiceImpl implements UserService, UserDetailsService {
+public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder passwordEncoder;
 
     @Override
     public Boolean existUserId(String userId) {
-        return userRepository.existsByUserId(userId); // 쿼리 보기
+        return userRepository.existsByUserId(userId);
     }
 
     @Transactional
     @Override
     public Long join(UserRequestDto dto) {
-        userRepository.findByUserId(dto.getUserId())
-                .orElseThrow(() -> new CustomException(USER_ALREADY_EXIST.getCode(), USER_ALREADY_EXIST.getMessage()));
+        if(userRepository.existsByUserId(dto.getUserId()))
+            throw new CustomException(USER_ALREADY_EXIST.getCode(), USER_ALREADY_EXIST.getMessage());
 
         dto.encodePassword(passwordEncoder.encode(dto.getPassword()));
         User result = userRepository.save(dto.toEntity());
@@ -46,8 +45,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String userId) throws UsernameNotFoundException {
         User user = userRepository.findByUserId(userId)
-                .orElseThrow(() -> new CustomException(USER_NOT_FOUND.getCode(), USER_NOT_FOUND.getMessage()));
-
+                .orElseThrow(() -> new UsernameNotFoundException(USER_NOT_FOUND.getMessage()));
         return new UserResponseDto(user);
     }
 }
