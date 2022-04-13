@@ -15,7 +15,8 @@ import java.util.stream.Collectors;
 @Getter
 public class BoardResponseDto {
     private Long id;
-    private String boardType;
+    private BoardType boardType;
+    private String boardTypeName;
     private String title;
     private String content;
 
@@ -38,14 +39,31 @@ public class BoardResponseDto {
     private Long fileId;
     private List<RegistrationResponseDto> registrations;
 
+    /** 현재 접속한 사용자 정보 */
+    private UserInfo userInfo;
+
+    @Getter
+    static class UserInfo {
+        private Long userId;
+        private Boolean isWriter;
+        private Boolean isRegistered;
+        private Long registrationId;
+
+        public UserInfo(Long userId, Boolean isWriter, Boolean isRegistered, Long registrationId){
+            this.userId = userId;
+            this.isWriter = isWriter;
+            this.isRegistered = isRegistered;
+            this.registrationId = registrationId;
+        }
+    }
+
     /** 목록용 dto */
     @QueryProjection
-    public BoardResponseDto(Long id, BoardType boardType, String title,
+    public BoardResponseDto(Long id, String title,
                             Long writerId, String writerName, int recruitingCnt,
                             Long registrationCnt, Boolean topFix, int views,
                             LocalDate startDate, LocalDate endDate, LocalDateTime createdDate) {
         this.id = id;
-        this.boardType = boardType.getName();
         this.title = title;
         this.writerId = writerId;
         this.writerName = writerName;
@@ -61,11 +79,14 @@ public class BoardResponseDto {
     /** 상세용 dto */
     public BoardResponseDto(Board entity){
         this.id = entity.getId();
-        this.boardType = entity.getBoardType().getName();
+        this.boardType = entity.getBoardType();
+        this.boardTypeName = entity.getBoardType().getName();
         this.title = entity.getTitle();
         this.content = entity.getContent();
         this.writerId = entity.getWriter().getId();
-        this.writerName = entity.getWriter().getName();
+        this.writerName = entity.getWriter().getNickName() != null ?
+                entity.getWriter().getNickName()
+                : entity.getWriter().getUserId();
         this.recruitingCnt = entity.getRecruitingCnt();
         this.views = entity.getViews();
         this.topFix = entity.getTopFix();
@@ -80,5 +101,19 @@ public class BoardResponseDto {
 
     public void setRegistrations(List<RegistrationResponseDto> registrations){
         this.registrations = registrations;
+    }
+
+    public void setUserInfo(Long userId){
+        RegistrationResponseDto userRegistration = registrations.stream()
+                .filter(r -> r.getUserId().equals(userId))
+                .findAny()
+                .orElse(null);
+
+        Boolean isRegistered = userRegistration != null;
+
+        this.userInfo = new UserInfo(userId
+                                , writerId.equals(userId)
+                                , isRegistered
+                                , isRegistered ? userRegistration.getId() : null);
     }
 }

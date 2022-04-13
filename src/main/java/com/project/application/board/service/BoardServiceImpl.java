@@ -48,6 +48,7 @@ public class BoardServiceImpl implements BoardService{
 
         BoardResponseDto dto = new BoardResponseDto(board);
         dto.setRegistrations(registrationRepository.findAllByBoardId(dto.getId()));
+        dto.setUserInfo(userId);
         return dto;
     }
 
@@ -71,6 +72,18 @@ public class BoardServiceImpl implements BoardService{
 
         Board result = boardRepository.save(board);
         return result.getId();
+    }
+
+    @Override
+    public void update(Long id, BoardRequestDto dto) {
+        Board board = boardRepository.findById(id)
+                .orElseThrow(() -> new CustomException(BOARD_NOT_FOUND.getCode(), BOARD_NOT_FOUND.getMessage()));
+        board.update(dto.getTitle(), dto.getContent(), dto.getRecruitingCnt(), dto.getStartDate(), dto.getEndDate());
+    }
+
+    @Override
+    public void delete(Long id) {
+        boardRepository.deleteById(id);
     }
 
     @Transactional

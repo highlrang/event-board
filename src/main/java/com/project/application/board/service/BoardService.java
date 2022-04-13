@@ -20,5 +20,9 @@ public interface BoardService {
 
     Long save(BoardRequestDto dto) throws IOException, BindException;
 
+    void update(Long id, BoardRequestDto dto);
+
+    void delete(Long id);
+
     void updateAllToBest(List<Long> ids);
 }

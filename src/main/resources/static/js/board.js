@@ -23,6 +23,104 @@ const board = {
         });
     },
 
+    detail: function(id){
+        callAjax("GET", "/api/board/" + id, null,
+            (result) => {
+                if(result.userInfo.isWriter === true){
+                    $("#title").html(`<input type="text" name="title" value="${result.title}" class="form-control">`);
+                    $("#content").html(`<textarea name="content" class="form-control" style="width:100%; height: 400px">${result.content}</textarea>`);
+
+                    $("input[name='startDate']").datepicker("setDate", new Date(result.startDate));
+                    $("input[name='endDate']").datepicker("setDate", new Date(result.endDate));
+
+                    $("#recruitingCnt").html(`<input type="number" name="recruitingCnt" value="${result.recruitingCnt}" class="form-control">`);
+                    $("#file").html("<input type=\"file\">");
+
+                    $("#button-area").html(
+                        `<input type="button" onclick="board.update(${result.id})" class="btn btn-outline-primary" value="수정">` +
+                        `<input type="button" onclick="board.delete(${result.id}, ${result.boardType})" class="btn btn-outline-secondary" value="삭제">`
+                    );
+
+                }else{
+                    $("#title").text(result.title);
+                    $("#content").text(result.content);
+                    $("#datePeriod").empty();
+                    $("#datePeriod").text(result.startDate + " ~ " + result.endDate);
+                    result.recruitingCnt !== 0 ? $("#recruitingCnt").text(result.recruitingCnt) : $("#recruitingCnt").text("제한 없음");
+                    result.fileId != null ? $("#file").html(`<a target="_blank" class="badge bg-light text-dark" href="/api/board/file-download/${result.fileId}">${result.fileName}</a>`) : $("#file").text("-");
+
+                    let button;
+                    result.userInfo.isRegistered === true ?
+                        button = `<input type="button" onclick="registration.cancel(${result.userInfo.registrationId}, ${result.id})" class="btn btn-outline-primary" value="참여 취소">`
+                        : button = `<input type="button" onclick="registration.save(${result.id}, ${result.userInfo.userId})" class="btn btn-outline-primary" value="참여">`;
+                    $("#button-area").html(button);
+                }
+
+                /** 공통 */
+                $("#writer").text(result.writerName);
+                $("#boardType").text(result.boardTypeName);
+                $("#views").text(result.views);
+
+                this.addRegistrations(result.registrations);
+            }
+        );
+    },
+
+    addRegistrations: function(data) {
+        if(data != null && data.length > 0) {
+            $("#registrationArea").html(`<button type="button" class="badge bg-light text-dark" data-bs-toggle="modal" data-bs-target="#registrationList">${data.length}</button>`);
+
+            let modalContent = "";
+            $.each(data, function (index, item) {
+                // table 형식으로 넣기
+                modalContent += `<div>${item.userName} - ${item.statusName}</div>`;
+            });
+
+            $("#modalContent").html(modalContent);
+
+        }else{
+            $("#registrationArea").text("-");
+        }
+    },
+
+    list: function(page, field, direction){
+        let params = {
+            "boardType": boardType,
+            "page": page,
+            "size": $("#size option:selected").val(),
+            "sort": field != null ? field + "," + direction : null
+        }
+
+        callAjax("GET", "/api/board/", params,
+            (result) => {
+                let tbody = "";
+                let no;
+                $.each(result.content, function(index, item){
+                    no = (result.number * result.size) + index + 1;
+                    let trClass = "";
+                    if(item.topFix === true)
+                        trClass = "table-info";
+                    let recruitingCnt = item.recruitingCnt !== 0 ? item.recruitingCnt : "제한없음";
+                    tbody += `<tr class=\"${trClass}\">`
+                        + `<td>${no}</td>`
+                        + `<td><a style="text-decoration: none; color: navy" href="/board/${item.id}">${item.title}</a></td>`
+                        + `<td>${item.writerName}</td>`
+                        + `<td>${item.registrationCnt}/${recruitingCnt}</td>`
+                        + `<td>${item.startDate}</td>`
+                        + `<td>${item.endDate}</td>`
+                        + `<td>${item.views}</td>`
+                        + `<td>${item.createdDate}</td>`
+                        + "</tr>";
+                });
+                $("#tbody").html(tbody);
+
+
+                if(result.totalElements !== 0)
+                    this.addPaging(result);
+            }
+        );
+    },
+
     addPaging: function(result) {
         let start = result.number < 10 ? 1 : ((result.number + 1) - ((result.number + 1) / 10)) + 1;
         let last = result.totalPages < 10 ? result.totalPages + 1 : start + 10;
@@ -47,6 +145,30 @@ const board = {
         }
 
         $("#pageList").html(pageList);
-    }
+    },
 
+    update: function(id){
+        const form = new FormData($("form")[0]);
+
+        $.ajax({
+            type: "PATCH",
+            url: `/api/board/${id}`,
+            data: form,
+            enctype: "multipart/form-data",
+            contentType: false,
+            processData: false,
+            success: function(){
+                this.detail();
+            },
+            error: function(){
+
+            }
+        });
+    },
+
+    delete: function(id, boardType){
+        callAjax("DELETE", `/api/board/${id}`, null, () => {
+            location.href=`/board/list/${boardType}`;
+        });
+    }
 }
