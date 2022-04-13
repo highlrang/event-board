@@ -7,8 +7,28 @@
     <title>홈</title>
 </head>
 
+<th:block layout:fragment="script">
+    <script src="/static/js/user.js"></script>
+    <script>
+        let authenticationUser;
+        user.info();
+
+        $(function(){
+           if(authenticationUser === null){
+               $("#content").html("<a href=\"/login\">로그인</a>");
+           } else {
+               $("#content").html("<a href=\"/logout\">로그아웃</a>");
+           }
+        });
+    </script>
+</th:block>
+
 <div layout:fragment="content">
     중심 내용 영역
+
+    <div id="content">
+    </div>
+
 </div>
 
 

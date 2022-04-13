@@ -7,13 +7,17 @@ import lombok.RequiredArgsConstructor;
 @Getter
 public enum StatusCode {
 
-    NOT_FOUND("1001", "존재하지 않습니다."),
-    VALIDATION_EXCEPTION("1002", "검증 오류입니다."),
+    SUCCESS("1001", "성공"),
+    NOT_FOUND("1002", "존재하지 않습니다."),
+    VALIDATION_EXCEPTION("1003", "검증 오류입니다."),
 
     /**
      * User
      */
     USER_NOT_FOUND("2001", "사용자를 찾을 수 없습니다."),
+    USER_ALREADY_EXIST("2002", "이미 존재하는 사용자 이름입니다."),
+    LOGIN_FAILED("2003", "로그인에 실패하였습니다."),
+    PASSWORD_NOT_CORRECT("2004", "비밀번호를 확인하여 주세요."),
 
     /**
      * Board
