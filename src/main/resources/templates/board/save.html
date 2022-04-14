@@ -43,7 +43,7 @@
     </div>
 
     <form enctype="multipart/form-data" method="post">
-        <input type="hidden" name="writerId" value="1"><!--security-->
+        <input type="hidden" name="writerId" th:value="${writerId}">
 
         <div class="input-group mb-3">
             <select class="form-select" name="boardType">

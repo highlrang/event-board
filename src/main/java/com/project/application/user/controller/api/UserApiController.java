@@ -12,8 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-import static com.project.application.common.StatusCode.SUCCESS;
-import static com.project.application.common.StatusCode.USER_ALREADY_EXIST;
+import static com.project.application.common.StatusCode.*;
 
 @Slf4j
 @RestController
@@ -25,7 +24,13 @@ public class UserApiController {
 
     @GetMapping("/info")
     public ResponseEntity<?> info(@AuthenticationPrincipal UserResponseDto user){
-        return new ResponseEntity<>(user, HttpStatus.OK);
+        ApiResponseBody<?> body = user == null?
+                new ApiResponseBody<>(ANONYMOUS.getCode(), ANONYMOUS.getMessage())
+                : new ApiResponseBody<>(LOGIN.getCode(), LOGIN.getMessage(), user);
+
+        return new ResponseEntity<>(
+                body,
+                HttpStatus.OK);
     }
 
     @PostMapping("/validate-user-id")
@@ -40,6 +45,8 @@ public class UserApiController {
     @PostMapping
     public ResponseEntity<?> join(@RequestBody UserRequestDto dto){
         userService.join(dto);
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(
+                new ApiResponseBody<>(SUCCESS.getCode(), SUCCESS.getMessage())
+                , HttpStatus.OK);
     }
 }

@@ -67,7 +67,8 @@ class BoardServiceTest {
         assertThat(result.getFileName()).isEqualTo("test_file");
     }
 
-    /** 게시글 목록 기능 생성
-     * 정렬 기능 추가
+    /** 게시글 목록 기능 테스트
     */
+
+    /** 게시글 목록 정렬 기능 테스트 */
 }

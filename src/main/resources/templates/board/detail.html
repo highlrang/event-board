@@ -7,35 +7,35 @@
   <title>게시글 상세</title>
 </head>
 
+<th:block layout:fragment="style">
+  <link rel="stylesheet" href="http://code.jquery.com/ui/1.8.18/themes/base/jquery-ui.css" type="text/css" />
+</th:block>
 <th:block layout:fragment="script">
-  <script>
-    callAjax("get", "/api/board/" + [[${boardId}]], null,
-            (result) => {
-              $("#boardType").text(result.boardType);
-              $("#title").text(result.title);
-              $("#writer").text(result.writerName);
-              $("#content").text(result.content);
-              $("#datePeriod").text(result.startDate + " ~ " + result.endDate);
-              result.recruitingCnt !== 0 ? $("#recruitingCnt").text(result.recruitingCnt) : $("#recruitingCnt").text("제한 없음");
-              result.fileId != null ? $("#file").html(`<a target="_blank" class="badge bg-light text-dark" href="/api/board/file-download/${result.fileId}">${result.fileName}</a>`) : $("#file").text("-");
-              $("#views").text(result.views);
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+  <script src="http://code.jquery.com/ui/1.8.18/jquery-ui.min.js"></script>
+  <script src="/static/js/board.js"></script>
+  <script src="/static/js/registration.js"></script>
+  <script th:inline="javascript">
+    $(function () {
+      $(".datepicker").datepicker({
+        changeMonth: false,
+        changeYear: false,
+        dateFormat: "yy-mm-dd",
+        dayNamesMin: ["일", "월", "화", "수", "목", "금", "토"],
+        monthNames: ["1월", "2월", "3월", "4월", "5월", "6월", "7월", "8월", "9월", "10월", "11월", "12월"],
+        monthNamesShort: ["1월", "2월", "3월", "4월", "5월", "6월", "7월", "8월", "9월", "10월", "11월", "12월"],
+        onClose: function (date) {
+          let name = $(this).attr('name');
+          if (name === 'startDate') {
+            $("input[name='endDate']").datepicker('option', 'minDate', date);
+          } else {
+            $("input[name='startDate']").datepicker('option', 'maxDate', date);
+          }
+        }
+      });
 
-              if(result.registrations != null && result.registrations.length > 0){
-                $("#registrationArea").html(`<button type="button" class="badge bg-light text-dark" data-bs-toggle="modal" data-bs-target="#registrationList">${result.registrations.length}</button>`);
-
-                let modalContent = "";
-                $.each(result.registrations, function(index, item){
-                  // table 형식으로 넣기
-                  modalContent += `<div>${item.userName} - ${item.status}</div>`;
-                });
-
-                $("#modalContent").html(modalContent);
-
-              }else{
-                $("#registrationArea").text("-");
-              }
-
-            });
+      board.detail([[${boardId}]]);
+    });
   </script>
 </th:block>
 
@@ -44,8 +44,9 @@
     <h3>게시글 상세</h3>
   </div>
 
-  <table class="table">
-    <tbody>
+  <form>
+    <table class="table">
+      <tbody>
       <tr>
         <td>게시글 종류</td>
         <td id="boardType"></td>
@@ -68,7 +69,16 @@
 
       <tr>
         <td>기간</td>
-        <td id="datePeriod"></td>
+        <td id="datePeriod"> <!-- input-group 해야되나 -->
+          <div class="row">
+            <div class="col">
+              <input type="text" name="startDate" class="datepicker form-control" readonly="readonly">
+            </div>
+            <div class="col">
+              <input type="text" name="endDate" class="datepicker form-control" readonly="readonly">`
+            </div>
+          </div>
+        </td>
       </tr>
 
       <tr>
@@ -91,8 +101,11 @@
         <td id="registrationArea"></td>
       </tr>
 
-    </tbody>
-  </table>
+      </tbody>
+    </table>
+  </form>
+
+  <div id="button-area" style="text-align: center;"></div>
 
   <div class="modal fade" id="registrationList" tabindex="-1" aria-labelledby="registrationListLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">

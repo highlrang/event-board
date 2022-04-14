@@ -44,10 +44,9 @@ public class BoardRepositoryCustomImpl implements BoardRepositoryCustom{
         List<BoardResponseDto> results = jpaQueryFactory.select(
                     Projections.constructor(BoardResponseDto.class,
                             board.id,
-                            board.boardType,
                             board.title,
                             user.id.as("writerId"),
-                            user.name.as("writerName"),
+                            user.nickName.nullif(user.userId).as("writerName"),
                             board.recruitingCnt,
                             registration.count().as("registrationCnt"),
                             board.topFix,

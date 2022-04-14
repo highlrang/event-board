@@ -10,6 +10,7 @@
 <th:block layout:fragment="script">
     <script src="/static/js/board.js"></script>
     <script th:inline="javascript">
+        let boardType = [[${boardType}]];
         let field = null;
         const directions = ["nothing", "asc", "desc"];
         let nowDirection = directions[0];
@@ -36,51 +37,11 @@
                         $(item).val(val.slice(0, val.length - 1));
 
                 });
-
-                callList(0, field, nowDirection);
+                board.list(0, field, nowDirection);
             });
         });
 
-        function callList(page, field, direction) {
-            let params = {
-                "boardType": [[${boardType}]],
-                "page": page,
-                "size": $("#size option:selected").val(),
-                "sort": field != null ? field + "," + direction : null
-            }
-
-            callAjax("GET", "/api/board/", params,
-                (result) => {
-                    let tbody = "";
-                    let no;
-                    $.each(result.content, function(index, item){
-                        no = (result.number * result.size) + index + 1;
-                        let trClass = "";
-                        if(item.topFix === true)
-                            trClass = "table-info";
-                        let recruitingCnt = item.recruitingCnt !== 0 ? item.recruitingCnt : "제한없음";
-                        tbody += `<tr class=\"${trClass}\">`
-                            + `<td>${no}</td>`
-                            + `<td><a style="text-decoration: none; color: navy" href="/board/${item.id}">${item.title}</a></td>`
-                            + `<td>${item.writerName}</td>`
-                            + `<td>${item.registrationCnt}/${recruitingCnt}</td>`
-                            + `<td>${item.startDate}</td>`
-                            + `<td>${item.endDate}</td>`
-                            + `<td>${item.views}</td>`
-                            + `<td>${item.createdDate}</td>`
-                            + "</tr>";
-                    });
-                    $("#tbody").html(tbody);
-
-
-                    if(result.totalElements !== 0)
-                        board.addPaging(result);
-                }
-            );
-        }
-
-        /* 최초 접속 시 ajax 호출 */
-        callList(0, field, nowDirection);
+        board.list(0, field, nowDirection);
 
     </script>
 </th:block>

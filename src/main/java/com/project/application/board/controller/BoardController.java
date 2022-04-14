@@ -1,7 +1,9 @@
 package com.project.application.board.controller;
 
+import com.project.application.user.domain.dto.UserResponseDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,7 +30,9 @@ public class BoardController {
     }
 
     @GetMapping("/save")
-    public String saveForm(){
+    public String saveForm(@AuthenticationPrincipal UserResponseDto user,
+                           Model model){
+        model.addAttribute("writerId", user.getId());
         return "board/save";
     }
 }

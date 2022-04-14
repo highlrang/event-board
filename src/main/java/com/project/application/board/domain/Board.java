@@ -41,10 +41,10 @@ public class Board {
     @JoinColumn(name = "user_id")
     private User writer;
 
-    @OneToMany(mappedBy = "board")
+    @OneToMany(mappedBy = "board", cascade = CascadeType.ALL)
     private List<Registration> registrations = new ArrayList<>();
 
-    @Column(columnDefinition = "boolean default 0")
+    @Column(columnDefinition = "tinyint default 0")
     private Boolean topFix;
 
     @Column(columnDefinition = "int default 0")

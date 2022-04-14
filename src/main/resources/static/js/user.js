@@ -35,7 +35,7 @@ const user = {
     save: function(){
         let data = {
             "userId": $("#userId").val(),
-            "nikName": $("#nickName").val(),
+            "nickName": $("#nickName").val(),
             "password": $("#password").val(),
             "isAdmin": false //
         }
@@ -52,8 +52,11 @@ const user = {
 
     info: function(){
         callAjax("GET", "/api/user/info", null, (result)=>{
-            authenticationUser = result;
-            console.log('result = ', result, ' user = ', authenticationUser);
+            if(result.statusCode === "2005"){
+                $("#content").html("<a href=\"/logout\">로그아웃</a>");
+            }else{
+                $("#content").html("<a href=\"/login\">로그인</a>");
+            }
         });
     }
 
