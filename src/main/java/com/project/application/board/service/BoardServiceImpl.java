@@ -74,6 +74,7 @@ public class BoardServiceImpl implements BoardService{
         return result.getId();
     }
 
+    @Transactional
     @Override
     public void update(Long id, BoardRequestDto dto) {
         Board board = boardRepository.findById(id)
@@ -81,6 +82,7 @@ public class BoardServiceImpl implements BoardService{
         board.update(dto.getTitle(), dto.getContent(), dto.getRecruitingCnt(), dto.getStartDate(), dto.getEndDate());
     }
 
+    @Transactional
     @Override
     public void delete(Long id) {
         boardRepository.deleteById(id);

@@ -34,11 +34,11 @@ const board = {
                     $("input[name='endDate']").datepicker("setDate", new Date(result.endDate));
 
                     $("#recruitingCnt").html(`<input type="number" name="recruitingCnt" value="${result.recruitingCnt}" class="form-control">`);
-                    $("#file").html("<input type=\"file\">");
+                    $("#file").html("<input type=\"file\" class=\"form-control\">");
 
                     $("#button-area").html(
                         `<input type="button" onclick="board.update(${result.id})" class="btn btn-outline-primary" value="수정">` +
-                        `<input type="button" onclick="board.delete(${result.id}, ${result.boardType})" class="btn btn-outline-secondary" value="삭제">`
+                        `<input type="button" onclick="board.delete(${result.id}, '${result.boardType}')" class="btn btn-outline-secondary" value="삭제">`
                     );
 
                 }else{
@@ -61,7 +61,7 @@ const board = {
                 $("#boardType").text(result.boardTypeName);
                 $("#views").text(result.views);
 
-                this.addRegistrations(result.registrations);
+                board.addRegistrations(result.registrations);
             }
         );
     },
@@ -158,7 +158,7 @@ const board = {
             contentType: false,
             processData: false,
             success: function(){
-                this.detail();
+                board.detail(id);
             },
             error: function(){
 

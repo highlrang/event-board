@@ -5,14 +5,18 @@ import com.project.application.board.domain.Board;
 import com.project.application.board.domain.BoardType;
 import com.project.application.registration.domain.dto.RegistrationResponseDto;
 import com.querydsl.core.annotations.QueryProjection;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 
-@Getter
+@Getter @Setter
+@NoArgsConstructor
 public class BoardResponseDto {
     private Long id;
     private BoardType boardType;
@@ -30,7 +34,7 @@ public class BoardResponseDto {
     private LocalDate startDate;
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate endDate;
-    @JsonFormat(pattern = "yyyy-MM-dd")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createdDate;
 
     private Boolean topFix;
@@ -43,7 +47,7 @@ public class BoardResponseDto {
     private UserInfo userInfo;
 
     @Getter
-    static class UserInfo {
+    public static class UserInfo {
         private Long userId;
         private Boolean isWriter;
         private Boolean isRegistered;
@@ -104,7 +108,9 @@ public class BoardResponseDto {
     }
 
     public void setUserInfo(Long userId){
-        RegistrationResponseDto userRegistration = registrations.stream()
+        RegistrationResponseDto userRegistration = null;
+        if(registrations != null && registrations.size() != 0)
+            userRegistration = registrations.stream()
                 .filter(r -> r.getUserId().equals(userId))
                 .findAny()
                 .orElse(null);

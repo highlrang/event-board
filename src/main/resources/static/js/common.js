@@ -10,7 +10,7 @@ function callAjax(method, url, params, callback){
             callback(data);
         },
         error: function(error){
-
+            console.log(error);
         }
     });
 }
@@ -27,7 +27,7 @@ function callJsonAjax(method, url, data, callback){
             callback(data);
         },
         error: function(error){
-
+            console.log(error);
         }
     });
 }

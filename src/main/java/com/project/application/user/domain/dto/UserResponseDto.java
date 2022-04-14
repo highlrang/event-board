@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.project.application.user.domain.Role;
 import com.project.application.user.domain.User;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -13,6 +14,7 @@ import java.time.LocalDate;
 import java.util.*;
 
 @Getter
+@NoArgsConstructor
 public class UserResponseDto implements UserDetails {
 
     private Long id;

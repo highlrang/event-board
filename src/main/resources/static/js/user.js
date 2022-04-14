@@ -52,11 +52,11 @@ const user = {
 
     info: function(){
         callAjax("GET", "/api/user/info", null, (result)=>{
-            if(result !== null){
+            if(result.statusCode === "2005"){
                 $("#content").html("<a href=\"/logout\">로그아웃</a>");
             }else{
                 $("#content").html("<a href=\"/login\">로그인</a>");
-            };
+            }
         });
     }
 

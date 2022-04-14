@@ -3,6 +3,7 @@ package com.project.application.board.domain.dto;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.project.application.board.domain.Board;
 import com.project.application.board.domain.BoardType;
+import com.project.application.common.CreateGroup;
 import com.project.application.user.domain.User;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -27,10 +28,10 @@ import static com.project.application.common.StatusCode.VALIDATION_EXCEPTION;
 @Setter @Getter
 public class BoardRequestDto {
 
-    @NotEmpty(message = "게시글 종류를 선택해주세요")
+    @NotEmpty(message = "게시글 종류를 선택해주세요", groups = CreateGroup.class)
     private String boardType;
 
-    @NotNull(message = "사용자에 대한 정보가 없습니다")
+    @NotNull(message = "사용자에 대한 정보가 없습니다", groups = CreateGroup.class)
     private Long writerId;
 
     @NotEmpty(message = "제목을 입력해주세요")

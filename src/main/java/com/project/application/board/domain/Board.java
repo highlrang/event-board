@@ -41,7 +41,7 @@ public class Board {
     @JoinColumn(name = "user_id")
     private User writer;
 
-    @OneToMany(mappedBy = "board")
+    @OneToMany(mappedBy = "board", cascade = CascadeType.ALL)
     private List<Registration> registrations = new ArrayList<>();
 
     @Column(columnDefinition = "tinyint default 0")

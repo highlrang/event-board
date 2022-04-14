@@ -5,6 +5,7 @@ import com.project.application.board.domain.dto.BoardRequestDto;
 import com.project.application.board.domain.dto.BoardResponseDto;
 import com.project.application.board.service.BoardService;
 import com.project.application.common.ApiResponseBody;
+import com.project.application.common.CreateGroup;
 import com.project.application.file.service.FileService;
 import com.project.application.file.service.FileServiceLocal;
 import com.project.application.user.domain.dto.UserResponseDto;
@@ -18,6 +19,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.*;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.BindException;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -28,6 +30,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static com.project.application.common.StatusCode.FILE_SAVE_FAILED;
+import static com.project.application.common.StatusCode.SUCCESS;
 
 @Slf4j
 @RestController
@@ -41,12 +44,7 @@ public class BoardApiController {
     @GetMapping("/{id}")
     public ResponseEntity<?> findById(@PathVariable("id") Long id,
                                       @AuthenticationPrincipal UserResponseDto user){
-        try{
-            return new ResponseEntity<>(boardService.findById(id, user.getId()), HttpStatus.OK);
-
-        }catch(Exception e){
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        return new ResponseEntity<>(boardService.findById(id, user.getId()), HttpStatus.OK);
     }
 
     @GetMapping("/file-download/{fileId}")
@@ -68,15 +66,15 @@ public class BoardApiController {
     }
 
     @PostMapping
-    public ResponseEntity<?> save(@Valid BoardRequestDto dto) throws BindException{
+    public ResponseEntity<?> save(@Validated(value = CreateGroup.class) BoardRequestDto dto) throws BindException{
         try {
             Long id = boardService.save(dto);
             return new ResponseEntity<>(id, HttpStatus.OK);
 
         } catch (IOException e) {
-            /* FILE EXCEPTION */
+            /* FILE EXCEPTION -> file controller 로 이동 예정*/
             ApiResponseBody<List<String>> body =
-                    new ApiResponseBody(FILE_SAVE_FAILED.getCode(), FILE_SAVE_FAILED.getMessage(), Arrays.asList(FILE_SAVE_FAILED.getMessage()));
+                    new ApiResponseBody<>(FILE_SAVE_FAILED.getCode(), FILE_SAVE_FAILED.getMessage(), Arrays.asList(FILE_SAVE_FAILED.getMessage()));
             return new ResponseEntity<>(body, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -85,12 +83,16 @@ public class BoardApiController {
     public ResponseEntity<?> update(@PathVariable("id") Long boardId,
                                     @Valid BoardRequestDto boardDto){
         boardService.update(boardId, boardDto);
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(
+                new ApiResponseBody<>(SUCCESS.getCode(), SUCCESS.getMessage())
+                , HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(@PathVariable("id") Long id){
         boardService.delete(id);
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(
+                new ApiResponseBody<>(SUCCESS.getCode(), SUCCESS.getMessage())
+                , HttpStatus.OK);
     }
 }
