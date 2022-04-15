@@ -2,10 +2,12 @@ package com.project.application.registration.controller.api;
 
 import com.project.application.registration.domain.dto.RegistrationRequestDto;
 import com.project.application.registration.domain.dto.RegistrationResponseDto;
+import com.project.application.registration.domain.dto.RegistrationUpdateDto;
 import com.project.application.registration.service.RegistrationService;
 import com.project.application.user.domain.dto.UserResponseDto;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -46,5 +48,12 @@ public class RegistrationApiController {
         registrationService.delete(id);
         List<RegistrationResponseDto> registrations = registrationService.findByBoardId(boardId);
         return new ResponseEntity<>(new RegistrationBody(registrations, user.getId()), HttpStatus.OK);
+    }
+
+    @PutMapping("/status")
+    public ResponseEntity<?> update(@Valid @RequestBody RegistrationUpdateDto dto){
+        Long boardId = registrationService.update(dto);
+        List<RegistrationResponseDto> registrations = registrationService.findByBoardId(boardId);
+        return new ResponseEntity<>(registrations, HttpStatus.OK);
     }
 }

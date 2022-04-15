@@ -6,6 +6,7 @@ import com.project.application.exception.CustomException;
 import com.project.application.registration.domain.Registration;
 import com.project.application.registration.domain.dto.RegistrationRequestDto;
 import com.project.application.registration.domain.dto.RegistrationResponseDto;
+import com.project.application.registration.domain.dto.RegistrationUpdateDto;
 import com.project.application.registration.repository.RegistrationRepository;
 import com.project.application.user.domain.User;
 import com.project.application.user.repository.UserRepository;
@@ -50,4 +51,13 @@ public class RegistrationServiceImpl implements RegistrationService{
         registrationRepository.deleteById(id);
     }
 
+    @Transactional
+    @Override
+    public Long update(RegistrationUpdateDto dto){
+        Registration registration = registrationRepository.findById(dto.getId())
+                .orElseThrow(() -> new CustomException(REGISTRATION_UPDATE_FAILED.getCode(), REGISTRATION_UPDATE_FAILED.getMessage()));
+
+        registration.setStatus(dto.getStatus());
+        return registration.getBoard().getId();
+    }
 }

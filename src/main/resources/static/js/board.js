@@ -26,7 +26,7 @@ const board = {
     detail: function(id){
         callAjax("GET", "/api/board/" + id, null,
             (result) => {
-                if(result.userInfo.isWriter === true){
+                if (result.userInfo.isWriter === true) {
                     $("#title").html(`<input type="text" name="title" value="${result.title}" class="form-control">`);
                     $("#content").html(`<textarea name="content" class="form-control" style="width:100%; height: 400px">${result.content}</textarea>`);
 
@@ -41,7 +41,7 @@ const board = {
                         `<input type="button" onclick="board.delete(${result.id}, '${result.boardType}')" class="btn btn-outline-secondary" value="삭제">`
                     );
 
-                }else{
+                } else {
                     $("#title").text(result.title);
                     $("#content").text(result.content);
                     $("#datePeriod").empty();
@@ -61,21 +61,32 @@ const board = {
                 $("#boardType").text(result.boardTypeName);
                 $("#views").text(result.views);
 
-                board.addRegistrations(result.registrations);
-            }
-        );
+                if (result.userInfo.isWriter === true) {
+                    board.addRegistrations(result.registrations);
+                } else {
+                    $("#registrationArea").text(result.registrations.length);
+                }
+            })
     },
 
     addRegistrations: function(data) {
         if(data != null && data.length > 0) {
             $("#registrationArea").html(`<button type="button" class="badge bg-light text-dark" data-bs-toggle="modal" data-bs-target="#registrationList">${data.length}</button>`);
 
-            let modalContent = "";
+            let modalContent = "<table class=\"table\" style=\"text-align: center\"><tbody>";
             $.each(data, function (index, item) {
-                // table 형식으로 넣기
-                modalContent += `<div>${item.userName} - ${item.statusName}</div>`;
-            });
+                let rClass = item.status === 'APPLY' ? 'btn btn-outline-primary' : 'btn btn-outline-secondary';
+                let rValue = item.status === 'APPLY' ? '수락' : '취소';
+                let rClick = item.status === 'APPLY' ? `registration.update(${item.id}, 'OK')` : `registration.update(${item.id}, 'APPLY')`;
 
+                modalContent += "<tr>"
+                    + `<td>${item.userName}</td>`
+                    + `<td>${item.statusName}</td>`
+                    + `<td><input type=\"button\" class=\"${rClass}\" value=\"${rValue}\" onclick=\"${rClick}\"></td>`
+                    + "</tr>";
+            })
+
+            modalContent += "</tbody></table>";
             $("#modalContent").html(modalContent);
 
         }else{
