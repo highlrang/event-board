@@ -46,7 +46,7 @@ public class BoardRepositoryCustomImpl implements BoardRepositoryCustom{
                             board.id,
                             board.title,
                             user.id.as("writerId"),
-                            user.nickName.nullif(user.userId).as("writerName"),
+                            user.userId.nullif(user.nickName).as("writerName"),
                             board.recruitingCnt,
                             registration.count().as("registrationCnt"),
                             board.topFix,

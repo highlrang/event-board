@@ -1,40 +1,45 @@
 const board = {
 
     save: function () {
-        const form = new FormData($("form")[0]);
+        let data = {
+            "boardType": $("#boardType").val(),
+            "writerId": $("#writerId").val(),
+            "title": $("#title").val(),
+            "content": $("#content").text(),
+            "startDate": $("#startDate").val(),
+            "endDate": $("#endDate").val(),
+            "recruitingCnt": $("#recruitingCnt").val(),
+            "fileId": $("#fileId").val()
+        }
 
-        $.ajax({
-            type: "POST",
-            url: "/api/board",
-            data: form,
-            enctype: "multipart/form-data",
-            contentType: false,
-            processData: false,
-            dataType: "json",
-            success: function(result){
+        callJsonAjax("POST", "/api/board", data,
+            (result) => {
                 alert("게시글이 저장되었습니다.");
                 location.href=`/board/${result}`;
             },
-            error: function(error){
+            (error) => {
                 let errRes = JSON.parse(error.responseText);
                 Array.isArray(errRes.body) && alert(errRes.body[0]);
             }
-
-        });
+        );
     },
 
     detail: function(id){
         callAjax("GET", "/api/board/" + id, null,
             (result) => {
                 if (result.userInfo.isWriter === true) {
-                    $("#title").html(`<input type="text" name="title" value="${result.title}" class="form-control">`);
-                    $("#content").html(`<textarea name="content" class="form-control" style="width:100%; height: 400px">${result.content}</textarea>`);
+                    $("#titleHtml").html(`<input type="text" id="title" value="${result.title}" class="form-control">`);
+                    $("#contentHtml").html(`<textarea id="content" class="form-control" style="width:100%; height: 400px">${result.content}</textarea>`);
 
-                    $("input[name='startDate']").datepicker("setDate", new Date(result.startDate));
-                    $("input[name='endDate']").datepicker("setDate", new Date(result.endDate));
+                    $("#startDate").datepicker("setDate", new Date(result.startDate));
+                    $("#endDate").datepicker("setDate", new Date(result.endDate));
 
-                    $("#recruitingCnt").html(`<input type="number" name="recruitingCnt" value="${result.recruitingCnt}" class="form-control">`);
-                    $("#file").html("<input type=\"file\" class=\"form-control\">");
+                    $("#recruitingCntHtml").html(`<input type="number" name="recruitingCnt" value="${result.recruitingCnt}" class="form-control">`);
+                    $("fileId").val(result.fileId);
+                    $("#fileHtml").html("<form><input type=\"file\" class=\"form-control\"></form>");
+                    result.fileId != null ?
+                        $("#fileHtml").append(`<a target="_blank" href="/api/file/${result.fileId}/download"><img alt="${result.fileName}" src="${result.filePath}" class="rounded float-start"></a>`)
+                        : $("#fileHtml").append("<img alt=\"기본이미지\" src=\"/static/img/default.JPG\" class=\"\">");
 
                     $("#button-area").html(
                         `<input type="button" onclick="board.update(${result.id})" class="btn btn-outline-primary" value="수정">` +
@@ -42,12 +47,12 @@ const board = {
                     );
 
                 } else {
-                    $("#title").text(result.title);
-                    $("#content").text(result.content);
+                    $("#titleHtml").text(result.title);
+                    $("#contentHtml").text(result.content);
                     $("#datePeriod").empty();
                     $("#datePeriod").text(result.startDate + " ~ " + result.endDate);
-                    result.recruitingCnt !== 0 ? $("#recruitingCnt").text(result.recruitingCnt) : $("#recruitingCnt").text("제한 없음");
-                    result.fileId != null ? $("#file").html(`<a target="_blank" class="badge bg-light text-dark" href="/api/board/file-download/${result.fileId}">${result.fileName}</a>`) : $("#file").text("-");
+                    result.recruitingCnt !== 0 ? $("#recruitingCntHtml").text(result.recruitingCnt) : $("#recruitingCntHtml").text("제한 없음");
+                    result.fileId != null ? $("#fileHtml").html(`<a target="_blank" href="/api/file/${result.fileId}/download"><img alt="${result.fileName}" src="${result.filePath}" class="rounded float-start"></a>`) : $("#fileHtml").text("-");
 
                     let button;
                     result.userInfo.isRegistered === true ?
@@ -159,22 +164,16 @@ const board = {
     },
 
     update: function(id){
-        const form = new FormData($("form")[0]);
+        let data = {
+            "title": $("#title").val(),
+            "content": $("#content").text(),
+            "recruitingCnt": $("#recruitingCnt").val(),
+            "startDate": $("#startDate").val(),
+            "endDate": $("#endDate").val(),
+            "fileId": $("#fileId").val()
+        };
 
-        $.ajax({
-            type: "PATCH",
-            url: `/api/board/${id}`,
-            data: form,
-            enctype: "multipart/form-data",
-            contentType: false,
-            processData: false,
-            success: function(){
-                board.detail(id);
-            },
-            error: function(){
-
-            }
-        });
+        callJsonAjax("PATCH", `/api/board/${id}`, data, () => { board.detail(id); });
     },
 
     delete: function(id, boardType){

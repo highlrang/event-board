@@ -51,7 +51,7 @@ public class BoardRequestDto {
     @Digits(message = "모집 인원은 숫자여야합니다.", integer = 3, fraction = 0)
     private int recruitingCnt;
 
-    private MultipartFile file;
+    private Long fileId;
 
     private void validateDate() throws BindException {
         if(startDate.isBefore(endDate) || startDate.equals(endDate)) return;

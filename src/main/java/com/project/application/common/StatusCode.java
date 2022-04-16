@@ -23,22 +23,24 @@ public enum StatusCode {
 
     /**
      * Board
-     *
      * */
     BOARD_NOT_FOUND("3001", "게시글을 찾을 수 없습니다."),
 
-    FILE_NOT_FOUND("3101", "파일을 찾을 수 없습니다."),
-    FILE_SAVE_FAILED("3102", "파일 업로드에 실패했습니다."),
-    FILE_DOWNLOAD_FAILED("3103", "파일 다운로드에 실패했습니다."),
+    /**
+     * file
+     */
+    FILE_NOT_FOUND("4101", "파일을 찾을 수 없습니다."),
+    FILE_SAVE_FAILED("4102", "파일 업로드에 실패했습니다."),
+    FILE_DOWNLOAD_FAILED("4103", "파일 다운로드에 실패했습니다."),
 
     /**
      * Registration
      */
-    REGISTRATION_NOT_FOUND("4001", "등록 정보를 찾을 수 없습니다."),
-    REGISTRATION_FAILED("4002", "참여가 진행되지 않았습니다."),
-    REGISTRATION_RESTRICTION("4003", "참여가 제한되었습니다."),
-    ALREADY_REGISTERED("4004", "이미 참여하였습니다."),
-    REGISTRATION_UPDATE_FAILED("4005", "등록 정보 업데이트에 실패하였습니다.");
+    REGISTRATION_NOT_FOUND("5001", "등록 정보를 찾을 수 없습니다."),
+    REGISTRATION_FAILED("5002", "참여가 진행되지 않았습니다."),
+    REGISTRATION_RESTRICTION("5003", "참여가 제한되었습니다."),
+    ALREADY_REGISTERED("5004", "이미 참여하였습니다."),
+    REGISTRATION_UPDATE_FAILED("5005", "등록 정보 업데이트에 실패하였습니다.");
 
     private final String code;
     private final String message;

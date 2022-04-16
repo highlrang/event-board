@@ -1,14 +1,13 @@
 package com.project.application.board.service;
 
 import com.project.application.board.domain.Board;
-import com.project.application.board.domain.BoardFile;
 import com.project.application.board.domain.BoardType;
 import com.project.application.board.domain.dto.BoardRequestDto;
 import com.project.application.board.domain.dto.BoardResponseDto;
 import com.project.application.board.repository.BoardRepository;
-import com.project.application.file.service.FileService;
+import com.project.application.file.domain.GenericFile;
+import com.project.application.file.domain.dto.FileResponseDto;
 import com.project.application.file.service.FileServiceLocal;
-import com.project.application.registration.domain.Registration;
 import com.project.application.registration.domain.RegistrationStatus;
 import com.project.application.registration.domain.dto.RegistrationResponseDto;
 import com.project.application.registration.repository.RegistrationRepository;
@@ -20,13 +19,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import com.project.application.user.domain.User;
-import org.springframework.core.io.UrlResource;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.validation.BindException;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.MalformedURLException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -74,50 +70,6 @@ public class BoardServiceUnitTest {
         assertThat(exception.getAllErrors().get(0).getDefaultMessage())
                 .isEqualTo("시작 날짜가 종료 날짜보다 앞서거나 같아야합니다");
 
-    }
-
-
-    @Test @DisplayName("게시글 저장 시 파일 저장 기능까지")
-    public void save() throws IOException, BindException {
-        /** given */
-        Board givenBoard = Board.builder().boardType(BoardType.event).build();
-        User givenWriter = new User();
-        givenWriter.testIdSetting();
-        givenBoard.setWriter(givenWriter);
-
-        MockMultipartFile requestFile = new MockMultipartFile("test_file", "test_file.txt", null, "test content".getBytes());
-        BoardFile givenFile = BoardFile.builder()
-                .originalName(requestFile.getName())
-                .fullPath("/upload/")
-                .build();
-        givenBoard.setFile(givenFile);
-
-        Long mockId = 1L;
-        given(boardRepository.save(any(Board.class)))
-                .willReturn(givenBoard);
-        given(userRepository.findById(any()))
-                .willReturn(Optional.of(givenWriter));
-        given(boardRepository.findById(anyLong()))
-                .willReturn(Optional.of(givenBoard));
-        given(fileService.upload(any(MockMultipartFile.class))) // requestFile
-                .willReturn(givenFile);
-        given(registrationRepository.findAllByBoardId(any())) // null
-                .willReturn(new ArrayList<>());
-
-        /** when */
-        BoardRequestDto dto = new BoardRequestDto();
-        dto.setBoardType(BoardType.event.toString());
-        dto.setTitle("test title");
-        dto.setContent("test content");
-        dto.setWriterId(mockId);
-        dto.setStartDate(LocalDate.now());
-        dto.setEndDate(LocalDate.now());
-        dto.setFile(requestFile);
-        boardService.save(dto);
-
-        /** then */
-        BoardResponseDto result = boardService.findById(mockId, mockId);
-        assertThat(result.getFileName()).isEqualTo("test_file");
     }
 
     @Test @DisplayName("작성자 아닌 사용자가 게시글 상세 접속 시 조회수 증가")

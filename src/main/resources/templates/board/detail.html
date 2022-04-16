@@ -15,6 +15,7 @@
   <script src="http://code.jquery.com/ui/1.8.18/jquery-ui.min.js"></script>
   <script src="/static/js/board.js"></script>
   <script src="/static/js/registration.js"></script>
+  <script src="/static/js/file.js"></script>
   <script th:inline="javascript">
     $(function () {
       $(".datepicker").datepicker({
@@ -35,6 +36,10 @@
       });
 
       board.detail([[${boardId}]]);
+
+      $("input[type=file]").change(function(){
+        file.save();
+      });
     });
   </script>
 </th:block>
@@ -44,9 +49,8 @@
     <h3>게시글 상세</h3>
   </div>
 
-  <form>
-    <table class="table">
-      <tbody>
+  <table class="table">
+    <tbody>
       <tr>
         <td>게시글 종류</td>
         <td id="boardType"></td>
@@ -54,7 +58,7 @@
 
       <tr>
         <td>제목</td>
-        <td id="title"></td>
+        <td id="titleHtml"></td>
       </tr>
 
       <tr>
@@ -63,19 +67,27 @@
       </tr>
 
       <tr>
+        <input type="hidden" id="fileId">
+        <td>이미지</td>
+        <td id="fileHtml">
+          <!-- input file 및 img 추가 -->
+        </td>
+      </tr>
+
+      <tr>
         <td>내용</td>
-        <td id="content"></td>
+        <td id="contentHtml"></td>
       </tr>
 
       <tr>
         <td>기간</td>
-        <td id="datePeriod"> <!-- input-group 해야되나 -->
+        <td id="datePeriod">
           <div class="row">
             <div class="col">
-              <input type="text" name="startDate" class="datepicker form-control" readonly="readonly">
+              <input type="text" id="startDate" class="datepicker form-control" readonly="readonly">
             </div>
             <div class="col">
-              <input type="text" name="endDate" class="datepicker form-control" readonly="readonly">`
+              <input type="text" id="endDate" class="datepicker form-control" readonly="readonly">`
             </div>
           </div>
         </td>
@@ -83,12 +95,7 @@
 
       <tr>
         <td>인원 제한</td>
-        <td id="recruitingCnt"></td>
-      </tr>
-
-      <tr>
-        <td>첨부파일</td>
-        <td id="file"></td>
+        <td id="recruitingCntHtml"></td>
       </tr>
 
       <tr>
@@ -101,9 +108,8 @@
         <td id="registrationArea"></td>
       </tr>
 
-      </tbody>
-    </table>
-  </form>
+    </tbody>
+  </table>
 
   <div id="button-area" style="text-align: center;"></div>
 

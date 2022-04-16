@@ -13,6 +13,8 @@
 <th:block layout:fragment="script">
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
     <script src="http://code.jquery.com/ui/1.8.18/jquery-ui.min.js"></script>
+    <script src="/static/js/board.js"></script>
+    <script src="/static/js/file.js"></script>
     <script>
         $(function(){
             $(".datepicker").datepicker({
@@ -25,15 +27,18 @@
                 onClose: function(date){
                     let name = $(this).attr('name');
                     if(name === 'startDate'){
-                        $("input[name='endDate']").datepicker('option', 'minDate', date);
+                        $("#endDate").datepicker('option', 'minDate', date);
                     }else{
-                        $("input[name='startDate']").datepicker('option', 'maxDate', date);
+                        $("#startDate").datepicker('option', 'maxDate', date);
                     }
                 }
             });
+
+            $("input[type=file]").change(function(){
+               file.save();
+            });
         });
     </script>
-    <script src="/static/js/board.js"></script>
 </th:block>
 
 
@@ -42,49 +47,53 @@
         <h3>게시글 저장</h3>
     </div>
 
-    <form enctype="multipart/form-data" method="post">
-        <input type="hidden" name="writerId" th:value="${writerId}">
+    <input type="hidden" id="writerId" th:value="${writerId}">
 
-        <div class="input-group mb-3">
-            <select class="form-select" name="boardType">
-                <option value="" selected>종류</option>
-                <option value="meeting">모집</option>
-                <option value="event">이벤트</option>
-            </select>
-        </div>
+    <div class="input-group mb-3">
+        <select class="form-select" id="boardType">
+            <option value="" selected>종류</option>
+            <option value="meeting">모집</option>
+            <option value="event">이벤트</option>
+        </select>
+    </div>
+
+    <div class="input-group mb-3">
+        <input type="text" class="form-control" id="title" placeholder="제목">
+    </div>
+
+    <div class="input-group mb-3">
+        <textarea class="form-control" style="height: 400px" id="content" placeholder="내용"></textarea>
+    </div>
+
+    <div class="input-group mb-3">
+        <input type="number" id="recruitingCnt" class="form-control" placeholder="참여 인원 수 (미선택 시 제한없음)">
+    </div>
     
-        <div class="input-group mb-3">
-            <input type="text" class="form-control" name="title" placeholder="제목">
-        </div>
-    
-        <div class="input-group mb-3">
-            <textarea class="form-control" style="height: 400px" name="content" placeholder="내용"></textarea>
-        </div>
-    
-        <div class="input-group mb-3">
-            <input type="number" class="form-control" placeholder="참여 인원 수 (미선택 시 제한없음)">
-        </div>
-    
-        <div class="input-group mb-3">
-            <div class="row">
-                <div class="col">
-                    <input type="text" class="form-control datepicker" name="startDate" placeholder="시작 날짜" readonly="readonly">
-                </div>
-                <div class="col">
-                    <input type="text" class="form-control datepicker" name="endDate" placeholder="종료 날짜" readonly="readonly">
-                </div>
+    <div class="input-group mb-3">
+        <div class="row">
+            <div class="col">
+                <input type="text" class="form-control datepicker" id="startDate" placeholder="시작 날짜" readonly="readonly">
+            </div>
+            <div class="col">
+                <input type="text" class="form-control datepicker" id="endDate" placeholder="종료 날짜" readonly="readonly">
             </div>
         </div>
+    </div>
     
-        <div class="input-group mb-3">
+    <div class="input-group mb-3">
+        <form>
             <input class="form-control" type="file" name="file">
-        </div>
+        </form>
+    </div>
 
-        <div>
-            <input type="button" class="btn btn-outline-primary" onclick="board.save()" value="게시글 등록">
-        </div>
+    <input type="hidden" id="fileId">
+    <div class="input-group mb-3" id="fileHtml">
+        <img src="/static/img/default.JPG" alt="기본이미지" class="img-thumbnail rounded float-start" style="width: 200px; height: 200px">
+    </div>
 
-    </form>
+    <div>
+        <input type="button" class="btn btn-outline-primary" onclick="board.save()" value="게시글 등록">
+    </div>
 </div>
 
 </html>

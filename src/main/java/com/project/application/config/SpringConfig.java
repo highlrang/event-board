@@ -1,8 +1,6 @@
 package com.project.application.config;
 
-import com.project.application.board.repository.BoardRepositoryCustom;
-import com.project.application.board.repository.BoardRepositoryCustomImpl;
-import com.project.application.file.repository.BoardFileRepository;
+import com.project.application.file.repository.FileRepository;
 import com.project.application.file.service.FileService;
 import com.project.application.file.service.FileServiceLocal;
 import com.project.application.user.repository.UserRepository;
@@ -39,11 +37,11 @@ public class SpringConfig {
 //        return new BoardRepositoryCustomImpl(em, jpaQueryFactory());
 //    }
 
-    @Autowired private BoardFileRepository boardFileRepository;
+    @Autowired private FileRepository fileRepository;
 
     @Bean
     public FileService fileService(){
-        return new FileServiceLocal(boardFileRepository);
+        return new FileServiceLocal(fileRepository);
     }
 
     @Autowired private UserRepository userRepository;

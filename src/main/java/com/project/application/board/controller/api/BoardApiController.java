@@ -47,17 +47,6 @@ public class BoardApiController {
         return new ResponseEntity<>(boardService.findById(id, user.getId()), HttpStatus.OK);
     }
 
-    @GetMapping("/file-download/{fileId}")
-    public ResponseEntity<?> downloadFile(@PathVariable("fileId") Long fileId){
-        FileServiceLocal.FileDownloadDto dto = (FileServiceLocal.FileDownloadDto) fileService.download(fileId);
-        return ResponseEntity.ok()
-                .headers(httpHeaders -> {
-                    httpHeaders.setContentType(MediaType.APPLICATION_OCTET_STREAM);
-                    httpHeaders.add(HttpHeaders.CONTENT_DISPOSITION, ContentDisposition.builder("attachment").filename(dto.getFileName()).build().toString());
-                })
-                .body(dto.getResource());
-    }
-
     @GetMapping
     public ResponseEntity<?> list(@RequestParam("boardType") String boardType,
                                   @PageableDefault(sort = "createdDate", direction = Sort.Direction.DESC) Pageable pageable){
