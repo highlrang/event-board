@@ -5,7 +5,7 @@ const board = {
             "boardType": $("#boardType").val(),
             "writerId": $("#writerId").val(),
             "title": $("#title").val(),
-            "content": $("#content").text(),
+            "content": $("#content").val(),
             "startDate": $("#startDate").val(),
             "endDate": $("#endDate").val(),
             "recruitingCnt": $("#recruitingCnt").val(),
@@ -15,7 +15,7 @@ const board = {
         callJsonAjax("POST", "/api/board", data,
             (result) => {
                 alert("게시글이 저장되었습니다.");
-                location.href=`/board/${result}`;
+                location.href=`/board/${result.body}`;
             },
             (error) => {
                 let errRes = JSON.parse(error.responseText);
@@ -35,11 +35,15 @@ const board = {
                     $("#endDate").datepicker("setDate", new Date(result.endDate));
 
                     $("#recruitingCntHtml").html(`<input type="number" name="recruitingCnt" value="${result.recruitingCnt}" class="form-control">`);
-                    $("fileId").val(result.fileId);
-                    $("#fileHtml").html("<form><input type=\"file\" class=\"form-control\"></form>");
-                    result.fileId != null ?
-                        $("#fileHtml").append(`<a target="_blank" href="/api/file/${result.fileId}/download"><img alt="${result.fileName}" src="${result.filePath}" class="rounded float-start"></a>`)
-                        : $("#fileHtml").append("<img alt=\"기본이미지\" src=\"/static/img/default.JPG\" class=\"\">");
+
+                    if(result.file != null) {
+                        $("fileId").val(result.file.id);
+                        $("#boardImage").attr('alt', result.file.name);
+                        $("#boardImage").attr('src', result.file.path);
+                        $("#boardImage").css('display', 'block');
+                    }else{
+                        $("#boardImage").css('display', 'none');
+                    }
 
                     $("#button-area").html(
                         `<input type="button" onclick="board.update(${result.id})" class="btn btn-outline-primary" value="수정">` +
@@ -52,7 +56,14 @@ const board = {
                     $("#datePeriod").empty();
                     $("#datePeriod").text(result.startDate + " ~ " + result.endDate);
                     result.recruitingCnt !== 0 ? $("#recruitingCntHtml").text(result.recruitingCnt) : $("#recruitingCntHtml").text("제한 없음");
-                    result.fileId != null ? $("#fileHtml").html(`<a target="_blank" href="/api/file/${result.fileId}/download"><img alt="${result.fileName}" src="${result.filePath}" class="rounded float-start"></a>`) : $("#fileHtml").text("-");
+
+                    $("#fileHtml").empty();
+                    if(result.file === null) {
+                        $("#fileHtml").text("-");
+                    } else {
+                        $("#fileId").val(result.file.id);
+                        $("#fileHtml").append(`<img id="boardImage" alt="${result.file.name}" src="${result.file.path}" class="rounded float-start">`);
+                    }
 
                     let button;
                     result.userInfo.isRegistered === true ?
@@ -166,14 +177,23 @@ const board = {
     update: function(id){
         let data = {
             "title": $("#title").val(),
-            "content": $("#content").text(),
+            "content": $("#content").val(),
             "recruitingCnt": $("#recruitingCnt").val(),
             "startDate": $("#startDate").val(),
             "endDate": $("#endDate").val(),
             "fileId": $("#fileId").val()
         };
 
-        callJsonAjax("PATCH", `/api/board/${id}`, data, () => { board.detail(id); });
+        callJsonAjax("PATCH", `/api/board/${id}`, data,
+            () => {
+                alert("수정이 완료되었습니다.");
+                location.href=`/board/${id}`;
+                },
+            (error) => {
+                let errRes = JSON.parse(error.responseText);
+                Array.isArray(errRes.body) && alert(errRes.body[0]);
+                }
+            );
     },
 
     delete: function(id, boardType){

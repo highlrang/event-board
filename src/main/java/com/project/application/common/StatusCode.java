@@ -29,9 +29,10 @@ public enum StatusCode {
     /**
      * file
      */
-    FILE_NOT_FOUND("4101", "파일을 찾을 수 없습니다."),
-    FILE_SAVE_FAILED("4102", "파일 업로드에 실패했습니다."),
-    FILE_DOWNLOAD_FAILED("4103", "파일 다운로드에 실패했습니다."),
+    FILE_NOT_FOUND("4001", "파일을 찾을 수 없습니다."),
+    FILE_SAVE_FAILED("4002", "파일 업로드에 실패했습니다."),
+    FILE_DOWNLOAD_FAILED("4003", "파일 다운로드에 실패했습니다."),
+    ONLY_IMAGE("4004", "이미지만 업로드가 가능합니다."),
 
     /**
      * Registration

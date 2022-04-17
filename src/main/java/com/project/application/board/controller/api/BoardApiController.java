@@ -55,22 +55,14 @@ public class BoardApiController {
     }
 
     @PostMapping
-    public ResponseEntity<?> save(@Validated(value = CreateGroup.class) BoardRequestDto dto) throws BindException{
-        try {
-            Long id = boardService.save(dto);
-            return new ResponseEntity<>(id, HttpStatus.OK);
-
-        } catch (IOException e) {
-            /* FILE EXCEPTION -> file controller 로 이동 예정*/
-            ApiResponseBody<List<String>> body =
-                    new ApiResponseBody<>(FILE_SAVE_FAILED.getCode(), FILE_SAVE_FAILED.getMessage(), Arrays.asList(FILE_SAVE_FAILED.getMessage()));
-            return new ResponseEntity<>(body, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+    public ResponseEntity<?> save(@Validated(value = CreateGroup.class) @RequestBody BoardRequestDto dto) throws BindException {
+        Long id = boardService.save(dto);
+        return new ResponseEntity<>(new ApiResponseBody(SUCCESS.getCode(), SUCCESS.getMessage(), id), HttpStatus.OK);
     }
 
     @PatchMapping("/{id}")
     public ResponseEntity<?> update(@PathVariable("id") Long boardId,
-                                    @Valid BoardRequestDto boardDto){
+                                    @Valid @RequestBody BoardRequestDto boardDto) throws BindException {
         boardService.update(boardId, boardDto);
         return new ResponseEntity<>(
                 new ApiResponseBody<>(SUCCESS.getCode(), SUCCESS.getMessage())

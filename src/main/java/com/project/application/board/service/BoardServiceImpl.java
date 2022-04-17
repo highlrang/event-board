@@ -55,7 +55,7 @@ public class BoardServiceImpl implements BoardService{
 
     @Transactional
     @Override
-    public Long save(BoardRequestDto dto) throws IOException, BindException {
+    public Long save(BoardRequestDto dto) throws BindException {
         Board board = dto.toEntity();
 
         /** 작성자 매핑 */
@@ -64,9 +64,11 @@ public class BoardServiceImpl implements BoardService{
         board.setWriter(writer);
 
         /** 첨부파일 매핑 */
-        GenericFile file = fileRepository.findById(dto.getFileId())
-                .orElseThrow(() -> new CustomException(FILE_NOT_FOUND.getCode(), FILE_NOT_FOUND.getMessage()));
-        board.setFile(file);
+        if(dto.getFileId() != null) {
+            GenericFile file = fileRepository.findById(dto.getFileId())
+                    .orElseThrow(() -> new CustomException(FILE_NOT_FOUND.getCode(), FILE_NOT_FOUND.getMessage()));
+            board.setFile(file);
+        }
 
         Board result = boardRepository.save(board);
         return result.getId();
@@ -74,18 +76,25 @@ public class BoardServiceImpl implements BoardService{
 
     @Transactional
     @Override
-    public void update(Long id, BoardRequestDto dto) {
+    public void update(Long id, BoardRequestDto dto) throws BindException {
+        dto.validateDate();
+
         Board board = boardRepository.findById(id)
                 .orElseThrow(() -> new CustomException(BOARD_NOT_FOUND.getCode(), BOARD_NOT_FOUND.getMessage()));
         board.update(dto.getTitle(), dto.getContent(), dto.getRecruitingCnt(), dto.getStartDate(), dto.getEndDate());
 
-        log.info("\n 파일 업로드 안 했을 시 넘어오는 file id 값 = {}", dto.getFileId());
-        if(dto.getFileId() != null) {
+        /** board - file 연관관계 */
+        if(dto.getFileId() == null && board.getFile() != null) {
+            board.removeFile();
+
+        }else if(dto.getFileId() != null){
             GenericFile file = fileRepository.findById(dto.getFileId())
                     .orElseThrow(() -> new CustomException(FILE_NOT_FOUND.getCode(), FILE_NOT_FOUND.getMessage()));
             board.setFile(file);
         }
 
+        /** 사용하지 않는 파일 삭제 */
+        fileRepository.deleteUnnecessary();
     }
 
     @Transactional

@@ -192,7 +192,7 @@ public class BoardServiceUnitTest {
 
     /** 게시글 수정 */
     @Test @DisplayName("게시글 수정 테스트")
-    public void update(){
+    public void update() throws BindException {
         /** given */
         Long boardId = 1L;
         LocalDate startDate = LocalDate.now();

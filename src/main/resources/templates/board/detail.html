@@ -9,6 +9,12 @@
 
 <th:block layout:fragment="style">
   <link rel="stylesheet" href="http://code.jquery.com/ui/1.8.18/themes/base/jquery-ui.css" type="text/css" />
+  <style>
+    img {
+      width: 90%;
+      height: auto;
+    }
+  </style>
 </th:block>
 <th:block layout:fragment="script">
   <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
@@ -37,8 +43,29 @@
 
       board.detail([[${boardId}]]);
 
-      $("input[type=file]").change(function(){
+      $("input[type=file]").change(function(e){
+        let url = window.URL.createObjectURL(e.target.files[0]);
+        $("#boardImage").attr('src', url);
+
         file.save();
+      });
+
+      $("#boardImage").click(function(){
+        // 작성자일 경우에는 파일 삭제 기능
+        if($("input[type=file]") !== null) {
+          let goDelete = confirm("삭제하시겠습니까?");
+          if (goDelete) {
+            $("#boardImage").css('display', 'none');
+            $("input[type=file]").val("");
+            $("#fileId").val("");
+          }
+
+        // 사용자일 경우 다운로드 기능
+        } else {
+          let fileId = $("#fileId").val();
+          if (fileId !== "")
+            location.href = `/api/file/${fileId}/download`;
+        }
       });
     });
   </script>
@@ -50,6 +77,10 @@
   </div>
 
   <table class="table">
+    <colgroup>
+      <col style="width: 20%">
+      <col style="width: 80%">
+    </colgroup>
     <tbody>
       <tr>
         <td>게시글 종류</td>
@@ -70,7 +101,10 @@
         <input type="hidden" id="fileId">
         <td>이미지</td>
         <td id="fileHtml">
-          <!-- input file 및 img 추가 -->
+          <form>
+            <input type="file" class="form-control" name="file" accept="image/*">
+            <img id="boardImage" class="rounded float-start" style="display: none">
+          </form>
         </td>
       </tr>
 

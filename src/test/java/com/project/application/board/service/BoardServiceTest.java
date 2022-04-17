@@ -65,7 +65,8 @@ class BoardServiceTest {
         BoardResponseDto result = boardService.findById(boardId, user.getId());
 
         /** then */
-        assertThat(result.getFileId()).isEqualTo(file.getId());
-        assertThat(result.getFileName()).isEqualTo(fileName);
+        assertThat(result.getFile().getId()).isEqualTo(file.getId());
+        assertThat(result.getFile().getName()).isEqualTo(fileName);
+        assertThat(result.getFile().getPath()).contains("static", "upload", fileName);
     }
 }

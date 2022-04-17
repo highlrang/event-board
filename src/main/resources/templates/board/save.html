@@ -34,8 +34,16 @@
                 }
             });
 
-            $("input[type=file]").change(function(){
-               file.save();
+            $("input[type=file]").change(function(e){
+                let url = window.URL.createObjectURL(e.target.files[0]);
+                $("#boardImage").attr('src', url);
+
+                file.save();
+            });
+
+            $("#boardImage").click(function(){
+                let goDelete = confirm("삭제하시겠습니까?");
+                if(goDelete) file.delete();
             });
         });
     </script>
@@ -62,7 +70,7 @@
     </div>
 
     <div class="input-group mb-3">
-        <textarea class="form-control" style="height: 400px" id="content" placeholder="내용"></textarea>
+        <textarea class="form-control" style="height: 300px" id="content" placeholder="내용"></textarea>
     </div>
 
     <div class="input-group mb-3">
@@ -82,13 +90,13 @@
     
     <div class="input-group mb-3">
         <form>
-            <input class="form-control" type="file" name="file">
+            <input class="form-control" type="file" name="file" accept="image/*">
         </form>
     </div>
 
-    <input type="hidden" id="fileId">
     <div class="input-group mb-3" id="fileHtml">
-        <img src="/static/img/default.JPG" alt="기본이미지" class="img-thumbnail rounded float-start" style="width: 200px; height: 200px">
+        <input type="hidden" id="fileId">
+        <img id="boardImage" class="img-thumbnail rounded float-start" style="display: none">
     </div>
 
     <div>

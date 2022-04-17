@@ -10,6 +10,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.validation.BindException;
 
 import java.io.IOException;
 
@@ -24,7 +25,7 @@ public class FileServiceUnitTest {
     @InjectMocks FileServiceLocal fileService;
 
     @Test @DisplayName("파일 저장 테스트")
-    public void save() throws IOException {
+    public void save() throws IOException, BindException {
 
         // given
         MockMultipartFile requestFile = new MockMultipartFile("test_file", "test_file.txt", null, "test content".getBytes());

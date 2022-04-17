@@ -26,4 +26,7 @@ public class FileServiceS3 implements FileService {
     public Object download(Long id) {
         return null;
     }
+
+    @Override
+    public void delete(Long id){}
 }

@@ -3,6 +3,7 @@ package com.project.application.board.domain.dto;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.project.application.board.domain.Board;
 import com.project.application.board.domain.BoardType;
+import com.project.application.file.domain.dto.FileResponseDto;
 import com.project.application.registration.domain.dto.RegistrationResponseDto;
 import com.querydsl.core.annotations.QueryProjection;
 import lombok.AllArgsConstructor;
@@ -39,8 +40,7 @@ public class BoardResponseDto {
 
     private Boolean topFix;
     private int views;
-    private String fileName;
-    private Long fileId;
+    private FileResponseDto file;
     private List<RegistrationResponseDto> registrations;
 
     /** 현재 접속한 사용자 정보 */
@@ -94,10 +94,8 @@ public class BoardResponseDto {
         this.recruitingCnt = entity.getRecruitingCnt();
         this.views = entity.getViews();
         this.topFix = entity.getTopFix();
-        if(entity.getFile() != null) {
-            this.fileName = entity.getFile().getOriginalName();
-            this.fileId = entity.getFile().getId();
-        }
+        if(entity.getFile() != null)
+            this.file = new FileResponseDto(entity.getFile());
         this.startDate = entity.getStartDate();
         this.endDate = entity.getEndDate();
         this.createdDate = entity.getCreatedDate();

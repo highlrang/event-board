@@ -93,6 +93,12 @@ public class Board {
 
     public void setFile(GenericFile file){
         this.file = file;
+        file.setBoard(this);
+    }
+
+    public void removeFile(){
+        file.removeBoard();
+        this.file = null;
     }
 
     public void changeTopFix(){

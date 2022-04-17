@@ -53,7 +53,7 @@ public class BoardRequestDto {
 
     private Long fileId;
 
-    private void validateDate() throws BindException {
+    public void validateDate() throws BindException {
         if(startDate.isBefore(endDate) || startDate.equals(endDate)) return;
 
         BindingResult bindingResult = new BeanPropertyBindingResult(BoardRequestDto.class, "board");

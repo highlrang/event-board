@@ -12,11 +12,24 @@ const file = {
                 dataType: "json",
                 success: function(result){
                     $("#fileId").val(result.id);
-                    $("#fileHtml").html(`<a target="_blank" href="/api/file/${result.id}/download"><img src="${result.path}" alt="${result.name}" class="rounded float-start"></a>`);
+                    $("#boardImage").attr('alt', result.name);
+                    $("#boardImage").css('display', 'block');
                 },
                 error: function(error){
-
+                    let msg = "파일 업로드에 실패하였습니다.";
+                    if(error.status === 400) msg = "이미지만 업로드가 가능합니다.";
+                    alert(msg);
+                    $("input[type=file]").val("");
+                    $("#boardImage").css('display', 'none');
                 }
+        });
+    },
+
+    delete: function(id){
+        callAjax("DELETE", `/api/file/${id}`, null, () => {
+            $("#boardImage").css('display', 'none');
+            $("input[type=file]").val("");
+            $("#fileId").val("");
         });
     }
 }
