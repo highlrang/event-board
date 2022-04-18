@@ -34,6 +34,9 @@
                 }
             });
 
+            $("#startDate").datepicker("setDate", new Date());
+            $("#endDate").datepicker("setDate", new Date());
+
             $("input[type=file]").change(function(e){
                 let url = window.URL.createObjectURL(e.target.files[0]);
                 $("#boardImage").attr('src', url);

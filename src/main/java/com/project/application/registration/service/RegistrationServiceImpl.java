@@ -39,8 +39,12 @@ public class RegistrationServiceImpl implements RegistrationService{
                 .orElseThrow(() -> new CustomException(USER_NOT_FOUND.getCode(), USER_NOT_FOUND.getMessage()));
         Board board = boardRepository.findById(dto.getBoardId())
                 .orElseThrow(() -> new CustomException(BOARD_NOT_FOUND.getCode(), BOARD_NOT_FOUND.getMessage()));
+
         if(board.isWriter(user.getId()))
             throw new CustomException(REGISTRATION_RESTRICTION.getCode(), REGISTRATION_RESTRICTION.getMessage());
+        if(board.isClosed())
+            throw new CustomException(ALREADY_CLOSED.getCode(), ALREADY_CLOSED.getMessage());
+
         Registration result = registrationRepository.save(new Registration(user, board));
         return result.getId();
     }

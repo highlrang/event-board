@@ -1,5 +1,6 @@
 package com.project.application.file.controller.api;
 
+import com.project.application.common.ApiResponseBody;
 import com.project.application.exception.CustomException;
 import com.project.application.file.domain.dto.FileResponseDto;
 import com.project.application.file.service.FileService;
@@ -14,6 +15,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
 import static com.project.application.common.StatusCode.FILE_SAVE_FAILED;
+import static com.project.application.common.StatusCode.SUCCESS;
 
 @RequiredArgsConstructor
 @RestController
@@ -26,7 +28,9 @@ public class FileApiController {
     public ResponseEntity<?> save(@RequestPart MultipartFile file) throws BindException {
         try {
             FileResponseDto result = fileService.upload(file);
-            return new ResponseEntity<>(result, HttpStatus.OK);
+            return new ResponseEntity<>(
+                    new ApiResponseBody<>(SUCCESS.getCode(), SUCCESS.getMessage(), result)
+                    , HttpStatus.OK);
         } catch (IOException e) {
             throw new CustomException(FILE_SAVE_FAILED.getCode(), FILE_SAVE_FAILED.getMessage());
         }
@@ -48,6 +52,8 @@ public class FileApiController {
     @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(@PathVariable("id") Long id){
         fileService.delete(id);
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(
+                new ApiResponseBody<>(SUCCESS.getCode(), SUCCESS.getMessage()),
+                HttpStatus.OK);
     }
 }

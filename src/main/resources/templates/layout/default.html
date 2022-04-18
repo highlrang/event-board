@@ -3,17 +3,14 @@
       xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 
-<head th:replace="layout/fragments/head :: headFragment">
-    <title layout:title-pattern="$LAYOUT_TITLE - $CONTENT_TITLE">
-        커뮤니티 by 정혜우
-    </title>
-</head>
+<head th:replace="layout/fragments/head :: headFragment"></head>
+
 
 <body>
 
-<header th:replace="layout/fragments/header :: headerFragment"></header>
-<div layout:fragment="content" class="container"></div>
-<footer th:replace="layout/fragments/footer :: footerFragment"></footer>
+    <header th:replace="layout/fragments/header :: headerFragment"></header>
+    <div layout:fragment="content" class="container my-5"></div>
+    <footer th:replace="layout/fragments/footer :: footerFragment"></footer>
 
 </body>
 

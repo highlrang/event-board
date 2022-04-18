@@ -17,4 +17,10 @@ public class FileResponseDto {
         name = file.getOriginalName();
         path = file.getPath() + "/" + file.getName();
     }
+
+    public FileResponseDto(Long id, String name, String path){
+        this.id = id;
+        this.name = name;
+        this.path = path;
+    }
 }

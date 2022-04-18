@@ -44,12 +44,16 @@ public class BoardApiController {
     @GetMapping("/{id}")
     public ResponseEntity<?> findById(@PathVariable("id") Long id,
                                       @AuthenticationPrincipal UserResponseDto user){
-        return new ResponseEntity<>(boardService.findById(id, user.getId()), HttpStatus.OK);
+        return new ResponseEntity<>(
+                new ApiResponseBody<>(
+                        SUCCESS.getCode(), SUCCESS.getMessage(),
+                        boardService.findById(id, user.getId()))
+                , HttpStatus.OK);
     }
 
     @GetMapping
     public ResponseEntity<?> list(@RequestParam("boardType") String boardType,
-                                  @PageableDefault(sort = "createdDate", direction = Sort.Direction.DESC) Pageable pageable){
+                                  @PageableDefault(size = 12, sort = "createdDate", direction = Sort.Direction.DESC) Pageable pageable){
         Page<BoardResponseDto> boardPaging = boardService.findPaging(BoardType.valueOf(boardType), pageable);
         return new ResponseEntity<>(boardPaging, HttpStatus.OK);
     }
@@ -57,7 +61,7 @@ public class BoardApiController {
     @PostMapping
     public ResponseEntity<?> save(@Validated(value = CreateGroup.class) @RequestBody BoardRequestDto dto) throws BindException {
         Long id = boardService.save(dto);
-        return new ResponseEntity<>(new ApiResponseBody(SUCCESS.getCode(), SUCCESS.getMessage(), id), HttpStatus.OK);
+        return new ResponseEntity<>(new ApiResponseBody<>(SUCCESS.getCode(), SUCCESS.getMessage(), id), HttpStatus.OK);
     }
 
     @PatchMapping("/{id}")

@@ -11,9 +11,13 @@ const file = {
                 processData: false,
                 dataType: "json",
                 success: function(result){
-                    $("#fileId").val(result.id);
-                    $("#boardImage").attr('alt', result.name);
-                    $("#boardImage").css('display', 'block');
+                    if(result.statusCode === "1001") {
+                        $("#fileId").val(result.body.id);
+                        $("#boardImage").attr('alt', result.body.name);
+                        $("#boardImage").css('display', 'block');
+                    }else{
+                        alert("파일 업로드에 실패하였습니다.");
+                    }
                 },
                 error: function(error){
                     let msg = "파일 업로드에 실패하였습니다.";

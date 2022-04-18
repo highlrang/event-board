@@ -14,12 +14,20 @@ const board = {
 
         callJsonAjax("POST", "/api/board", data,
             (result) => {
-                alert("게시글이 저장되었습니다.");
-                location.href=`/board/${result.body}`;
+                if(result.statusCode === "1001") {
+                    alert("게시글이 저장되었습니다.");
+                    location.href = `/board/${result.body}`;
+                }else{
+                    result.message && alert(result.message);
+                }
             },
             (error) => {
-                let errRes = JSON.parse(error.responseText);
-                Array.isArray(errRes.body) && alert(errRes.body[0]);
+                if(error.statusCode === "1003") {
+                    let errRes = JSON.parse(error.responseText);
+                    Array.isArray(errRes.body) && alert(errRes.body[0]);
+                }else{
+                    alert("게시글 저장에 실패하였습니다.");
+                }
             }
         );
     },
@@ -27,60 +35,66 @@ const board = {
     detail: function(id){
         callAjax("GET", "/api/board/" + id, null,
             (result) => {
-                if (result.userInfo.isWriter === true) {
-                    $("#titleHtml").html(`<input type="text" id="title" value="${result.title}" class="form-control">`);
-                    $("#contentHtml").html(`<textarea id="content" class="form-control" style="width:100%; height: 400px">${result.content}</textarea>`);
+                if(result.statusCode !== "1001"){
+                    result.message ? alert(result.message) : alert("게시글을 불러올 수 없습니다.");
+                    location.history.back();
+                }
 
-                    $("#startDate").datepicker("setDate", new Date(result.startDate));
-                    $("#endDate").datepicker("setDate", new Date(result.endDate));
+                let boardDetail = result.body;
+                if (boardDetail.userInfo.isWriter === true) {
+                    $("#titleHtml").html(`<input type="text" id="title" value="${boardDetail.title}" class="form-control">`);
+                    $("#contentHtml").html(`<textarea id="content" class="form-control" style="width:100%; height: 400px">${boardDetail.content}</textarea>`);
 
-                    $("#recruitingCntHtml").html(`<input type="number" name="recruitingCnt" value="${result.recruitingCnt}" class="form-control">`);
+                    $("#startDate").datepicker("setDate", new Date(boardDetail.startDate));
+                    $("#endDate").datepicker("setDate", new Date(boardDetail.endDate));
 
-                    if(result.file != null) {
-                        $("fileId").val(result.file.id);
-                        $("#boardImage").attr('alt', result.file.name);
-                        $("#boardImage").attr('src', result.file.path);
+                    $("#recruitingCntHtml").html(`<input type="number" name="recruitingCnt" value="${boardDetail.recruitingCnt}" class="form-control">`);
+
+                    if(boardDetail.file.id != null) {
+                        $("fileId").val(boardDetail.file.id);
+                        $("#boardImage").attr('alt', boardDetail.file.name);
+                        $("#boardImage").attr('src', boardDetail.file.path);
                         $("#boardImage").css('display', 'block');
                     }else{
                         $("#boardImage").css('display', 'none');
                     }
 
                     $("#button-area").html(
-                        `<input type="button" onclick="board.update(${result.id})" class="btn btn-outline-primary" value="수정">` +
-                        `<input type="button" onclick="board.delete(${result.id}, '${result.boardType}')" class="btn btn-outline-secondary" value="삭제">`
+                        `<input type="button" onclick="board.update(${boardDetail.id})" class="btn btn-outline-primary" value="수정">` +
+                        `<input type="button" onclick="board.delete(${boardDetail.id}, '${boardDetail.boardType}')" class="btn btn-outline-secondary" value="삭제">`
                     );
 
                 } else {
-                    $("#titleHtml").text(result.title);
-                    $("#contentHtml").text(result.content);
+                    $("#titleHtml").text(boardDetail.title);
+                    $("#contentHtml").text(boardDetail.content);
                     $("#datePeriod").empty();
-                    $("#datePeriod").text(result.startDate + " ~ " + result.endDate);
-                    result.recruitingCnt !== 0 ? $("#recruitingCntHtml").text(result.recruitingCnt) : $("#recruitingCntHtml").text("제한 없음");
+                    $("#datePeriod").text(boardDetail.startDate + " ~ " + boardDetail.endDate);
+                    boardDetail.recruitingCnt !== 0 ? $("#recruitingCntHtml").text(boardDetail.recruitingCnt) : $("#recruitingCntHtml").text("제한 없음");
 
                     $("#fileHtml").empty();
-                    if(result.file === null) {
+                    if(boardDetail.file.id === null) {
                         $("#fileHtml").text("-");
                     } else {
-                        $("#fileId").val(result.file.id);
-                        $("#fileHtml").append(`<img id="boardImage" alt="${result.file.name}" src="${result.file.path}" class="rounded float-start">`);
+                        $("#fileId").val(boardDetail.file.id);
+                        $("#fileHtml").append(`<img id="boardImage" alt="${boardDetail.file.name}" src="${boardDetail.file.path}" class="rounded float-start">`);
                     }
 
                     let button;
-                    result.userInfo.isRegistered === true ?
-                        button = `<input type="button" onclick="registration.cancel(${result.userInfo.registrationId}, ${result.id})" class="btn btn-outline-primary" value="참여 취소">`
-                        : button = `<input type="button" onclick="registration.save(${result.id}, ${result.userInfo.userId})" class="btn btn-outline-primary" value="참여">`;
+                    boardDetail.userInfo.isRegistered === true ?
+                        button = `<input type="button" onclick="registration.cancel(${boardDetail.userInfo.registrationId}, ${boardDetail.id})" class="btn btn-outline-primary" value="참여 취소">`
+                        : button = `<input type="button" onclick="registration.save(${boardDetail.id}, ${boardDetail.userInfo.userId})" class="btn btn-outline-primary" value="참여">`;
                     $("#button-area").html(button);
                 }
 
                 /** 공통 */
-                $("#writer").text(result.writerName);
-                $("#boardType").text(result.boardTypeName);
-                $("#views").text(result.views);
+                $("#writer").text(boardDetail.writerName);
+                $("#boardType").text(boardDetail.boardTypeName);
+                $("#views").text(boardDetail.views);
 
-                if (result.userInfo.isWriter === true) {
-                    board.addRegistrations(result.registrations);
+                if (boardDetail.userInfo.isWriter === true) {
+                    board.addRegistrations(boardDetail.registrations);
                 } else {
-                    $("#registrationArea").text(result.registrations.length);
+                    $("#registrationArea").text(boardDetail.registrations.length);
                 }
             })
     },
@@ -120,26 +134,50 @@ const board = {
 
         callAjax("GET", "/api/board/", params,
             (result) => {
-                let tbody = "";
-                let no;
+                let boardList = "";
                 $.each(result.content, function(index, item){
-                    no = (result.number * result.size) + index + 1;
-                    let trClass = "";
-                    if(item.topFix === true)
-                        trClass = "table-info";
-                    let recruitingCnt = item.recruitingCnt !== 0 ? item.recruitingCnt : "제한없음";
-                    tbody += `<tr class=\"${trClass}\">`
-                        + `<td>${no}</td>`
-                        + `<td><a style="text-decoration: none; color: navy" href="/board/${item.id}">${item.title}</a></td>`
-                        + `<td>${item.writerName}</td>`
-                        + `<td>${item.registrationCnt}/${recruitingCnt}</td>`
-                        + `<td>${item.startDate}</td>`
-                        + `<td>${item.endDate}</td>`
-                        + `<td>${item.views}</td>`
-                        + `<td>${item.createdDate}</td>`
-                        + "</tr>";
+
+                    if(index === 0) {
+                        boardList += "<div class='row row-cols-4 mb-5'>";
+                    } else if(index % 4 === 0) {
+                        boardList += "</div>";
+                        boardList += "<div class='row row-cols-4 mb-5'>";
+                    }
+
+                    let boardClass = "normalBoard";
+                    if(item.topFix === true) boardClass = "specialBoard";
+                    let fileName = item.file.name === null ? '기본이미지' : item.file.name;
+                    let filePath = item.file.path === null ? '/static/img/default.JPG' : item.file.path;
+
+                    boardList += "<div class='col'>"
+                        + `<div class='${boardClass}'>`
+                            + "<div>"
+                                + `<a href="/board/${item.id}">`
+                                    + `<img class='' alt='${fileName}' src='${filePath}'>`
+                                + "</a>"
+                            + "</div>"
+
+                            + `<div class='mt-3' style='width: 100%; font-weight: bold; overflow: hidden; white-space: nowrap; text-overflow: clip'>${item.title}</div>`
+
+                            + `<div class='mt-3'>${item.startDate} - ${item.endDate}</div>`
+
+                            + "<div class='mt-3'>"
+                                + `<span class="float-start" style="font-size: 8px; color: gray">${item.createdDate}</span>`
+                                + `<span class="float-end">조회수 : ${item.views}</span>`
+                            + "</div>"
+                        + "</div>"
+
+                    + "</div>";
                 });
-                $("#tbody").html(tbody);
+
+                if(result.content.length % 4 !== 0){
+                    for(var i=0; i < 4 - (result.content.length % 4); i++){
+                        boardList += "<div class='col'></div>";
+                    }
+                    boardList += "</div>";
+                }
+
+                $("#boardList").html(boardList);
 
 
                 if(result.totalElements !== 0)
@@ -154,8 +192,8 @@ const board = {
 
         let pageList = "";
         if (result.number !== 0) {
-            pageList += "<a class=\"btn btn-light\" onclick=\"callList(0, field, nowDirection)\"><<</a>"
-                + `<a class="btn btn-light" onclick="callList(${result.number - 1}, field, nowDirection)"><</a>`;
+            pageList += "<a class=\"btn btn-light\" onclick=\"board.list(0, field, nowDirection)\">&laquo;</a>"
+                + `<a class="btn btn-light" onclick="board.list(${result.number - 1}, field, nowDirection)">&lsaquo;</a>`;
         }
 
         let aClass;
@@ -163,12 +201,12 @@ const board = {
             aClass = "btn btn-light";
             if (i === result.number + 1)
                 aClass = "btn btn-dark";
-            pageList += `<a class="${aClass}" onclick="callList(${i - 1}, field, nowDirection)">${i}</a>`;
+            pageList += `<a class="${aClass}" onclick="board.list(${i - 1}, field, nowDirection)">${i}</a>`;
         }
 
         if (result.number !== result.totalPages - 1) {
-            pageList += `<a class="btn btn-light" onclick="callList(${result.number + 1}, field, nowDirection)">></a>`
-                + `<a class=\"btn btn-light\" onclick=\"callList(${result.totalPages - 1}, field, nowDirection)\">>></a>`;
+            pageList += `<a class="btn btn-light" onclick="board.list(${result.number + 1}, field, nowDirection)">&rsaquo;</a>`
+                + `<a class=\"btn btn-light\" onclick=\"board.list(${result.totalPages - 1}, field, nowDirection)\">&raquo;</a>`;
         }
 
         $("#pageList").html(pageList);
@@ -185,20 +223,31 @@ const board = {
         };
 
         callJsonAjax("PATCH", `/api/board/${id}`, data,
-            () => {
-                alert("수정이 완료되었습니다.");
-                location.href=`/board/${id}`;
+            (result) => {
+                    if(result.statusCode === "1001") {
+                        alert("수정이 완료되었습니다.");
+                        location.href=`/board/${id}`;
+                    }else{
+                        result.message && alert(result.message);
+                    }
                 },
             (error) => {
-                let errRes = JSON.parse(error.responseText);
-                Array.isArray(errRes.body) && alert(errRes.body[0]);
+                    if(error.statusCode === "1003"){
+                        let errRes = JSON.parse(error.responseText);
+                        Array.isArray(errRes.body) && alert(errRes.body[0]);
+                    }else{
+                       alert("게시글 수정에 실패하였습니다.");
+                    }
                 }
             );
     },
 
     delete: function(id, boardType){
-        callAjax("DELETE", `/api/board/${id}`, null, () => {
-            location.href=`/board/list/${boardType}`;
+        callAjax("DELETE", `/api/board/${id}`, null, (result) => {
+            if(result.statusCode === "1001")
+                location.href = `/board/list/${boardType}`;
+
+            alert("게시글 삭제에 실패했습니다.");
         });
     }
 }

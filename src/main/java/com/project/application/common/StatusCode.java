@@ -41,7 +41,8 @@ public enum StatusCode {
     REGISTRATION_FAILED("5002", "참여가 진행되지 않았습니다."),
     REGISTRATION_RESTRICTION("5003", "참여가 제한되었습니다."),
     ALREADY_REGISTERED("5004", "이미 참여하였습니다."),
-    REGISTRATION_UPDATE_FAILED("5005", "등록 정보 업데이트에 실패하였습니다.");
+    REGISTRATION_UPDATE_FAILED("5005", "등록 정보 업데이트에 실패하였습니다."),
+    ALREADY_CLOSED("5006", "이미 모집 인원이 달성되었습니다.");
 
     private final String code;
     private final String message;

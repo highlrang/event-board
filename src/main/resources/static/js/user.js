@@ -41,12 +41,15 @@ const user = {
         }
 
         callJsonAjax("POST", "/api/user", data, (result) => {
-            if(result.statusCode === "2002"){
+            if(result.statusCode === "1001"){
+                alert("회원가입이 완료되었습니다.");
+                location.href = "/login";
+            }else if(result.statusCode === "2002"){
                 alert(result.message);
-                return;
+            }else{
+                alert("회원가입에 실패하였습니다.");
             }
-            alert("회원가입이 완료되었습니다.");
-            location.href = "/login";
+
         });
     },
 

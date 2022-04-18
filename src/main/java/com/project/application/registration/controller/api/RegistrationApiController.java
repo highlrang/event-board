@@ -1,5 +1,6 @@
 package com.project.application.registration.controller.api;
 
+import com.project.application.common.ApiResponseBody;
 import com.project.application.registration.domain.dto.RegistrationRequestDto;
 import com.project.application.registration.domain.dto.RegistrationResponseDto;
 import com.project.application.registration.domain.dto.RegistrationUpdateDto;
@@ -15,6 +16,8 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
+
+import static com.project.application.common.StatusCode.SUCCESS;
 
 @RestController
 @RequiredArgsConstructor
@@ -38,7 +41,10 @@ public class RegistrationApiController {
     public ResponseEntity<?> save(@Valid @RequestBody RegistrationRequestDto dto){
         Long registrationId = registrationService.save(dto);
         List<RegistrationResponseDto> registrations = registrationService.findByBoardId(dto.getBoardId());
-        return new ResponseEntity<>(new RegistrationBody(registrations, registrationId), HttpStatus.OK);
+        return new ResponseEntity<>(
+                new ApiResponseBody<>(SUCCESS.getCode(), SUCCESS.getMessage(),
+                        new RegistrationBody(registrations, registrationId))
+                , HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
@@ -47,13 +53,18 @@ public class RegistrationApiController {
                                     @AuthenticationPrincipal UserResponseDto user){
         registrationService.delete(id);
         List<RegistrationResponseDto> registrations = registrationService.findByBoardId(boardId);
-        return new ResponseEntity<>(new RegistrationBody(registrations, user.getId()), HttpStatus.OK);
+        return new ResponseEntity<>(
+                new ApiResponseBody<>(SUCCESS.getCode(), SUCCESS.getMessage(),
+                        new RegistrationBody(registrations, user.getId()))
+                , HttpStatus.OK);
     }
 
     @PutMapping("/status")
     public ResponseEntity<?> update(@Valid @RequestBody RegistrationUpdateDto dto){
         Long boardId = registrationService.update(dto);
         List<RegistrationResponseDto> registrations = registrationService.findByBoardId(boardId);
-        return new ResponseEntity<>(registrations, HttpStatus.OK);
+        return new ResponseEntity<>(
+                new ApiResponseBody<>(SUCCESS.getCode(), SUCCESS.getMessage(), registrations)
+                , HttpStatus.OK);
     }
 }

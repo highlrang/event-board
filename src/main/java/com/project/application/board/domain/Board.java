@@ -98,15 +98,20 @@ public class Board {
 
     public void removeFile(){
         file.removeBoard();
-        this.file = null;
+        file = null;
     }
 
-    public void changeTopFix(){
-        this.topFix = !this.topFix;
+    public Boolean isClosed(){
+        return recruitingCnt == registrations.size();
+    }
+
+    public void setTopFix(Boolean topFix){
+        this.topFix = topFix;
     }
 
     public void increaseViews(){
-        this.views += 1;
+        views += 1;
+        if(views > 100 && !topFix) setTopFix(true);
     }
 
 }

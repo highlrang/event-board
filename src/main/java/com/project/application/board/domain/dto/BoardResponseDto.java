@@ -35,7 +35,7 @@ public class BoardResponseDto {
     private LocalDate startDate;
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate endDate;
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDateTime createdDate;
 
     private Boolean topFix;
@@ -64,15 +64,12 @@ public class BoardResponseDto {
     /** 목록용 dto */
     @QueryProjection
     public BoardResponseDto(Long id, String title,
-                            Long writerId, String writerName, int recruitingCnt,
-                            Long registrationCnt, Boolean topFix, int views,
+                            Long fileId, String fileName, String filePath,
+                            Boolean topFix, int views,
                             LocalDate startDate, LocalDate endDate, LocalDateTime createdDate) {
         this.id = id;
         this.title = title;
-        this.writerId = writerId;
-        this.writerName = writerName;
-        this.recruitingCnt = recruitingCnt;
-        this.registrationCnt = registrationCnt;
+        this.file = new FileResponseDto(fileId, fileName, filePath);
         this.topFix = topFix;
         this.views = views;
         this.startDate = startDate;
