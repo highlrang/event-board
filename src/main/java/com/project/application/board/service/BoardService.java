@@ -18,9 +18,9 @@ public interface BoardService {
 
     Page<BoardResponseDto> findPaging(BoardType boardType, Pageable pageable);
 
-    Long save(BoardRequestDto dto) throws IOException, BindException;
+    Long save(BoardRequestDto dto) throws BindException;
 
-    void update(Long id, BoardRequestDto dto);
+    void update(Long id, BoardRequestDto dto) throws BindException;
 
     void delete(Long id);
 

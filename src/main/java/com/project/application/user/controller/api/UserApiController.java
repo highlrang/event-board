@@ -12,6 +12,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+
 import static com.project.application.common.StatusCode.*;
 
 @Slf4j
@@ -43,7 +45,7 @@ public class UserApiController {
     }
 
     @PostMapping
-    public ResponseEntity<?> join(@RequestBody UserRequestDto dto){
+    public ResponseEntity<?> join(@Valid @RequestBody UserRequestDto dto){
         userService.join(dto);
         return new ResponseEntity<>(
                 new ApiResponseBody<>(SUCCESS.getCode(), SUCCESS.getMessage())

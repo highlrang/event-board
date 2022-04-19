@@ -7,6 +7,50 @@
     <title>게시글 목록</title>
 </head>
 
+<th:block layout:fragment="style">
+    <style>
+        img{
+            width: 100%;
+            height: 200px;
+            border-radius: 10px;
+        }
+
+        .normalBoard{
+            text-align: center;
+            padding: 5% 5% 5% 5%;
+            width: 80%;
+            /*height: 350px;*/
+            /*border: 1px solid skyblue;*/
+            border-radius: 10px;
+            background-color: rgba(184, 223, 248, 0.1);
+            font-size: 12px;
+            overflow: auto;
+            box-shadow: -1px -1px 10px 1px #dadce0, 1px 1px 10px 1px #dadce0;
+        }
+
+        .specialBoard{
+            text-align: center;
+            padding: 5% 5% 5% 5%;
+            width: 80%;
+            /*height: 350px;*/
+            /*border: 1px solid lightyellow;*/
+            border-radius: 10px;
+            background-color: rgba(255, 255, 0, 0.1);
+            font-size: 12px;
+            overflow: auto;
+            box-shadow: -1px -1px 10px 1px #dadce0, 1px 1px 10px 1px #dadce0;
+        }
+
+        .normalBoard:hover{
+            transform: scale(1.1);
+        }
+
+        .specialBoard:hover{
+            transform: scale(1.1);
+        }
+    </style>
+</th:block>
+
 <th:block layout:fragment="script">
     <script src="/static/js/board.js"></script>
     <script th:inline="javascript">
@@ -15,24 +59,24 @@
         const directions = ["nothing", "asc", "desc"];
         let nowDirection = directions[0];
 
-        $(function(){
-            $("input[name='filter']").click(function(){
+        $(function () {
+            $("input[name='filter']").click(function () {
                 let index = directions.indexOf(nowDirection) === directions.length - 1 ? 0 : directions.indexOf(nowDirection) + 1;
                 nowDirection = field !== $(this).next().val() ? directions[1] : directions[index];
                 field = nowDirection === "nothing" ? null : $(this).next().val();
 
                 let fieldStatus = $(this).val();
-                if(["△", "▽"].includes(fieldStatus.charAt(fieldStatus.length - 1)))
+                if (["△", "▽"].includes(fieldStatus.charAt(fieldStatus.length - 1)))
                     fieldStatus = fieldStatus.slice(0, fieldStatus.length - 1);
-                if(nowDirection === "asc")
+                if (nowDirection === "asc")
                     fieldStatus += "△"
-                else if(nowDirection === "desc")
+                else if (nowDirection === "desc")
                     fieldStatus += "▽";
                 $(this).val(fieldStatus);
 
-                $("input[name='filter']").each(function(idx, item){
+                $("input[name='filter']").each(function (idx, item) {
                     let val = $(item).val();
-                    if(val !== fieldStatus &&
+                    if (val !== fieldStatus &&
                         ["△", "▽"].includes(val.charAt(val.length - 1)))
                         $(item).val(val.slice(0, val.length - 1));
 
@@ -47,52 +91,52 @@
 </th:block>
 
 <div layout:fragment="content">
-    <select class="form-select" style="width: 30%" id="size" onchange="callList(0, field, nowDirection)">
-        <option value="10" selected="selected">10</option>
-        <option value="30">30</option>
-        <option value="50">50</option>
-    </select>
 
-    <table class="table" style="width: 100%">
-        <colgroup>
-            <col style="width: 10%">
-            <col style="width: 30%">
-            <col style="width: 10%">
-            <col style="width: 10%">
-            <col style="width: 10%">
-            <col style="width: 10%">
-            <col style="width: 10%">
-            <col style="width: 10%">
-        </colgroup>
-        <thead>
-        <tr>
-            <th scope="col">NO.</th>
-            <th scope="col">제목</th>
-            <th scope="col">작성자</th>
-            <th scope="col">등록/모집</th>
-            <th scope="col">
-                <input type="button" style="border: none; background-color: white; font-weight: bold;" name="filter" value="모집 시작">
-                <input type="hidden" value="startDate">
-            </th>
-            <th scope="col">
-                <input type="button" style="border: none; background-color: white; font-weight: bold;" name="filter" value="모집 종료">
-                <input type="hidden" value="endDate">
-            </th>
-            <th scope="col">
-                <input type="button" style="border: none; background-color: white; font-weight: bold;" name="filter" value="조회수">
-                <input type="hidden" value="views">
-            </th>
-            <th scope="col">
-                <input type="button" style="border: none; background-color: white; font-weight: bold;" name="filter" value="작성일">
-                <input type="hidden" value="createdDate">
-            </th>
-        </tr>
-        </thead>
-        <tbody id="tbody">
-        </tbody>
-    </table>
+    <div class="row mb-5">
+        <div class="col">
+            <select class="form-select" style="width: 30%" id="size" onchange="board.list(0, field, nowDirection)">
+                <option value="12" selected="selected">기본</option>
+                <option value="24">중간</option>
+                <option value="48">길게</option>
+            </select>
+        </div>
+
+        <div class="col" style="text-align: right;">
+            <input type="button" class="btn btn-outline-primary" value="게시글 작성" onclick="location.href=`/board/save`">
+        </div>
+    </div>
+
+    <div class="row mb-5" style="text-align: center">
+        <div class="col">
+            <input type="button" style="border: none; background-color: white; font-weight: bold;" name="filter"
+                   value="모집 시작">
+            <input type="hidden" value="startDate">
+        </div>
+
+        <div class="col">
+            <input type="button" style="border: none; background-color: white; font-weight: bold;" name="filter"
+                   value="모집 종료">
+            <input type="hidden" value="endDate">
+        </div>
+
+        <div class="col">
+            <input type="button" style="border: none; background-color: white; font-weight: bold;" name="filter"
+                   value="조회수">
+            <input type="hidden" value="views">
+        </div>
+
+        <div class="col">
+            <input type="button" style="border: none; background-color: white; font-weight: bold;" name="filter"
+                   value="작성일">
+            <input type="hidden" value="createdDate">
+        </div>
+
+    </div>
+
+    <div id="boardList"></div>
 
     <div id="pageList" style="text-align: center;"></div>
+
 </div>
 
 </html>

@@ -1,8 +1,10 @@
 package com.project.application.file.service;
 
-import com.project.application.board.domain.BoardFile;
+import com.project.application.board.domain.dto.BoardRequestDto;
 import com.project.application.exception.CustomException;
-import com.project.application.file.repository.BoardFileRepository;
+import com.project.application.file.domain.GenericFile;
+import com.project.application.file.domain.dto.FileResponseDto;
+import com.project.application.file.repository.FileRepository;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -10,6 +12,9 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.BeanPropertyBindingResult;
+import org.springframework.validation.BindException;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
@@ -19,8 +24,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import static com.project.application.common.Constants.FILE_BASE_PATH;
-import static com.project.application.common.StatusCode.FILE_DOWNLOAD_FAILED;
-import static com.project.application.common.StatusCode.FILE_NOT_FOUND;
+import static com.project.application.common.StatusCode.*;
 
 @Slf4j
 @Service
@@ -28,32 +32,39 @@ import static com.project.application.common.StatusCode.FILE_NOT_FOUND;
 @RequiredArgsConstructor
 public class FileServiceLocal implements FileService{
 
-    private final BoardFileRepository fileRepository;
+    private final FileRepository fileRepository;
 
+    @Transactional
     @Override
-    public BoardFile upload(MultipartFile file) throws IOException {
-        if(file.isEmpty()) return null;
+    public FileResponseDto upload(MultipartFile file) throws IOException, BindException {
+        if(file == null || file.isEmpty()) return null;
+
+        if(!file.getContentType().contains("image")){
+            BindingResult bindingResult = new BeanPropertyBindingResult(BoardRequestDto.class, "board");
+            bindingResult.reject(ONLY_IMAGE.getCode(), ONLY_IMAGE.getMessage());
+            throw new BindException(bindingResult);
+        }
 
         String originalName = file.getOriginalFilename();
         String extension = originalName.substring(originalName.lastIndexOf("."));
-
         String name = LocalDateTime.now().getNano() + extension;
 
-        String path = "/upload/" + LocalDate.now();
+        String path = "/static/upload/" + LocalDate.now();
         File dirPath = new File(FILE_BASE_PATH + path);
         if(!dirPath.exists()) dirPath.mkdirs();
 
         File uploadFile = new File(dirPath.getAbsolutePath() + "/" + name);
         file.transferTo(uploadFile);
 
-        log.info("=== file service LOCAL ===");
-
-        return BoardFile.builder()
-                .originalName(file.getName() + extension)
+        GenericFile result = fileRepository.save(GenericFile.builder()
+                .originalName(originalName)
                 .path(path)
                 .name(name)
                 .fullPath(uploadFile.getAbsolutePath())
-                .build();
+                .build()
+        );
+
+        return new FileResponseDto(result);
     }
 
     @Getter
@@ -66,8 +77,9 @@ public class FileServiceLocal implements FileService{
         }
     }
 
+    @Override
     public FileDownloadDto download(Long id){
-        BoardFile file = fileRepository.findById(id)
+        GenericFile file = fileRepository.findById(id)
                 .orElseThrow(() -> new CustomException(FILE_NOT_FOUND.getCode(), FILE_NOT_FOUND.getMessage()));
         try {
             UrlResource urlResource = new UrlResource("file", file.getFullPath());
@@ -75,5 +87,10 @@ public class FileServiceLocal implements FileService{
         } catch (MalformedURLException e) {
             throw new CustomException(FILE_DOWNLOAD_FAILED.getCode(), FILE_DOWNLOAD_FAILED.getMessage());
         }
+    }
+
+    @Override
+    public void delete(Long id) {
+        fileRepository.deleteById(id);
     }
 }

@@ -3,6 +3,7 @@ package com.project.application.board.domain.dto;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.project.application.board.domain.Board;
 import com.project.application.board.domain.BoardType;
+import com.project.application.file.domain.dto.FileResponseDto;
 import com.project.application.registration.domain.dto.RegistrationResponseDto;
 import com.querydsl.core.annotations.QueryProjection;
 import lombok.AllArgsConstructor;
@@ -34,13 +35,12 @@ public class BoardResponseDto {
     private LocalDate startDate;
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate endDate;
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDateTime createdDate;
 
     private Boolean topFix;
     private int views;
-    private String fileName;
-    private Long fileId;
+    private FileResponseDto file;
     private List<RegistrationResponseDto> registrations;
 
     /** 현재 접속한 사용자 정보 */
@@ -64,15 +64,12 @@ public class BoardResponseDto {
     /** 목록용 dto */
     @QueryProjection
     public BoardResponseDto(Long id, String title,
-                            Long writerId, String writerName, int recruitingCnt,
-                            Long registrationCnt, Boolean topFix, int views,
+                            Long fileId, String fileName, String filePath,
+                            Boolean topFix, int views,
                             LocalDate startDate, LocalDate endDate, LocalDateTime createdDate) {
         this.id = id;
         this.title = title;
-        this.writerId = writerId;
-        this.writerName = writerName;
-        this.recruitingCnt = recruitingCnt;
-        this.registrationCnt = registrationCnt;
+        this.file = new FileResponseDto(fileId, fileName, filePath);
         this.topFix = topFix;
         this.views = views;
         this.startDate = startDate;
@@ -94,10 +91,8 @@ public class BoardResponseDto {
         this.recruitingCnt = entity.getRecruitingCnt();
         this.views = entity.getViews();
         this.topFix = entity.getTopFix();
-        if(entity.getFile() != null) {
-            this.fileName = entity.getFile().getOriginalName();
-            this.fileId = entity.getFile().getId();
-        }
+        if(entity.getFile() != null)
+            this.file = new FileResponseDto(entity.getFile());
         this.startDate = entity.getStartDate();
         this.endDate = entity.getEndDate();
         this.createdDate = entity.getCreatedDate();

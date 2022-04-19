@@ -1,13 +1,11 @@
 package com.project.application.board.domain;
 
+import com.project.application.file.domain.GenericFile;
 import com.project.application.registration.domain.Registration;
 import com.project.application.user.domain.User;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.ColumnDefault;
-import org.hibernate.engine.profile.Fetch;
-import org.springframework.boot.context.properties.bind.DefaultValue;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -60,7 +58,7 @@ public class Board {
 
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "board_file_id")
-    private BoardFile file;
+    private GenericFile file;
 
     @CreatedDate
     private LocalDateTime createdDate;
@@ -74,6 +72,7 @@ public class Board {
         this.recruitingCnt = recruitingCnt;
         this.startDate = startDate;
         this.endDate = endDate;
+        this.topFix = false;
     }
 
     public void update(String title, String content, int recruitingCnt, LocalDate startDate, LocalDate endDate){
@@ -92,16 +91,27 @@ public class Board {
         return writer.getId().equals(id);
     }
 
-    public void setFile(BoardFile file){
+    public void setFile(GenericFile file){
         this.file = file;
+        file.setBoard(this);
     }
 
-    public void changeTopFix(){
-        this.topFix = !this.topFix;
+    public void removeFile(){
+        file.removeBoard();
+        file = null;
+    }
+
+    public Boolean isClosed(){
+        return recruitingCnt > 0 && recruitingCnt == registrations.size();
+    }
+
+    public void setTopFix(Boolean topFix){
+        this.topFix = topFix;
     }
 
     public void increaseViews(){
-        this.views += 1;
+        views += 1;
+        if(views > 100 && !topFix) setTopFix(true);
     }
 
 }

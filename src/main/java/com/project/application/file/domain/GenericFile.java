@@ -1,15 +1,14 @@
-package com.project.application.board.domain;
+package com.project.application.file.domain;
 
+import com.project.application.board.domain.Board;
 import com.querydsl.core.types.dsl.CaseBuilder;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDate;
@@ -19,7 +18,7 @@ import static com.project.application.common.Constants.FILE_BASE_PATH;
 
 @Entity @Getter
 @NoArgsConstructor
-public class BoardFile {
+public class GenericFile {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,11 +32,22 @@ public class BoardFile {
 
     private String fullPath;
 
+    @OneToOne(mappedBy = "file", cascade = CascadeType.ALL)
+    public Board board;
+
     @Builder
-    public BoardFile(String originalName, String path, String name, String fullPath){
+    public GenericFile(String originalName, String path, String name, String fullPath){
         this.originalName = originalName;
         this.path = path;
         this.name = name;
         this.fullPath = fullPath;
+    }
+
+    public void setBoard(Board board){
+        this.board = board;
+    }
+
+    public void removeBoard(){
+        this.board = null;
     }
 }

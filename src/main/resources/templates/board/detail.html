@@ -9,12 +9,15 @@
 
 <th:block layout:fragment="style">
   <link rel="stylesheet" href="http://code.jquery.com/ui/1.8.18/themes/base/jquery-ui.css" type="text/css" />
+  <style>
+  </style>
 </th:block>
 <th:block layout:fragment="script">
   <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
   <script src="http://code.jquery.com/ui/1.8.18/jquery-ui.min.js"></script>
   <script src="/static/js/board.js"></script>
   <script src="/static/js/registration.js"></script>
+  <script src="/static/js/file.js"></script>
   <script th:inline="javascript">
     $(function () {
       $(".datepicker").datepicker({
@@ -35,18 +38,49 @@
       });
 
       board.detail([[${boardId}]]);
+
+      $("input[type=file]").change(function(e){
+        let url = window.URL.createObjectURL(e.target.files[0]);
+        $("#boardImage").attr('src', url);
+
+        file.save();
+      });
+
+      $("#boardImage").click(function(){
+        // 작성자일 경우에는 파일 삭제 기능
+        if($("input[type=file]") !== null) {
+          let goDelete = confirm("삭제하시겠습니까?");
+          if (goDelete) {
+            $("#boardImage").css('display', 'none');
+            $("input[type=file]").val("");
+            $("#fileId").val("");
+          }
+
+        // 사용자일 경우 다운로드 기능
+        } else {
+          let fileId = $("#fileId").val();
+          if (fileId !== "")
+            location.href = `/api/file/${fileId}/download`;
+        }
+      });
+
+      $("#content").on("click, keydown", function(){
+        $(this).css("height", $(this).prop('scrollHeight') + 3);
+      });
     });
   </script>
 </th:block>
 
 <div layout:fragment="content">
-  <div class="">
-    <h3>게시글 상세</h3>
-  </div>
 
-  <form>
-    <table class="table">
-      <tbody>
+  <table class="table">
+
+    <colgroup>
+      <col style="width: 20%">
+      <col style="width: 80%">
+    </colgroup>
+
+    <tbody>
       <tr>
         <td>게시글 종류</td>
         <td id="boardType"></td>
@@ -54,7 +88,7 @@
 
       <tr>
         <td>제목</td>
-        <td id="title"></td>
+        <td id="titleHtml"></td>
       </tr>
 
       <tr>
@@ -63,19 +97,33 @@
       </tr>
 
       <tr>
+        <input type="hidden" id="fileId">
+        <td>이미지</td>
+        <td id="fileHtml">
+          <form>
+            <input type="file" class="form-control" name="file" accept="image/*">
+            <br>
+            <img id="boardImage" class="rounded float-start" style="display: none">
+          </form>
+        </td>
+      </tr>
+
+      <tr>
         <td>내용</td>
-        <td id="content"></td>
+        <td id="contentHtml">
+          <textarea id="content" class="form-control"></textarea>
+        </td>
       </tr>
 
       <tr>
         <td>기간</td>
-        <td id="datePeriod"> <!-- input-group 해야되나 -->
+        <td id="datePeriod">
           <div class="row">
             <div class="col">
-              <input type="text" name="startDate" class="datepicker form-control" readonly="readonly">
+              <input type="text" id="startDate" class="datepicker form-control" readonly="readonly">
             </div>
             <div class="col">
-              <input type="text" name="endDate" class="datepicker form-control" readonly="readonly">`
+              <input type="text" id="endDate" class="datepicker form-control" readonly="readonly">
             </div>
           </div>
         </td>
@@ -83,12 +131,7 @@
 
       <tr>
         <td>인원 제한</td>
-        <td id="recruitingCnt"></td>
-      </tr>
-
-      <tr>
-        <td>첨부파일</td>
-        <td id="file"></td>
+        <td id="recruitingCntHtml"></td>
       </tr>
 
       <tr>
@@ -101,9 +144,8 @@
         <td id="registrationArea"></td>
       </tr>
 
-      </tbody>
-    </table>
-  </form>
+    </tbody>
+  </table>
 
   <div id="button-area" style="text-align: center;"></div>
 

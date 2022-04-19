@@ -17,7 +17,8 @@ public class RegistrationResponseDto {
     private Long userId;
     private String userName;
 
-    private String status;
+    private RegistrationStatus status;
+    private String statusName;
 
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDateTime createdDate;
@@ -27,7 +28,8 @@ public class RegistrationResponseDto {
         this.id = id;
         this.userId = userId;
         this.userName = userName;
-        this.status = status.getName();
+        this.status = status;
+        this.statusName = status.getName();
         this.createdDate = createdDate;
     }
 }

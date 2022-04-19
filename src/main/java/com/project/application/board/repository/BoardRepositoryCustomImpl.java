@@ -1,6 +1,7 @@
 package com.project.application.board.repository;
 
 import static com.project.application.board.domain.QBoard.board;
+import static com.project.application.file.domain.QGenericFile.genericFile;
 import static com.project.application.registration.domain.QRegistration.registration;
 import static com.project.application.user.domain.QUser.user;
 
@@ -45,10 +46,9 @@ public class BoardRepositoryCustomImpl implements BoardRepositoryCustom{
                     Projections.constructor(BoardResponseDto.class,
                             board.id,
                             board.title,
-                            user.id.as("writerId"),
-                            user.nickName.nullif(user.userId).as("writerName"),
-                            board.recruitingCnt,
-                            registration.count().as("registrationCnt"),
+                            genericFile.id.as("fileId"),
+                            genericFile.originalName.as("fileName"),
+                            genericFile.path.concat("/").concat(genericFile.name).as("filePath"),
                             board.topFix,
                             board.views,
                             board.startDate,
@@ -57,8 +57,8 @@ public class BoardRepositoryCustomImpl implements BoardRepositoryCustom{
                             )
                 )
                 .from(board)
-                .innerJoin(board.writer, user)
                 .leftJoin(board.registrations, registration)
+                .leftJoin(board.file, genericFile)
                 .where(board.boardType.eq(boardType)
                         .and(board.endDate.after(criteriaDate)))
                 .offset(pageable.getOffset())
