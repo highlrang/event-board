@@ -1,6 +1,6 @@
 package com.project.application.file.service;
 
-import com.project.application.board.domain.BoardFile;
+import com.project.application.file.domain.dto.FileResponseDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -16,14 +16,17 @@ import java.io.IOException;
 public class FileServiceS3 implements FileService {
 
     @Override
-    public BoardFile upload(MultipartFile file) throws IOException {
+    public FileResponseDto upload(MultipartFile file) throws IOException {
         log.info("=== file service AWS S3 ===");
 
-        return new BoardFile();
+        return null;
     }
 
     @Override
     public Object download(Long id) {
         return null;
     }
+
+    @Override
+    public void delete(Long id){}
 }

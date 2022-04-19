@@ -44,44 +44,29 @@ public class BoardApiController {
     @GetMapping("/{id}")
     public ResponseEntity<?> findById(@PathVariable("id") Long id,
                                       @AuthenticationPrincipal UserResponseDto user){
-        return new ResponseEntity<>(boardService.findById(id, user.getId()), HttpStatus.OK);
-    }
-
-    @GetMapping("/file-download/{fileId}")
-    public ResponseEntity<?> downloadFile(@PathVariable("fileId") Long fileId){
-        FileServiceLocal.FileDownloadDto dto = (FileServiceLocal.FileDownloadDto) fileService.download(fileId);
-        return ResponseEntity.ok()
-                .headers(httpHeaders -> {
-                    httpHeaders.setContentType(MediaType.APPLICATION_OCTET_STREAM);
-                    httpHeaders.add(HttpHeaders.CONTENT_DISPOSITION, ContentDisposition.builder("attachment").filename(dto.getFileName()).build().toString());
-                })
-                .body(dto.getResource());
+        return new ResponseEntity<>(
+                new ApiResponseBody<>(
+                        SUCCESS.getCode(), SUCCESS.getMessage(),
+                        boardService.findById(id, user.getId()))
+                , HttpStatus.OK);
     }
 
     @GetMapping
     public ResponseEntity<?> list(@RequestParam("boardType") String boardType,
-                                  @PageableDefault(sort = "createdDate", direction = Sort.Direction.DESC) Pageable pageable){
+                                  @PageableDefault(size = 12, sort = "createdDate", direction = Sort.Direction.DESC) Pageable pageable){
         Page<BoardResponseDto> boardPaging = boardService.findPaging(BoardType.valueOf(boardType), pageable);
         return new ResponseEntity<>(boardPaging, HttpStatus.OK);
     }
 
     @PostMapping
-    public ResponseEntity<?> save(@Validated(value = CreateGroup.class) BoardRequestDto dto) throws BindException{
-        try {
-            Long id = boardService.save(dto);
-            return new ResponseEntity<>(id, HttpStatus.OK);
-
-        } catch (IOException e) {
-            /* FILE EXCEPTION -> file controller 로 이동 예정*/
-            ApiResponseBody<List<String>> body =
-                    new ApiResponseBody<>(FILE_SAVE_FAILED.getCode(), FILE_SAVE_FAILED.getMessage(), Arrays.asList(FILE_SAVE_FAILED.getMessage()));
-            return new ResponseEntity<>(body, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+    public ResponseEntity<?> save(@Validated(value = CreateGroup.class) @RequestBody BoardRequestDto dto) throws BindException {
+        Long id = boardService.save(dto);
+        return new ResponseEntity<>(new ApiResponseBody<>(SUCCESS.getCode(), SUCCESS.getMessage(), id), HttpStatus.OK);
     }
 
     @PatchMapping("/{id}")
     public ResponseEntity<?> update(@PathVariable("id") Long boardId,
-                                    @Valid BoardRequestDto boardDto){
+                                    @Valid @RequestBody BoardRequestDto boardDto) throws BindException {
         boardService.update(boardId, boardDto);
         return new ResponseEntity<>(
                 new ApiResponseBody<>(SUCCESS.getCode(), SUCCESS.getMessage())

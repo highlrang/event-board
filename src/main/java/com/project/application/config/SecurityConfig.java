@@ -1,8 +1,9 @@
 package com.project.application.config;
 
+import com.project.application.handler.LoginSuccessHandler;
+import com.project.application.handler.LogoutSuccessCustomHandler;
 import com.project.application.user.service.UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -10,7 +11,6 @@ import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 
 @Configuration
 @EnableWebSecurity
@@ -19,6 +19,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final UserService userService;
     private final BCryptPasswordEncoder passwordEncoder;
+    private final LoginSuccessHandler loginSuccessHandler;
+    private final LogoutSuccessCustomHandler logoutSuccessHandler;
 
     @Override
     public void configure(WebSecurity web) throws Exception{
@@ -37,12 +39,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .formLogin()
                     .loginPage("/login")
                     .loginProcessingUrl("/login")
-                    .defaultSuccessUrl("/")
+                    .successHandler(loginSuccessHandler)
                     .permitAll()
                     .and()
                 .logout()
                     .logoutUrl("/logout")
-                    .logoutSuccessUrl("/")
+                    .addLogoutHandler(logoutSuccessHandler)
                     .permitAll()
                     .and()
                 .csrf().disable();

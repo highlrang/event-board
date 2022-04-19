@@ -35,8 +35,9 @@ public class Registration {
 
     @Builder
     public Registration(User user, Board board){
-        this.board = board;
         this.user = user;
+        this.board = board;
+        this.status = RegistrationStatus.APPLY;
     }
 
     public void setStatus(RegistrationStatus status){

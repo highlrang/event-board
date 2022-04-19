@@ -3,6 +3,9 @@ package com.project.application.board.service;
 import com.project.application.board.domain.BoardType;
 import com.project.application.board.domain.dto.BoardRequestDto;
 import com.project.application.board.domain.dto.BoardResponseDto;
+import com.project.application.file.domain.GenericFile;
+import com.project.application.file.domain.dto.FileResponseDto;
+import com.project.application.file.repository.FileRepository;
 import com.project.application.user.domain.User;
 import com.project.application.user.repository.UserRepository;
 import org.junit.jupiter.api.AfterEach;
@@ -23,6 +26,7 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -32,14 +36,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 class BoardServiceTest {
 
     @Autowired UserRepository userRepository;
+    @Autowired FileRepository fileRepository;
     @Autowired BoardService boardService;
 
-    /**
-     * 게시글 저장
-     * fileService bean 확인
-     * jpa 연관관계 저장 확인
-     */
-    @Test @DisplayName("게시글 저장 시 파일 기능 작동 확인")
+    @Test @DisplayName("게시글 저장 시 파일 연관관계 확인")
     public void save() throws IOException, BindException {
         /** given */
         BoardRequestDto dto = new BoardRequestDto();
@@ -47,28 +47,26 @@ class BoardServiceTest {
         dto.setTitle("test title");
         dto.setContent("test content");
 
-        User user = userRepository.save(User.builder().build());
+        User user = userRepository.save(User.builder().userId("test").password("test").build());
         dto.setWriterId(user.getId());
 
         LocalDate now = LocalDate.now();
         dto.setStartDate(now);
         dto.setEndDate(now);
 
-        MockMultipartFile file = new MockMultipartFile("test_file", "test_file.txt", null, "test_content".getBytes());
-        dto.setFile(file);
-
-        Long boardId = boardService.save(dto);
-
+        String fileName = "test_file_name.txt";
+        GenericFile file = fileRepository.save(GenericFile.builder()
+                        .originalName(fileName)
+                        .build());
+        dto.setFileId(file.getId());
 
         /** when */
+        Long boardId = boardService.save(dto);
         BoardResponseDto result = boardService.findById(boardId, user.getId());
 
         /** then */
-        assertThat(result.getFileName()).isEqualTo("test_file");
+        assertThat(result.getFile().getId()).isEqualTo(file.getId());
+        assertThat(result.getFile().getName()).isEqualTo(fileName);
+        assertThat(result.getFile().getPath()).contains("static", "upload", fileName);
     }
-
-    /** 게시글 목록 기능 테스트
-    */
-
-    /** 게시글 목록 정렬 기능 테스트 */
 }

@@ -24,7 +24,7 @@ public class RegistrationRepositoryCustomImpl implements RegistrationRepositoryC
                         RegistrationResponseDto.class,
                         registration.id,
                         user.id.as("userId"),
-                        user.name.as("userName"),
+                        user.userId.nullif(user.nickName).as("userName"),
                         registration.status,
                         registration.createdDate
                 ))
