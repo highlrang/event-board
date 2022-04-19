@@ -43,14 +43,14 @@ const board = {
                 let boardDetail = result.body;
                 if (boardDetail.userInfo.isWriter === true) {
                     $("#titleHtml").html(`<input type="text" id="title" value="${boardDetail.title}" class="form-control">`);
-                    $("#contentHtml").html(`<textarea id="content" class="form-control" style="width:100%; height: 400px">${boardDetail.content}</textarea>`);
+                    $("#content").val(`${boardDetail.content}`);
 
                     $("#startDate").datepicker("setDate", new Date(boardDetail.startDate));
                     $("#endDate").datepicker("setDate", new Date(boardDetail.endDate));
 
                     $("#recruitingCntHtml").html(`<input type="number" name="recruitingCnt" value="${boardDetail.recruitingCnt}" class="form-control">`);
 
-                    if(boardDetail.file.id != null) {
+                    if(boardDetail.file != null) {
                         $("fileId").val(boardDetail.file.id);
                         $("#boardImage").attr('alt', boardDetail.file.name);
                         $("#boardImage").attr('src', boardDetail.file.path);
@@ -66,17 +66,19 @@ const board = {
 
                 } else {
                     $("#titleHtml").text(boardDetail.title);
+                    $("#contentHtml").empty();
+                    $("#contentHtml").css("white-space", "pre");
                     $("#contentHtml").text(boardDetail.content);
                     $("#datePeriod").empty();
                     $("#datePeriod").text(boardDetail.startDate + " ~ " + boardDetail.endDate);
                     boardDetail.recruitingCnt !== 0 ? $("#recruitingCntHtml").text(boardDetail.recruitingCnt) : $("#recruitingCntHtml").text("제한 없음");
 
                     $("#fileHtml").empty();
-                    if(boardDetail.file.id === null) {
+                    if(boardDetail.file === null) {
                         $("#fileHtml").text("-");
                     } else {
                         $("#fileId").val(boardDetail.file.id);
-                        $("#fileHtml").append(`<img id="boardImage" alt="${boardDetail.file.name}" src="${boardDetail.file.path}" class="rounded float-start">`);
+                        $("#fileHtml").append(`<img id="boardImage" alt="${boardDetail.file.name}" src="${boardDetail.file.path}" style="width: 80%; height: auto;">`);
                     }
 
                     let button;

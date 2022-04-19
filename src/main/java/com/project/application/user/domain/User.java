@@ -23,7 +23,7 @@ public class User {
     @NotEmpty
     private String userId;
 
-    @NotEmpty // 검증 추가
+    @NotEmpty
     private String password;
 
     private String nickName;
@@ -46,4 +46,7 @@ public class User {
         this.nickName = nickName;
     }
 
+    public void testIdSetting(){
+        this.id = -1L;
+    }
 }

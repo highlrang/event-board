@@ -3,8 +3,8 @@ const user = {
         let password = $("#password").val();
         let passwordCheck = $("#passwordCheck").val();
 
-        if(password.length < 8){ // || 정규식으로 검증 추가
-            $("#errorMsg").text("비밀번호는 8자 이상, 숫자º영문º특수문자 중 두 가지 조합이어야합니다.");
+        if(!new RegExp("^[a-zA-Z0-9]{8,}$").test(password)){
+            $("#errorMsg").text("비밀번호는 8자 이상, 숫자º영문 조합이어야합니다.");
             return false;
         }
 

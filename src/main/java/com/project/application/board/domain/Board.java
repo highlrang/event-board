@@ -102,7 +102,7 @@ public class Board {
     }
 
     public Boolean isClosed(){
-        return recruitingCnt == registrations.size();
+        return recruitingCnt > 0 && recruitingCnt == registrations.size();
     }
 
     public void setTopFix(Boolean topFix){
