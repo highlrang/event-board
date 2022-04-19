@@ -33,9 +33,9 @@ public class UserApiController {
                 HttpStatus.OK);
     }
 
-    @PostMapping("/validate-user-id")
-    public ResponseEntity<?> validateId(@RequestBody UserRequestDto user){
-        StatusCode statusCode = !userService.existUserId(user.getUserId()) ? SUCCESS : USER_ALREADY_EXIST;
+    @GetMapping("/validate-user-id")
+    public ResponseEntity<?> validateId(@RequestParam("userId") String userId){
+        StatusCode statusCode = !userService.existUserId(userId) ? SUCCESS : USER_ALREADY_EXIST;
         return new ResponseEntity<>(
                 new ApiResponseBody<>(statusCode.getCode(), statusCode.getMessage()),
                 HttpStatus.OK

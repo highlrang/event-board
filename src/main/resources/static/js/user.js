@@ -18,7 +18,7 @@ const user = {
     },
 
     checkId: function(){
-        callJsonAjax("POST", "/api/user/validate-user-id", { "userId" : $("#userId").val() },
+        callAjax("GET", "/api/user/validate-user-id", { "userId" : $("#userId").val() },
             (result) => {
                 if(result.statusCode !== "1001") {
                     $("#errorMsg").text(result.message);
