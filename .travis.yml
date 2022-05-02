@@ -6,17 +6,17 @@ services:
   - docker
 
 before_install:
-  - docker build -t highlrang/dockerApplication ./
+  - docker build -t highlrang/application ./
 
 script:
-  - docker run -e CI=true highlrang/dockerApplication
+  - docker run -e CI=true highlrang/application
 
 after_success:
-  - docker build -t highlrang/dockerApplication ./
+  - docker build -t highlrang/application ./
 
   - echo "$DOCKER_HUB_PASSWORD" | docker login -u "$DOCKER_HUB_ID" -- password-stdin
 
-  - docker push highlrang/dockerApplication
+  - docker push highlrang/application
 
 deploy:
   provider: elasticbeanstalk
