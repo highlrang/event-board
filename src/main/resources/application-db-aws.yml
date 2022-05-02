@@ -1,0 +1,6 @@
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://application.c7jrlatrigit.ap-northeast-2.rds.amazonaws.com:3306/application
+    username: $DB_USERNAME
+    password: $DB_PASSWORD
