@@ -38,6 +38,8 @@ out/
 
 # db
 application-db.yml
+data
+db_dev.env
 
 # querydsl
 src/main/generated

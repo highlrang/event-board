@@ -1,11 +1,5 @@
 FROM amazoncorretto:11
-COPY gradlew .
-COPY gradle gradle
-COPY build.gradle .
-COPY settings.gradle .
-COPY src src
-RUN chmod +x ./gradlew
-RUN ./gradlew bootJar
-ARG JAR_FILE=build/libs/*.jar
+WORKDIR /usr/src/app
+ARG JAR_FILE=build/libs/application-0.0.1-SNAPSHOT.jar
 COPY ${JAR_FILE} application.jar
-ENTRYPOINT ["java", "-jar", "/application.jar"]
+ENTRYPOINT ["java", "-jar", "application.jar"]

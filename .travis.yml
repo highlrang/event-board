@@ -6,28 +6,24 @@ services:
   - docker
 
 before_install:
-  - docker build -t jhw127/application ./
+  - docker-compose up
 
 script:
-  - docker run -e CI=true jhw127/application
-
-after_success:
-  - docker build -t jhw127/application ./
-
   - echo "$DOCKER_HUB_PASSWORD" | docker login -u "$DOCKER_HUB_ID" -- password-stdin
 
-  - docker push jhw127/application
+after_success:
+  - docker-compose push
 
-deploy:
-  provider: elasticbeanstalk
-  region: ap-northeast-2
-  app: docker-application
-  env: DockerApplication-env
-  bucket_name: elasticbeanstalk-ap-northeast-2-423124245517
-  bucket_path: docker-application
-  on:
-    branch: master
-  access_key_id: $AWS_ACCESS_KEY
-  secret_access_key: $AWS_SECRET_KEY
+#deploy:
+#  provider: elasticbeanstalk
+#  region: ap-northeast-2
+#  app: docker-application
+#  env: DockerApplication-env
+#  bucket_name: elasticbeanstalk-ap-northeast-2-423124245517
+#  bucket_path: docker-application
+#  on:
+#    branch: master
+#  access_key_id: $AWS_ACCESS_KEY
+#  secret_access_key: $AWS_SECRET_KEY
 
 

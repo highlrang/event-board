@@ -1,0 +1,33 @@
+version: "3.8"
+services:
+  db:
+    image: mysql:8
+    container_name: mysql
+    restart: always
+    volumes:
+      - ./data/docker:/var/lib/mysql
+    environment:
+      MYSQL_DATABASE: application
+    command: ['--character-set-server=utf8mb4', '--collation-server=utf8mb4_unicode_ci']
+    ports:
+      - "3307:3306"
+    env_file:
+      - ./db_dev.env
+
+
+
+  application:
+    build:
+      context: .
+    container_name: application
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+    environment:
+      SPRING_DATASOURCE_DRIVER_CLASS_NAME: com.mysql.cj.jdbc.Driver
+      SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/application
+      SPRING_DATASOURCE_USERNAME: root
+
+    env_file:
+      - ./db_dev.env
