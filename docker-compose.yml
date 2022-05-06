@@ -8,11 +8,12 @@ services:
       - ./data/docker:/var/lib/mysql
     environment:
       MYSQL_DATABASE: application
+      MYSQL_ROOT_PASSWORD: $MYSQL_ROOT_PASSWORD
     command: ['--character-set-server=utf8mb4', '--collation-server=utf8mb4_unicode_ci']
     ports:
       - "3307:3306"
-    env_file:
-      - ./db_dev.env
+#    env_file:
+#      - ./db_dev.env
 
 
 
@@ -28,6 +29,7 @@ services:
       SPRING_DATASOURCE_DRIVER_CLASS_NAME: com.mysql.cj.jdbc.Driver
       SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/application
       SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: $MYSQL_ROOT_PASSWORD
 
-    env_file:
-      - ./db_dev.env
+#    env_file:
+#      - ./db_dev.env
