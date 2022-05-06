@@ -100,8 +100,7 @@
                 <option value="48">길게</option>
             </select>
         </div>
-
-        <div class="col" style="text-align: right;">
+        <div th:if="${session.user.role.name == '관리자'}" class="col" style="text-align: right;">
             <input type="button" class="btn btn-outline-primary" value="게시글 작성" onclick="location.href=`/board/save`">
         </div>
     </div>

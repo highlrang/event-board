@@ -60,7 +60,7 @@ const board = {
                     }
 
                     $("#button-area").html(
-                        `<input type="button" onclick="board.update(${boardDetail.id})" class="btn btn-outline-primary" value="수정">` +
+                        `<input type="button" onclick="board.update(${boardDetail.id})" class="btn btn-outline-primary" value="수정" style="margin-right: 5%">` +
                         `<input type="button" onclick="board.delete(${boardDetail.id}, '${boardDetail.boardType}')" class="btn btn-outline-secondary" value="삭제">`
                     );
 

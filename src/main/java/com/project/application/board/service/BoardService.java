@@ -18,6 +18,8 @@ public interface BoardService {
 
     Page<BoardResponseDto> findPaging(BoardType boardType, Pageable pageable);
 
+    List<BoardResponseDto> findFirstScreenList(int limit, String field);
+
     Long save(BoardRequestDto dto) throws BindException;
 
     void update(Long id, BoardRequestDto dto) throws BindException;

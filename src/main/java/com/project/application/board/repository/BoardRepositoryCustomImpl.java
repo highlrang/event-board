@@ -3,20 +3,22 @@ package com.project.application.board.repository;
 import static com.project.application.board.domain.QBoard.board;
 import static com.project.application.file.domain.QGenericFile.genericFile;
 import static com.project.application.registration.domain.QRegistration.registration;
-import static com.project.application.user.domain.QUser.user;
 
 import com.project.application.board.domain.Board;
 import com.project.application.board.domain.BoardType;
+import com.project.application.board.domain.QBoard;
 import com.project.application.board.domain.dto.BoardResponseDto;
 import com.querydsl.core.types.*;
+import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.PathBuilder;
+import com.querydsl.core.types.dsl.StringPath;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Repository;
-import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
 import java.time.LocalDate;
@@ -89,6 +91,23 @@ public class BoardRepositoryCustomImpl implements BoardRepositoryCustom{
                         .and(board.endDate.after(criteriaDate)))
                 .fetchFirst();
         return totalCnt;
+    }
+
+    @Override
+    public List<BoardResponseDto> findLimitOrderBy(int limit, String field){
+        return jpaQueryFactory.select(
+                Projections.fields(BoardResponseDto.class,
+                        board.id,
+                        board.title,
+                        board.views,
+                        board.createdDate
+                )
+        )
+                .from(board)
+                .orderBy(Expressions.stringPath(board, field).desc())
+                .where(board.endDate.after(LocalDate.now()))
+                .limit(limit)
+                .fetch();
     }
 
     @Override

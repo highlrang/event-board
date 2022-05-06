@@ -8,18 +8,75 @@
 </head>
 
 <th:block layout:fragment="script">
-    <script src="/static/js/user.js"></script>
+    <script src="/static/js/board.js"></script>
     <script>
-        user.info();
+        $(function(){
+            $.ajax({
+                type: "GET",
+                url: "/api/board/first-screen",
+                data: { "field": "createdDate" },
+                dataType: "json",
+                success: function(result){
+                    let html = "";
+
+                    $.each(result, function(idx, item){
+                        html +=
+                            "<tr>"
+                                + `<td onclick="location.href='/board/${item.id}'">${item.title}</td>`
+                                + `<td>${item.views}</td>`
+                                + `<td>${item.createdDate}</td>`
+                            + "</tr>";
+                    });
+
+                    $("#newArea").html(html);
+                }
+            });
+
+            $.ajax({
+                type: "GET",
+                url: "/api/board/first-screen",
+                data: { "field": "views" },
+                dataType: "json",
+                success: function(result){
+                    let html = "";
+
+                    $.each(result, function(idx, item){
+                        html +=
+                            "<tr>"
+                            + `<td onclick="location.href='/board/${item.id}'">${item.title}</td>`
+                            + `<td>${item.views}</td>`
+                            + `<td>${item.createdDate}</td>`
+                            + "</tr>";
+                    });
+
+                    $("#bestViewsArea").html(html);
+                }
+            });
+        });
     </script>
 </th:block>
 
 <div layout:fragment="content">
-    중심 내용 영역
+    <div class="row">
 
-    <div id="content">
+        <div class="col">
+            <h4>최신 게시글</h4><br>
+            <table class="table">
+                <tbody id="newArea">
+
+                </tbody>
+            </table>
+        </div>
+
+        <div class="col">
+            <h4>조회수 높은 게시글</h4><br>
+            <table class="table">
+                <tbody id="bestViewsArea">
+
+                </tbody>
+            </table>
+        </div>
     </div>
-
 </div>
 
 

@@ -39,7 +39,6 @@ import static com.project.application.common.StatusCode.SUCCESS;
 public class BoardApiController {
 
     private final BoardService boardService;
-    private final FileService fileService;
 
     @GetMapping("/{id}")
     public ResponseEntity<?> findById(@PathVariable("id") Long id,
@@ -56,6 +55,12 @@ public class BoardApiController {
                                   @PageableDefault(size = 12, sort = "createdDate", direction = Sort.Direction.DESC) Pageable pageable){
         Page<BoardResponseDto> boardPaging = boardService.findPaging(BoardType.valueOf(boardType), pageable);
         return new ResponseEntity<>(boardPaging, HttpStatus.OK);
+    }
+
+    @GetMapping("/first-screen")
+    public ResponseEntity<?> listNew(@RequestParam("field") String field){
+        List<BoardResponseDto> boardList = boardService.findFirstScreenList(10, field);
+        return new ResponseEntity<>(boardList, HttpStatus.OK);
     }
 
     @PostMapping

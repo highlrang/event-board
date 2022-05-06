@@ -37,7 +37,7 @@ const user = {
             "userId": $("#userId").val(),
             "nickName": $("#nickName").val(),
             "password": $("#password").val(),
-            "isAdmin": false //
+            "isAdmin": $("#isAdmin").prop("checked") === "checked"
         }
 
         callJsonAjax("POST", "/api/user", data, (result) => {
@@ -50,16 +50,6 @@ const user = {
                 alert("회원가입에 실패하였습니다.");
             }
 
-        });
-    },
-
-    info: function(){
-        callAjax("GET", "/api/user/info", null, (result)=>{
-            if(result.statusCode === "2005"){
-                $("#content").html("<a href=\"/logout\">로그아웃</a>");
-            }else{
-                $("#content").html("<a href=\"/login\">로그인</a>");
-            }
         });
     }
 

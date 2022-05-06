@@ -53,6 +53,11 @@ public class BoardServiceImpl implements BoardService{
         return boardRepository.findPaging(boardType, pageable);
     }
 
+    @Override
+    public List<BoardResponseDto> findFirstScreenList(int limit, String field) {
+        return boardRepository.findLimitOrderBy(limit, field);
+    }
+
     @Transactional
     @Override
     public Long save(BoardRequestDto dto) throws BindException {
