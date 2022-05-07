@@ -10,6 +10,6 @@ COPY settings.gradle .
 RUN chmod +x ./gradlew
 RUN ./gradlew bootJar
 
-ARG JAR_FILE=build/libs/application-0.0.1-SNAPSHOT.jar
-COPY ${JAR_FILE} application.jar
-ENTRYPOINT ["java", "-jar", "application.jar"]
+#ARG JAR_FILE=build/libs/application-0.0.1-SNAPSHOT.jar
+#COPY ${JAR_FILE} application.jar
+ENTRYPOINT ["java", "-jar", "build/libs/application-0.0.1-SNAPSHOT.jar"]
