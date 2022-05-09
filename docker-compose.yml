@@ -21,6 +21,9 @@ services:
     build:
       context: .
     container_name: application
+    volumes:
+      - ./data/upload:/static/upload
+
     ports:
       - "8080:8080"
     depends_on:

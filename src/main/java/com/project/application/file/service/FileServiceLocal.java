@@ -8,10 +8,14 @@ import com.project.application.file.repository.FileRepository;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.ResourceUtils;
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
@@ -23,7 +27,6 @@ import java.net.MalformedURLException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-import static com.project.application.common.Constants.FILE_BASE_PATH;
 import static com.project.application.common.StatusCode.*;
 
 @Slf4j
@@ -32,6 +35,12 @@ import static com.project.application.common.StatusCode.*;
 @RequiredArgsConstructor
 public class FileServiceLocal implements FileService{
 
+    private static String staticPath;
+    @Value("${static.path}")
+    public void setStaticPath(String path){
+        staticPath = path;
+    }
+
     private final FileRepository fileRepository;
 
     @Transactional
@@ -39,6 +48,7 @@ public class FileServiceLocal implements FileService{
     public FileResponseDto upload(MultipartFile file) throws IOException, BindException {
         if(file == null || file.isEmpty()) return null;
 
+        /** 검증으로 따로 빼기 */
         if(!file.getContentType().contains("image")){
             BindingResult bindingResult = new BeanPropertyBindingResult(BoardRequestDto.class, "board");
             bindingResult.reject(ONLY_IMAGE.getCode(), ONLY_IMAGE.getMessage());
@@ -49,8 +59,9 @@ public class FileServiceLocal implements FileService{
         String extension = originalName.substring(originalName.lastIndexOf("."));
         String name = LocalDateTime.now().getNano() + extension;
 
-        String path = "/static/upload/" + LocalDate.now();
-        File dirPath = new File(FILE_BASE_PATH + path);
+        String path = "/upload/" + LocalDate.now();
+        // ResourceUtils.getURL("classpath:").getPath()
+        File dirPath = new File(staticPath + path);
         if(!dirPath.exists()) dirPath.mkdirs();
 
         File uploadFile = new File(dirPath.getAbsolutePath() + "/" + name);
@@ -89,6 +100,7 @@ public class FileServiceLocal implements FileService{
         }
     }
 
+    @Transactional
     @Override
     public void delete(Long id) {
         fileRepository.deleteById(id);

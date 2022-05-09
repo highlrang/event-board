@@ -37,7 +37,7 @@ const user = {
             "userId": $("#userId").val(),
             "nickName": $("#nickName").val(),
             "password": $("#password").val(),
-            "isAdmin": $("#isAdmin").prop("checked") === "checked"
+            "isAdmin": $("#isAdmin").prop("checked")
         }
 
         callJsonAjax("POST", "/api/user", data, (result) => {

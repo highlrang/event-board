@@ -14,7 +14,6 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-import static com.project.application.common.Constants.FILE_BASE_PATH;
 
 @Entity @Getter
 @NoArgsConstructor

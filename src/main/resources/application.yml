@@ -1,12 +1,12 @@
 spring:
   profiles:
-    include: db
+    include: docker # local
 
-  devtools:
-    livereload:
-      enabled: true
-    restart:
-      enabled: true
+#  devtools:
+#    livereload:
+#      enabled: true
+#    restart:
+#      enabled: true
 
   jpa:
     database: mysql
