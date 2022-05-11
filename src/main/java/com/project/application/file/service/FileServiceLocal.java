@@ -28,18 +28,13 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import static com.project.application.common.StatusCode.*;
+import static com.project.application.config.WebConfig.staticPath;
 
 @Slf4j
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class FileServiceLocal implements FileService{
-
-    private static String staticPath;
-    @Value("${static.path}")
-    public void setStaticPath(String path){
-        staticPath = path;
-    }
 
     private final FileRepository fileRepository;
 
@@ -60,7 +55,6 @@ public class FileServiceLocal implements FileService{
         String name = LocalDateTime.now().getNano() + extension;
 
         String path = "/upload/" + LocalDate.now();
-        // ResourceUtils.getURL("classpath:").getPath()
         File dirPath = new File(staticPath + path);
         if(!dirPath.exists()) dirPath.mkdirs();
 

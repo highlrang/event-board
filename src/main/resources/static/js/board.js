@@ -51,7 +51,7 @@ const board = {
                     $("#recruitingCntHtml").html(`<input type="number" name="recruitingCnt" value="${boardDetail.recruitingCnt}" class="form-control">`);
 
                     if(boardDetail.file != null) {
-                        $("fileId").val(boardDetail.file.id);
+                        $("#fileId").val(boardDetail.file.id);
                         $("#boardImage").attr('alt', boardDetail.file.name);
                         $("#boardImage").attr('src', boardDetail.file.path);
                         $("#boardImage").css('display', 'block');
