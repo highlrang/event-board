@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.project.application.common.ApiResponseBody;
 import com.project.application.file.service.FileService;
 import com.project.application.file.service.FileServiceLocal;
+import org.assertj.core.util.Arrays;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -24,9 +25,9 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
 import java.io.IOException;
+import java.lang.reflect.Array;
 
-import static com.project.application.common.StatusCode.FILE_SAVE_FAILED;
-import static com.project.application.common.StatusCode.ONLY_IMAGE;
+import static com.project.application.common.StatusCode.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
@@ -44,13 +45,13 @@ public class FileApiControllerTest {
     @Autowired MockMvc mockMvc;
 
     @Test
-    @DisplayName("이미지 파일이 아니라면 확장자 제한으로 500 에러 테스트")
+    @DisplayName("이미지 파일이 아니라면 확장자 제한으로 400 에러 테스트")
     @WithMockUser
     public void boardFileSaveException() throws Exception {
         /** given */
         MockMultipartFile requestFile = new MockMultipartFile("file", "test_file.txt", MediaType.TEXT_PLAIN_VALUE, "test content".getBytes());
 
-        ApiResponseBody<?> apiResponse = new ApiResponseBody<>(ONLY_IMAGE.getCode(), ONLY_IMAGE.getMessage());
+        ApiResponseBody<?> apiResponse = new ApiResponseBody<>(VALIDATION_EXCEPTION.getCode(), VALIDATION_EXCEPTION.getMessage(), Arrays.array(ONLY_IMAGE.getMessage()));
         ObjectMapper objectMapper = new ObjectMapper();
         String result = objectMapper.writeValueAsString(apiResponse);
 
@@ -58,7 +59,7 @@ public class FileApiControllerTest {
         mockMvc.perform(multipart("/api/file")
                         .file(requestFile)
                 )
-                .andExpect(status().isOk())
+                .andExpect(status().is4xxClientError())
                 .andExpect(content().json(result, false))
                 .andDo(print());
 

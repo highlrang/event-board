@@ -6,6 +6,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.project.application.board.domain.dto.BoardRequestDto;
 import com.project.application.board.domain.dto.BoardResponseDto;
 import com.project.application.common.ApiResponseBody;
+import com.project.application.common.StatusCode;
 import com.project.application.registration.domain.RegistrationStatus;
 import com.project.application.registration.domain.dto.RegistrationRequestDto;
 import com.project.application.registration.domain.dto.RegistrationResponseDto;
@@ -51,18 +52,26 @@ public class RegistrationApiControllerTest {
         ObjectMapper om = new ObjectMapper().registerModule(new JavaTimeModule());
 
         // given
+        Long mockId = 1L;
         RegistrationRequestDto requestDto = new RegistrationRequestDto();
-        requestDto.setBoardId(1L);
-        requestDto.setUserId(1L);
+        requestDto.setBoardId(mockId);
+        requestDto.setUserId(mockId);
         String requestString = om.writeValueAsString(requestDto);
 
-        doNothing().when(registrationService).save(any());
+        Long returnId = 1L;
+        given(registrationService.save(any(RegistrationRequestDto.class)))
+                .willReturn(returnId);
 
         List<RegistrationResponseDto> responseList =
-                Arrays.asList(new RegistrationResponseDto(1L, 1L, "user", RegistrationStatus.APPLY, LocalDateTime.now()));
+                Arrays.asList(new RegistrationResponseDto(returnId, mockId, "user", RegistrationStatus.APPLY, LocalDateTime.now()));
         given(registrationService.findByBoardId(anyLong()))
                 .willReturn(responseList);
-        String responseString = om.writeValueAsString(responseList);
+
+        String responseString = om.writeValueAsString(
+                new ApiResponseBody<>(SUCCESS.getCode(), SUCCESS.getMessage(),
+                        new RegistrationApiController.RegistrationBody(responseList, returnId)
+                )
+        );
 
         // when then
         mockMvc.perform(post("/api/registration")

@@ -39,7 +39,7 @@ class BoardServiceTest {
     @Autowired FileRepository fileRepository;
     @Autowired BoardService boardService;
 
-    @Test @DisplayName("게시글 저장 시 파일 연관관계 확인")
+    @Test @DisplayName("게시글 저장 시 파일 연관관계 매핑 확인(저장 완료된 파일 아이디 given)")
     public void save() throws IOException, BindException {
         /** given */
         BoardRequestDto dto = new BoardRequestDto();
@@ -67,6 +67,5 @@ class BoardServiceTest {
         /** then */
         assertThat(result.getFile().getId()).isEqualTo(file.getId());
         assertThat(result.getFile().getName()).isEqualTo(fileName);
-        assertThat(result.getFile().getPath()).contains("static", "upload", fileName);
     }
 }

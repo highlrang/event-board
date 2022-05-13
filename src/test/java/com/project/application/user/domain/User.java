@@ -3,7 +3,6 @@ package com.project.application.user.domain;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.GeneratorType;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -16,14 +15,11 @@ import java.time.LocalDate;
 @EntityListeners(AuditingEntityListener.class)
 public class User {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotEmpty
     private String userId;
 
-    @NotEmpty
     private String password;
 
     private String nickName;
@@ -44,5 +40,10 @@ public class User {
 
     public void setNickName(String nickName){
         this.nickName = nickName;
+    }
+
+    /** test ver */
+    public void setId(Long id){
+        this.id = id;
     }
 }

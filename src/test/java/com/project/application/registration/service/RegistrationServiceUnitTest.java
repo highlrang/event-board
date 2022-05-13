@@ -39,7 +39,7 @@ public class RegistrationServiceUnitTest {
         Long boardId = 1L;
 
         User givenUser = new User();
-        givenUser.testIdSetting();
+        givenUser.setId(1L);
 
         Board givenBoard = Board.builder().build();
         givenBoard.setWriter(givenUser);

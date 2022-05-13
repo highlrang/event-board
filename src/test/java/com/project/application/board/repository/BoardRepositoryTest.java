@@ -35,7 +35,7 @@ public class BoardRepositoryTest {
     @Autowired BoardRepository boardRepository;
     @Autowired UserRepository userRepository;
 
-    @Test @DisplayName("게시글 목록 정렬 테스트") @WithMockUser
+    @Test @DisplayName("게시글 목록 정렬 테스트")
     public void pagingWithSort(){
         int page = 0;
         int size = 5;
@@ -55,7 +55,7 @@ public class BoardRepositoryTest {
                     .title("title")
                     .content("content")
                     .startDate(date)
-                    .endDate(date.plusDays(i))
+                    .endDate(date.plusMonths(i))
                     .build();
             board.setWriter(writer);
             boardList.add(board);
@@ -65,18 +65,17 @@ public class BoardRepositoryTest {
         /** when */
         Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "endDate"));
 
-        Page<BoardResponseDto> paging =
-                boardRepository.findPaging(BoardType.event, pageable);
+        Page<BoardResponseDto> paging = boardRepository.findPaging(BoardType.event, pageable);
 
         /** then */
-        assertThat(paging.getTotalElements()).isEqualTo(boardList.size());
         paging.getContent().forEach(
                 b -> {
-                    assertThat(b.getWriterId()).isEqualTo(writer.getId());
-                    System.out.println("Sort endDate DESC 확인 -> " + b.getEndDate());
+                    System.out.println("Sort 기본적으로 topFix DESC 적용되어있음 topfix -> " + b.getTopFix()
+                            + "\n" + "Sort endDate DESC 확인 -> " + b.getEndDate());
                 }
         );
         assertTrue(paging.getSort().getOrderFor("endDate").isDescending());
+        assertTrue(paging.getSort().getOrderFor("topFix").isDescending());
 
     }
 

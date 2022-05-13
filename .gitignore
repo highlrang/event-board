@@ -37,7 +37,7 @@ out/
 .vscode/
 
 # db
-application-db.yml
+application-local.yml
 data
 db_dev.env
 

@@ -7,6 +7,7 @@ import com.project.application.board.domain.dto.BoardResponseDto;
 import com.project.application.board.repository.BoardRepository;
 import com.project.application.file.domain.GenericFile;
 import com.project.application.file.domain.dto.FileResponseDto;
+import com.project.application.file.repository.FileRepository;
 import com.project.application.file.service.FileServiceLocal;
 import com.project.application.registration.domain.RegistrationStatus;
 import com.project.application.registration.domain.dto.RegistrationResponseDto;
@@ -35,14 +36,16 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.doNothing;
 
 @ExtendWith(MockitoExtension.class)
 public class BoardServiceUnitTest {
     @Mock UserRepository userRepository;
     @Mock BoardRepository boardRepository;
     @Mock RegistrationRepository registrationRepository;
-    @InjectMocks BoardServiceImpl boardService;
+    @Mock FileRepository fileRepository;
     @Mock FileServiceLocal fileService;
+    @InjectMocks BoardServiceImpl boardService;
 
     @Test @DisplayName("게시글 저장 시 데이터 검증 테스트")
     public void requestDto(){
@@ -82,7 +85,7 @@ public class BoardServiceUnitTest {
                 .endDate(LocalDate.now())
                 .build();
         User givenWriter = new User();
-        givenWriter.testIdSetting();
+        givenWriter.setId(1L);
         board.setWriter(givenWriter);
         Long boardId = 1L;
 
@@ -107,7 +110,7 @@ public class BoardServiceUnitTest {
         /** given */
         Long boardId = 1L;
         User givenWriter = new User();
-        givenWriter.testIdSetting();
+        givenWriter.setId(1L);
         Long userId = givenWriter.getId();
 
         Board givenBoard = Board.builder().boardType(BoardType.event).build();
@@ -135,8 +138,9 @@ public class BoardServiceUnitTest {
         /** given */
         Long boardId = 1L;
         Long userId = 1L;
+        Long writerId = 2L;
         User givenWriter = new User();
-        givenWriter.testIdSetting();
+        givenWriter.setId(writerId);
 
         Board givenBoard = Board.builder().boardType(BoardType.event).build();
         givenBoard.setWriter(givenWriter);
@@ -164,7 +168,7 @@ public class BoardServiceUnitTest {
         /** given */
         Long mockId = 1L;
         User givenWriter = new User();
-        givenWriter.testIdSetting();
+        givenWriter.setId(mockId);
         Board givenBoard = Board.builder().boardType(BoardType.event).build();
         givenBoard.setWriter(givenWriter);
         User givenUser = User.builder().userId("testId").build();
@@ -203,15 +207,24 @@ public class BoardServiceUnitTest {
                 .recruitingCnt(recruitingCnt)
                 .startDate(startDate)
                 .build();
+        GenericFile givenFile = GenericFile.builder().build();
 
         given(boardRepository.findById(boardId))
                 .willReturn(Optional.of(givenBoard));
+        given(fileRepository.findById(anyLong()))
+                .willReturn(Optional.of(givenFile));
+        doNothing().when(fileRepository).deleteUnnecessary();
 
         /** when */
         BoardRequestDto updateDto = new BoardRequestDto();
         updateDto.setTitle("수정한 제목");
         updateDto.setRecruitingCnt(givenBoard.getRecruitingCnt() + 1);
         updateDto.setStartDate(givenBoard.getStartDate().plusDays(1L));
+        LocalDate today = LocalDate.now();
+        updateDto.setStartDate(today);
+        updateDto.setEndDate(today);
+        Long fileId = 1L;
+        updateDto.setFileId(fileId);
 
         boardService.update(boardId, updateDto);
         

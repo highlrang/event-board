@@ -28,7 +28,7 @@ public class CommonApiExceptionHandler {
     @ExceptionHandler(value = {BindException.class})
     @ResponseStatus(value = HttpStatus.BAD_REQUEST)
     public ApiResponseBody<?> validationException(BindException e){
-        List<String> body = e.getFieldErrors().stream()
+        List<String> body = e.getAllErrors().stream()
                 .map(fe -> fe.getDefaultMessage())
                 .collect(Collectors.toList());
 
