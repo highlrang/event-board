@@ -10,7 +10,7 @@ before_install:
   - docker-compose up
 
 script:
-  - echo "$DOCKER_HUB_PASSWORD" | docker login -u "$DOCKER_HUB_ID" -- password-stdin
+  - echo "$DOCKER_HUB_PASSWORD" | winpty docker login -u "$DOCKER_HUB_ID" --password-stdin
 
 after_success:
   - docker-compose push
