@@ -47,6 +47,11 @@ public class RegistrationApiController {
                 , HttpStatus.OK);
     }
 
+    @PostMapping("/buik-insert")
+    public void saveAll(@RequestBody List<RegistrationRequestDto> dtos){
+        registrationService.saveAll(dtos);
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(@PathVariable("id") Long id,
                                     @RequestParam("boardId") Long boardId,

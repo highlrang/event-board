@@ -15,6 +15,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import static com.project.application.common.StatusCode.*;
 
@@ -47,6 +50,31 @@ public class RegistrationServiceImpl implements RegistrationService{
 
         Registration result = registrationRepository.save(new Registration(user, board));
         return result.getId();
+    }
+
+    @Transactional
+    @Override
+    public void saveAll(List<RegistrationRequestDto> dtos){
+        /*
+        Board board = boardRepository.findById(dtos.get(0).getBoardId())
+                .orElseThrow(IllegalArgumentException::new);
+
+        List<Long> userIdList = dtos.stream()
+                .map(RegistrationRequestDto::getUserId)
+                .collect(Collectors.toList());
+
+        Map<Long, User> userListById = userRepository.findAllById(userIdList).stream()
+                .collect(Collectors.toMap(User::getId, Function.identity()));
+
+        List<Registration> registrations = dtos.stream()
+                .map(dto -> Registration.builder()
+                        .board(board)
+                        .user(userListById.get(dto.getUserId()))
+                        .build()
+                ).collect(Collectors.toList());
+        */
+
+        registrationRepository.saveAll(dtos);
     }
 
     @Transactional

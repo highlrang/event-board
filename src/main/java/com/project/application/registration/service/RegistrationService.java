@@ -10,6 +10,7 @@ public interface RegistrationService {
 
     List<RegistrationResponseDto> findByBoardId(Long boardId);
     Long save(RegistrationRequestDto dto);
+    void saveAll(List<RegistrationRequestDto> dtos);
     void delete(Long id);
     Long update(RegistrationUpdateDto dto);
 }

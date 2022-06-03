@@ -1,11 +1,21 @@
 package com.project.application.registration.repository;
 
+import com.project.application.registration.domain.Registration;
+import com.project.application.registration.domain.RegistrationStatus;
+import com.project.application.registration.domain.dto.RegistrationRequestDto;
 import com.project.application.registration.domain.dto.RegistrationResponseDto;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
+import org.springframework.jdbc.core.BatchPreparedStatementSetter;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
+import java.sql.Date;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import static com.project.application.board.domain.QBoard.board;
@@ -16,6 +26,7 @@ import static com.project.application.user.domain.QUser.user;
 @RequiredArgsConstructor
 public class RegistrationRepositoryCustomImpl implements RegistrationRepositoryCustom{
 
+    private final JdbcTemplate jdbcTemplate;
     private final JPAQueryFactory jpaQueryFactory;
 
     @Override
@@ -35,5 +46,29 @@ public class RegistrationRepositoryCustomImpl implements RegistrationRepositoryC
                 .fetch();
 
         return result;
+    }
+
+    @Override
+    public void saveAll(List<RegistrationRequestDto> dtos) {
+        jdbcTemplate.batchUpdate(
+                "INSERT INTO registration(board_id, created_date, status, user_id)"
+                + " VALUES(?, ?, ?, ?)",
+                new BatchPreparedStatementSetter(){
+
+                    @Override
+                    public void setValues(PreparedStatement ps, int i) throws SQLException {
+                        RegistrationRequestDto dto = dtos.get(i);
+                        ps.setLong(1, dto.getBoardId());
+                        ps.setString(2, LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
+                        ps.setString(3, RegistrationStatus.APPLY.toString());
+                        ps.setLong(4, dto.getUserId());
+                    }
+
+                    @Override
+                    public int getBatchSize() {
+                        return dtos.size();
+                    }
+                }
+        );
     }
 }
