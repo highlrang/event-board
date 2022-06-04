@@ -1,0 +1,36 @@
+<configuration>
+<!--
+datasource url 설정
+batch 설정 : rewriteBatchedStatements=true
+query 로그 : profileSQL=true&logger=Slf4JLogger
+-->
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} %level [%thread] %logger{1} - %msg%n</pattern>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>data/logs/application.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>30</maxHistory>
+            <totalSizeCap>3GB</totalSizeCap>
+        </rollingPolicy>
+    </appender>
+
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{yyyy.MM.dd HH:mm:ss.SS} %-5level [%thread] %logger{5} - %msg %n</pattern>
+        </encoder>
+    </appender>
+
+<!--    <logger name="jdbc.resultsettable" level="DEBUG"/>-->
+<!--    <logger name="jdbc.sqltiming" level="DEBUG"/>-->
+<!--    <logger name="jdbc.resultset" level="OFF"/>-->
+<!--    <logger name="jdbc.sqlonly" level="OFF"/>-->
+<!--    <logger name="jdbc.audit" level="OFF"/>-->
+<!--    <logger name="jdbc.connection" level="OFF"/>-->
+
+    <root level="INFO">
+        <appender-ref ref="STDOUT"/>
+        <appender-ref ref="FILE"/>
+    </root>
+
+</configuration>
