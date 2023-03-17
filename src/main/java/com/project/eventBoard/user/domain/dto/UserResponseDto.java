@@ -15,7 +15,7 @@ import java.util.*;
 
 @Getter
 @NoArgsConstructor
-public class UserResponseDto implements UserDetails {
+public class UserResponseDto implements UserDetails { // UserPrincipal
 
     private Long id;
 
