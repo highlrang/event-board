@@ -28,6 +28,9 @@ dependencies {
 	implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity5'
 	implementation('nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect')
 	//	developmentOnly 'org.springframework.boot:spring-boot-devtools'
+
+	implementation 'org.springframework.boot:spring-boot-starter-jdbc'
+	implementation 'com.h2database:h2'
 	runtimeOnly 'mysql:mysql-connector-java'
     implementation 'org.projectlombok:lombok:1.18.24'
     compileOnly 'org.projectlombok:lombok'
