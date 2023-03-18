@@ -1,5 +1,6 @@
 package com.project.eventBoard.config;
 
+import com.project.eventBoard.auth.token.AuthTokenProvider;
 import com.project.eventBoard.file.repository.FileRepository;
 import com.project.eventBoard.file.service.FileService;
 import com.project.eventBoard.file.service.FileServiceLocal;
@@ -9,6 +10,7 @@ import com.project.eventBoard.user.service.UserServiceImpl;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import nz.net.ultraq.thymeleaf.layoutdialect.LayoutDialect;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;

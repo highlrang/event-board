@@ -17,6 +17,8 @@ import org.springframework.transaction.annotation.Transactional;
 import static com.project.eventBoard.common.StatusCode.USER_ALREADY_EXIST;
 import static com.project.eventBoard.common.StatusCode.USER_NOT_FOUND;
 
+import java.util.Optional;
+
 @Slf4j
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -30,6 +32,14 @@ public class UserServiceImpl implements UserService {
         return userRepository.existsByUserId(userId);
     }
 
+    @Override
+    public UserResponseDto findByUserId(String userId){
+        User userEntity = userRepository.findByUserId(userId)
+            .orElseThrow(() -> new IllegalArgumentException());
+
+        return new UserResponseDto(userEntity);
+    }
+
     @Transactional
     @Override
     public Long join(UserRequestDto dto) {
@@ -40,12 +50,5 @@ public class UserServiceImpl implements UserService {
         User result = userRepository.save(dto.toEntity());
 
         return result.getId();
-    }
-
-    @Override
-    public UserDetails loadUserByUsername(String userId) throws UsernameNotFoundException {
-        User user = userRepository.findByUserId(userId)
-                .orElseThrow(() -> new UsernameNotFoundException(USER_NOT_FOUND.getMessage()));
-        return new UserResponseDto(user);
     }
 }

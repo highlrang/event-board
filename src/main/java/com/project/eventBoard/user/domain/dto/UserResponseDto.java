@@ -2,6 +2,8 @@ package com.project.eventBoard.user.domain.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.project.eventBoard.auth.dto.KakaoUserInfo;
+import com.project.eventBoard.auth.dto.OAuth2UserInfo;
 import com.project.eventBoard.user.domain.Role;
 import com.project.eventBoard.user.domain.User;
 import lombok.Getter;
@@ -15,7 +17,7 @@ import java.util.*;
 
 @Getter
 @NoArgsConstructor
-public class UserResponseDto implements UserDetails { // UserPrincipal
+public class UserResponseDto extends KakaoUserInfo implements UserDetails {
 
     private Long id;
 
@@ -43,7 +45,7 @@ public class UserResponseDto implements UserDetails { // UserPrincipal
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return new ArrayList<>(Collections.singleton(
-                new SimpleGrantedAuthority(role.getTitle())));
+                new SimpleGrantedAuthority(role.getCode())));
     }
 
     @Override
@@ -74,5 +76,5 @@ public class UserResponseDto implements UserDetails { // UserPrincipal
     @Override
     public boolean isEnabled() {
         return true;
-    }
+    }   
 }

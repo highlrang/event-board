@@ -48,6 +48,9 @@ spring:
             user-info-uri: https://kapi.kakao.com/v2/user/me
             user-name-attribute: id
             
+token:
+  secret: ZXZlbnQtYm9hcmQtanNvbi13ZWItdG9rZW4tc2VjcmV0LWtleQ==
+  expiry: 604800000
 
 logging:
   level:
