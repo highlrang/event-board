@@ -4,7 +4,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.project.eventBoard.common.ApiResponseBody;
 import com.project.eventBoard.file.service.FileService;
-import com.project.eventBoard.file.service.FileServiceLocal;
+import com.project.eventBoard.file.service.FileStorageService;
+
 import org.assertj.core.util.Arrays;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -40,7 +41,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ExtendWith(SpringExtension.class)
 @AutoConfigureMockMvc
 public class FileApiControllerTest {
-    @MockBean FileServiceLocal fileService;
+    @MockBean FileStorageService fileStorageService;
     @Autowired FileApiController fileApiController;
     @Autowired MockMvc mockMvc;
 

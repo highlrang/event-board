@@ -12,10 +12,13 @@ public class FileResponseDto {
 
     private String path;
 
+    private String fullPath;
+
     public FileResponseDto(GenericFile file){
         id = file.getId();
         name = file.getOriginalName();
         path = file.getPath() + "/" + file.getName();
+        fullPath = file.getFullPath();
     }
 
     public FileResponseDto(Long id, String name, String path){

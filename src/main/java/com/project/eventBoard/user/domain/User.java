@@ -3,6 +3,8 @@ package com.project.eventBoard.user.domain;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 import org.hibernate.annotations.GeneratorType;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -11,7 +13,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
 import java.time.LocalDate;
 
-@Entity @Getter
+@Entity @Getter @Setter
 @NoArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
 public class User {

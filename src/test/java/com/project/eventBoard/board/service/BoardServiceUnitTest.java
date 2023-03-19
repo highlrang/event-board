@@ -8,7 +8,8 @@ import com.project.eventBoard.board.repository.BoardRepository;
 import com.project.eventBoard.file.domain.GenericFile;
 import com.project.eventBoard.file.domain.dto.FileResponseDto;
 import com.project.eventBoard.file.repository.FileRepository;
-import com.project.eventBoard.file.service.FileServiceLocal;
+import com.project.eventBoard.file.service.FileStorageService;
+import com.project.eventBoard.file.service.LocalStorageService;
 import com.project.eventBoard.registration.domain.RegistrationStatus;
 import com.project.eventBoard.registration.domain.dto.RegistrationResponseDto;
 import com.project.eventBoard.registration.repository.RegistrationRepository;
@@ -44,7 +45,7 @@ public class BoardServiceUnitTest {
     @Mock BoardRepository boardRepository;
     @Mock RegistrationRepository registrationRepository;
     @Mock FileRepository fileRepository;
-    @Mock FileServiceLocal fileService;
+    @Mock FileStorageService fileService;
     @InjectMocks BoardServiceImpl boardService;
 
     @Test @DisplayName("게시글 저장 시 데이터 검증 테스트")

@@ -2,9 +2,11 @@ package com.project.eventBoard.file.controller.api;
 
 import com.project.eventBoard.common.ApiResponseBody;
 import com.project.eventBoard.exception.CustomException;
+import com.project.eventBoard.file.domain.dto.FileDownloadDto;
 import com.project.eventBoard.file.domain.dto.FileResponseDto;
 import com.project.eventBoard.file.service.FileService;
-import com.project.eventBoard.file.service.FileServiceLocal;
+import com.project.eventBoard.file.service.FileStorageService;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.*;
 import org.springframework.validation.BindException;
@@ -23,11 +25,12 @@ import static com.project.eventBoard.common.StatusCode.SUCCESS;
 public class FileApiController {
 
     private final FileService fileService;
+    private final FileStorageService fileStorageService;
 
     @PostMapping
     public ResponseEntity<?> save(@RequestPart MultipartFile file) throws BindException {
         try {
-            FileResponseDto result = fileService.upload(file);
+            FileResponseDto result = fileStorageService.upload(file);
             return new ResponseEntity<>(
                     new ApiResponseBody<>(SUCCESS.getCode(), SUCCESS.getMessage(), result)
                     , HttpStatus.OK);
@@ -39,7 +42,7 @@ public class FileApiController {
 
     @GetMapping("/{id}/download")
     public ResponseEntity<?> download(@PathVariable("id") Long id){
-        FileServiceLocal.FileDownloadDto dto = (FileServiceLocal.FileDownloadDto) fileService.download(id);
+        FileDownloadDto dto = fileService.download(id);
         return ResponseEntity.ok()
                 .headers(httpHeaders -> {
                     httpHeaders.setContentType(MediaType.APPLICATION_OCTET_STREAM);
@@ -51,7 +54,7 @@ public class FileApiController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(@PathVariable("id") Long id){
-        fileService.delete(id);
+        fileService.deleteById(id);
         return new ResponseEntity<>(
                 new ApiResponseBody<>(SUCCESS.getCode(), SUCCESS.getMessage()),
                 HttpStatus.OK);

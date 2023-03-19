@@ -30,10 +30,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @RequiredArgsConstructor
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-    private final BCryptPasswordEncoder passwordEncoder;
-    private final SecurityUserService securityUserService;
-    private final SecurityOAuth2UserService oAuth2UserService;
-
     @Value("${token.secret}")
     private String secret;
 
@@ -41,6 +37,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     public AuthTokenProvider authTokenProvider() {
         return new AuthTokenProvider(secret);
     }
+
+    // @Bean
+    // public TokenAuthenticationFilter tokenAuthenticationFilter() {
+    //     return new TokenAuthenticationFilter(authTokenProvider());
+    // }
+
+    private final BCryptPasswordEncoder passwordEncoder;
+    private final SecurityUserService securityUserService;
+    private final SecurityOAuth2UserService oAuth2UserService;
 
     @Override
     public void configure(WebSecurity web) throws Exception{
@@ -78,7 +83,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                     .csrf().disable();
 
-            // http.addFilterBefore(tokenAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class); // login시 filter에서 token으로 검증    
+            http.addFilterBefore(new TokenAuthenticationFilter(authTokenProvider()), UsernamePasswordAuthenticationFilter.class); // login시 filter에서 token으로 검증    
     }
 
     @Override
@@ -101,10 +106,5 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     public OAuthLoginFailureHandler oAuthLoginFailureHandler(){
         return new OAuthLoginFailureHandler(authorizationRequestRepository());
     };
-
-    @Bean
-    public TokenAuthenticationFilter tokenAuthenticationFilter(){
-        return new TokenAuthenticationFilter(authTokenProvider());
-    }
     
 }

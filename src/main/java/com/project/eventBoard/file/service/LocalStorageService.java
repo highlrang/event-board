@@ -3,6 +3,7 @@ package com.project.eventBoard.file.service;
 import com.project.eventBoard.board.domain.dto.BoardRequestDto;
 import com.project.eventBoard.exception.CustomException;
 import com.project.eventBoard.file.domain.GenericFile;
+import com.project.eventBoard.file.domain.dto.FileDownloadDto;
 import com.project.eventBoard.file.domain.dto.FileResponseDto;
 import com.project.eventBoard.file.repository.FileRepository;
 import lombok.Getter;
@@ -34,9 +35,9 @@ import static com.project.eventBoard.config.WebConfig.staticPath;
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
-public class FileServiceLocal implements FileService{
+public class LocalStorageService implements FileStorageService{
 
-    private final FileRepository fileRepository;
+    private final FileService fileService;
 
     @Transactional
     @Override
@@ -61,42 +62,17 @@ public class FileServiceLocal implements FileService{
         File uploadFile = new File(dirPath.getAbsolutePath() + "/" + name);
         file.transferTo(uploadFile);
 
-        GenericFile result = fileRepository.save(GenericFile.builder()
-                .originalName(originalName)
-                .path(path)
-                .name(name)
-                .fullPath(uploadFile.getAbsolutePath())
-                .build()
-        );
+        GenericFile result = fileService.save(file, uploadFile.getAbsolutePath());
 
         return new FileResponseDto(result);
     }
 
-    @Getter
-    public static class FileDownloadDto{
-        private String fileName;
-        private Resource resource;
-        public FileDownloadDto(String fileName, Resource resource){
-            this.fileName = fileName;
-            this.resource = resource;
-        }
-    }
-
-    @Override
-    public FileDownloadDto download(Long id){
-        GenericFile file = fileRepository.findById(id)
-                .orElseThrow(() -> new CustomException(FILE_NOT_FOUND.getCode(), FILE_NOT_FOUND.getMessage()));
-        try {
-            UrlResource urlResource = new UrlResource("file", file.getFullPath());
-            return new FileDownloadDto(file.getOriginalName(), urlResource);
-        } catch (MalformedURLException e) {
-            throw new CustomException(FILE_DOWNLOAD_FAILED.getCode(), FILE_DOWNLOAD_FAILED.getMessage());
-        }
-    }
 
     @Transactional
     @Override
     public void delete(Long id) {
-        fileRepository.deleteById(id);
+        // TODO local 파일 삭제
+
+        fileService.deleteById(id);
     }
 }

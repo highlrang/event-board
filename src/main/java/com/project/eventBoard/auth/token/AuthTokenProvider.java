@@ -30,7 +30,7 @@ public class AuthTokenProvider{
     private static final String AUTHORITIES_KEY = "role";
 
     private Key key;
-    public AuthTokenProvider(String secretKey){
+    public AuthTokenProvider(@Value("${token.secret}") String secretKey){
         this.key = Keys.hmacShaKeyFor(secretKey.getBytes());
     }
     

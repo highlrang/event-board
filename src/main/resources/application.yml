@@ -52,6 +52,20 @@ token:
   secret: ZXZlbnQtYm9hcmQtanNvbi13ZWItdG9rZW4tc2VjcmV0LWtleQ==
   expiry: 604800000
 
+cloud:
+  aws:
+    stack:
+      auto: false
+    region:
+      static: ap-northeast-2
+    # credentials:
+      # access-key:
+      # secret-key:
+    s3:
+      bucket: ''
+      domain: ''
+
+
 logging:
   level:
     org:

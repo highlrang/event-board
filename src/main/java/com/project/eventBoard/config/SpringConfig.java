@@ -3,7 +3,8 @@ package com.project.eventBoard.config;
 import com.project.eventBoard.auth.token.AuthTokenProvider;
 import com.project.eventBoard.file.repository.FileRepository;
 import com.project.eventBoard.file.service.FileService;
-import com.project.eventBoard.file.service.FileServiceLocal;
+import com.project.eventBoard.file.service.FileStorageService;
+import com.project.eventBoard.file.service.LocalStorageService;
 import com.project.eventBoard.user.repository.UserRepository;
 import com.project.eventBoard.user.service.UserService;
 import com.project.eventBoard.user.service.UserServiceImpl;
@@ -39,11 +40,11 @@ public class SpringConfig {
 //        return new BoardRepositoryCustomImpl(em, jpaQueryFactory());
 //    }
 
-    @Autowired private FileRepository fileRepository;
+    @Autowired private FileService fileService;
 
     @Bean
-    public FileService fileService(){
-        return new FileServiceLocal(fileRepository);
+    public FileStorageService fileStorageService(){
+        return new LocalStorageService(fileService);
     }
 
     @Autowired private UserRepository userRepository;

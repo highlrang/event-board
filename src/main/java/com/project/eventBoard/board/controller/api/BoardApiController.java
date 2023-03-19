@@ -7,7 +7,6 @@ import com.project.eventBoard.board.service.BoardService;
 import com.project.eventBoard.common.ApiResponseBody;
 import com.project.eventBoard.common.CreateGroup;
 import com.project.eventBoard.file.service.FileService;
-import com.project.eventBoard.file.service.FileServiceLocal;
 import com.project.eventBoard.user.domain.dto.UserResponseDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

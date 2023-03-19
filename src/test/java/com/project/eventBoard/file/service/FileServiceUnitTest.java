@@ -28,7 +28,7 @@ import static org.mockito.BDDMockito.given;
 public class FileServiceUnitTest {
 
     @Mock FileRepository fileRepository;
-    @InjectMocks FileServiceLocal fileService;
+    @InjectMocks FileStorageService fileStorageService;
 
     @Test @DisplayName("파일 저장 테스트")
     public void save() throws BindException, IOException {
@@ -46,7 +46,7 @@ public class FileServiceUnitTest {
         byte[] bytes = new byte[1];
 //        bytes[0] = (byte) 21;
         MockMultipartFile requestFile = new MockMultipartFile("file", originalName, MediaType.IMAGE_JPEG_VALUE, bytes);
-        FileResponseDto responseDto = fileService.upload(requestFile);
+        FileResponseDto responseDto = fileStorageService.upload(requestFile);
 
         // then
         assertThat(responseDto.getName()).isEqualTo(originalName);
@@ -59,7 +59,7 @@ public class FileServiceUnitTest {
         MockMultipartFile requestFile = new MockMultipartFile("file", "test_file.txt", MediaType.TEXT_PLAIN.getType(), "test content".getBytes());
 
         // when
-        BindException exception = assertThrows(BindException.class, () -> fileService.upload(requestFile));
+        BindException exception = assertThrows(BindException.class, () -> fileStorageService.upload(requestFile));
         assertThat(exception.getAllErrors().get(0).getDefaultMessage()).isEqualTo(ONLY_IMAGE.getMessage());
     }
 
