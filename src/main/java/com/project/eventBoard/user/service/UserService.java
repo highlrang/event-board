@@ -9,7 +9,7 @@ import java.util.Optional;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
 public interface UserService{
-    Boolean existUserId(String userId);
+    Boolean existById(String id);
     UserResponseDto findByUserId(String userId);
-    Long join(UserRequestDto dto);
+    String join(UserRequestDto dto);
 }

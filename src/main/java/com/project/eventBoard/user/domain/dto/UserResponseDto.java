@@ -19,9 +19,9 @@ import java.util.*;
 @NoArgsConstructor
 public class UserResponseDto extends KakaoUserInfo implements UserDetails {
 
-    private Long id;
+    private String id;
 
-    private String userId;
+    private String email;
 
     private String nickName;
 
@@ -35,7 +35,7 @@ public class UserResponseDto extends KakaoUserInfo implements UserDetails {
 
     public UserResponseDto(User user) {
         this.id = user.getId();
-        this.userId = user.getUserId();
+        this.email = user.getEmail();
         this.nickName = user.getNickName();
         this.password = user.getPassword();
         this.role = user.getRole();
@@ -55,7 +55,7 @@ public class UserResponseDto extends KakaoUserInfo implements UserDetails {
 
     @Override
     public String getUsername() {
-        return userId;
+        return email;
     }
 
     @Override

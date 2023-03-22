@@ -167,17 +167,17 @@ public class BoardServiceUnitTest {
     @Test @DisplayName("게시글 상세 조회 시 등록 인원 정보 확인")
     public void detail_registrations(){
         /** given */
-        Long mockId = 1L;
+        String mockId = "mockUserId";
         User givenWriter = new User();
         givenWriter.setId(mockId);
         Board givenBoard = Board.builder().boardType(BoardType.event).build();
         givenBoard.setWriter(givenWriter);
-        User givenUser = User.builder().userId("testId").build();
+        User givenUser = User.builder().email("testEmail").build();
         List<RegistrationResponseDto> givenRegistrations = new ArrayList<>();
         givenRegistrations.add(new RegistrationResponseDto(
                 mockId,
                 mockId,
-                givenUser.getUserId(),
+                givenUser.getEmail(),
                 RegistrationStatus.APPLY,
                 LocalDateTime.now()
         ));

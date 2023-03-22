@@ -5,9 +5,16 @@ import java.util.Map;
 
 import org.springframework.security.core.GrantedAuthority;
 
+import lombok.NoArgsConstructor;
+
+@NoArgsConstructor
 public class KakaoUserInfo implements OAuth2UserInfo{
 
     private Map<String, Object> attributes;
+
+    public KakaoUserInfo(Map<String, Object> attributes){
+        this.attributes = attributes;
+    }
 
     @Override
     public Map<String, Object> getAttributes() {

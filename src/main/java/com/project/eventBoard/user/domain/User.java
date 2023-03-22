@@ -19,11 +19,10 @@ import java.time.LocalDate;
 public class User {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private String id;
 
     @NotEmpty
-    private String userId;
+    private String email;
 
     @NotEmpty
     private String password;
@@ -37,8 +36,9 @@ public class User {
     private LocalDate createdDate;
 
     @Builder
-    public User(String userId, String password, String nickName, Role role){
-        this.userId = userId;
+    public User(String id, String email, String password, String nickName, Role role){
+        this.id = id;
+        this.email = email;
         this.password = password;
         this.role = role;
         this.nickName = nickName;

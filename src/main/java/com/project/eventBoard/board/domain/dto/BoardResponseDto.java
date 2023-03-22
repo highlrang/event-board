@@ -48,12 +48,12 @@ public class BoardResponseDto {
 
     @Getter
     public static class UserInfo {
-        private Long userId;
+        private String userId;
         private Boolean isWriter;
         private Boolean isRegistered;
         private Long registrationId;
 
-        public UserInfo(Long userId, Boolean isWriter, Boolean isRegistered, Long registrationId){
+        public UserInfo(String userId, Boolean isWriter, Boolean isRegistered, Long registrationId){
             this.userId = userId;
             this.isWriter = isWriter;
             this.isRegistered = isRegistered;
@@ -102,7 +102,7 @@ public class BoardResponseDto {
         this.registrations = registrations;
     }
 
-    public void setUserInfo(Long userId){
+    public void setUserInfo(String userId){
         RegistrationResponseDto userRegistration = null;
         if(registrations != null && registrations.size() != 0)
             userRegistration = registrations.stream()

@@ -18,6 +18,7 @@ import static com.project.eventBoard.common.StatusCode.USER_ALREADY_EXIST;
 import static com.project.eventBoard.common.StatusCode.USER_NOT_FOUND;
 
 import java.util.Optional;
+import java.util.UUID;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -28,8 +29,8 @@ public class UserServiceImpl implements UserService {
     private final BCryptPasswordEncoder passwordEncoder;
 
     @Override
-    public Boolean existUserId(String userId) {
-        return userRepository.existsByUserId(userId);
+    public Boolean existById(String id) {
+        return userRepository.existsById(id);
     }
 
     @Override
@@ -42,11 +43,11 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     @Override
-    public Long join(UserRequestDto dto) {
-        if(userRepository.existsByUserId(dto.getUserId()))
+    public String join(UserRequestDto dto) {
+        if(userRepository.existsById(dto.getUserId()))
             throw new CustomException(USER_ALREADY_EXIST.getCode(), USER_ALREADY_EXIST.getMessage());
 
-        dto.encodePassword(passwordEncoder.encode(dto.getPassword()));
+        if(dto.getPassword() != null) dto.encodePassword(passwordEncoder.encode(dto.getPassword()));
         User result = userRepository.save(dto.toEntity());
 
         return result.getId();

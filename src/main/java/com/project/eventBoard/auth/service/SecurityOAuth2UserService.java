@@ -10,6 +10,8 @@ import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
+import com.project.eventBoard.auth.dto.KakaoUserInfo;
+import com.project.eventBoard.auth.dto.OAuth2UserInfo;
 import com.project.eventBoard.user.domain.Role;
 import com.project.eventBoard.user.domain.User;
 import com.project.eventBoard.user.domain.dto.UserRequestDto;
@@ -27,21 +29,21 @@ public class SecurityOAuth2UserService extends DefaultOAuth2UserService {
     
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
-        // if kakao return KakaoUser
         
         OAuth2User oauth2User = super.loadUser(userRequest);
         Map<String, Object> attributes = oauth2User.getAttributes();
-
+        OAuth2UserInfo oAuth2UserInfo = new KakaoUserInfo(attributes);
 
         ClientRegistration clientRegistration = userRequest.getClientRegistration();
         String clientId = clientRegistration.getClientId();
          
-        Boolean existUser = userService.existUserId(clientId);
+        Boolean existUser = userService.existById(clientId);
 
         if(!existUser){
             userService.join(
                 UserRequestDto.builder()
-                    .userId(clientId)
+                    .id(clientId)
+                    .email(oAuth2UserInfo.getEmail()) // email 입력 안 할 경우 ??
                     .password(null)
                     .nickName(oauth2User.getName())
                     .role(oauth2User.getAttribute("role"))

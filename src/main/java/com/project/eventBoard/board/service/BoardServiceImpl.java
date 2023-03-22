@@ -37,7 +37,7 @@ public class BoardServiceImpl implements BoardService{
     private final FileRepository fileRepository;
 
     @Override
-    public BoardResponseDto findById(Long id, Long userId){
+    public BoardResponseDto findById(Long id, String userId){
         Board board = boardRepository.findById(id)
                 .orElseThrow(() -> new CustomException(BOARD_NOT_FOUND.getCode(), BOARD_NOT_FOUND.getMessage()));
         if(!board.isWriter(userId)) board.increaseViews();

@@ -87,8 +87,8 @@ public class Board {
         this.writer = writer;
     }
 
-    public Boolean isWriter(Long id){
-        return writer.getId().equals(id);
+    public Boolean isWriter(String userId){
+        return writer.getId().equals(userId);
     }
 
     public void setFile(GenericFile file){

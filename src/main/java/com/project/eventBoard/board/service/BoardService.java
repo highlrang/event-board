@@ -14,7 +14,7 @@ import java.util.List;
 
 public interface BoardService {
 
-    BoardResponseDto findById(Long id, Long userId);
+    BoardResponseDto findById(Long id, String userId);
 
     Page<BoardResponseDto> findPaging(BoardType boardType, Pageable pageable);
 
