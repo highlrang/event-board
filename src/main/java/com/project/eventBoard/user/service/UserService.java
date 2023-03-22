@@ -13,4 +13,5 @@ public interface UserService{
     UserResponseDto findById(String userId);
     UserResponseDto findByEmail(String email);
     String join(UserRequestDto dto);
+    void updateRefreshToken(String id, String token);
 }

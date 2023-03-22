@@ -18,7 +18,7 @@ const user = {
     },
 
     checkId: function(){
-        callAjax("GET", "/api/user/validate-user-id", { "userId" : $("#userId").val() },
+        callAjax("GET", "/api/user/validate-user-id", { "email" : $("#email").val() },
             (result) => {
                 if(result.statusCode !== "1001") {
                     $("#errorMsg").text(result.message);
@@ -34,7 +34,7 @@ const user = {
 
     save: function(){
         let data = {
-            "userId": $("#userId").val(),
+            "email": $("#email").val(),
             "nickName": $("#nickName").val(),
             "password": $("#password").val(),
             "isAdmin": $("#isAdmin").prop("checked")

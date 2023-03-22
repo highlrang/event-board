@@ -24,13 +24,14 @@ public class User {
     @NotEmpty
     private String email;
 
-    @NotEmpty
     private String password;
 
     private String nickName;
 
     @Enumerated(EnumType.STRING)
     private Role role;
+
+    private String refreshToken;
 
     @CreatedDate
     private LocalDate createdDate;

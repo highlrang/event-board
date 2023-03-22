@@ -3,6 +3,9 @@ package com.project.eventBoard.auth.service;
 import java.util.Map;
 import java.util.Optional;
 
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.oauth2.client.registration.ClientRegistration;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
@@ -23,7 +26,7 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-public class SecurityOAuth2UserService extends DefaultOAuth2UserService {
+public class SecurityOAuth2UserService extends DefaultOAuth2UserService implements UserDetailsService {
 
     private final UserService userService;
     
@@ -32,6 +35,7 @@ public class SecurityOAuth2UserService extends DefaultOAuth2UserService {
         
         OAuth2User oauth2User = super.loadUser(userRequest);
         Map<String, Object> attributes = oauth2User.getAttributes();
+        
         OAuth2UserInfo oAuth2UserInfo = new KakaoUserInfo(attributes);
 
         ClientRegistration clientRegistration = userRequest.getClientRegistration();
@@ -55,6 +59,11 @@ public class SecurityOAuth2UserService extends DefaultOAuth2UserService {
         UserResponseDto userResponseDto = userService.findById(clientId);
         return userResponseDto;
 
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        return userService.findByEmail(email);
     }
 
     

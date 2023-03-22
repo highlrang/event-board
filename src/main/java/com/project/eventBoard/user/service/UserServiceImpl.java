@@ -54,12 +54,20 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @Override
     public String join(UserRequestDto dto) {
-        if(userRepository.existsById(dto.getId()))
+        if(userRepository.existsByEmail(dto.getEmail()))
             throw new CustomException(USER_ALREADY_EXIST.getCode(), USER_ALREADY_EXIST.getMessage());
 
         if(dto.getPassword() != null) dto.encodePassword(passwordEncoder.encode(dto.getPassword()));
         User result = userRepository.save(dto.toEntity());
 
         return result.getId();
+    }
+
+    @Transactional
+    @Override
+    public void updateRefreshToken(String id, String token){
+        User user = userRepository.findById(id)
+            .orElseThrow(() -> new IllegalArgumentException());
+        user.setRefreshToken(token);
     }
 }

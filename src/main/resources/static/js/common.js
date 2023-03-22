@@ -1,6 +1,7 @@
 
 /** GET, DELETE */
 function callAjax(method, url, params, successFn, errorFn){
+    console.log("data = ", params);
     $.ajax({
         type: method,
         url: url,

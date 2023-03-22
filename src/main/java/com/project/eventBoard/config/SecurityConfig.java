@@ -46,6 +46,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private final BCryptPasswordEncoder passwordEncoder;
     private final SecurityUserService securityUserService;
     private final SecurityOAuth2UserService oAuth2UserService;
+    @Autowired private UserService userService;
 
     @Override
     public void configure(WebSecurity web) throws Exception{
@@ -60,14 +61,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     .antMatchers("/", "/h2-console", "/login", "/join", "/api/user/**", "/api/board/first-screen").permitAll()
                 // antMatchers().hasRole(role)
                     .anyRequest().authenticated()
-                // .and()
-                //      .formLogin()
-                //      .loginPage("/login")
-                //      .loginProcessingUrl("/login")
-                //      .successHandler(loginSuccessHandler)
-                //      .permitAll()
+                .and()
+                     .formLogin()
+                     .loginPage("/login")
+                     .loginProcessingUrl("/login")
+                     .permitAll()
                 .and()
                     .oauth2Login()
+                    .loginPage("/login")
                     .authorizationEndpoint()
                     .baseUri("/oauth2/authorization")
                     .authorizationRequestRepository(authorizationRequestRepository()) // authorization request status 저장
@@ -78,7 +79,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     .userInfoEndpoint()
                     .userService(oAuth2UserService) // 사용자 처리
                 .and()
-                    .successHandler(oAuthLoginSuccessHandler()) // token
+                    .successHandler(loginSuccessHandler()) // token
                     .failureHandler(oAuthLoginFailureHandler())
                 .and()
                     .csrf().disable();
@@ -98,9 +99,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Bean
-    public OAuthLoginSuccessHandler oAuthLoginSuccessHandler(){ // Login Handler Interface로 조립하기
-        return new OAuthLoginSuccessHandler();
-    };
+    public LoginSuccessHandler loginSuccessHandler(){
+        return new LoginSuccessHandler(authTokenProvider(), userService);
+    }
+
+    // @Bean
+    // public OAuthLoginSuccessHandler oAuthLoginSuccessHandler(){ // Login Handler Interface로 조립하기
+    //     return new OAuthLoginSuccessHandler();
+    // };
 
     @Bean
     public OAuthLoginFailureHandler oAuthLoginFailureHandler(){

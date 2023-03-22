@@ -11,10 +11,12 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.UnsupportedJwtException;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 
+@Getter
 @Slf4j
 @RequiredArgsConstructor
 public class AuthToken {
@@ -26,7 +28,7 @@ public class AuthToken {
 
     public AuthToken(String id, Role role, Date expiryDate, Key key){
         this.key = key;
-        this.token = createAuthToken(id, role.name(), expiryDate);
+        this.token = createAuthToken(id, role != null ? role.name() : null, expiryDate);
     }
     
     private String createAuthToken(String id, String role, Date expiryDate) {

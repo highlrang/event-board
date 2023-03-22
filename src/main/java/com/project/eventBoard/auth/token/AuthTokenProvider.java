@@ -27,6 +27,9 @@ public class AuthTokenProvider{
     @Value("${token.expiry}")
     private String tokenExpiry;
 
+    @Value("${token.refreshExpiry}")
+    private String refreshExpiry;
+
     private static final String AUTHORITIES_KEY = "role";
 
     private Key key;
@@ -35,7 +38,12 @@ public class AuthTokenProvider{
     }
     
     public AuthToken createAuthToken(String id, Role role) {
-        Date expiryDate = getExpiryDate();
+        Date expiryDate = getExpiryDate(tokenExpiry);
+        return new AuthToken(id, role, expiryDate, key);
+    }
+
+    public AuthToken createRefreshToken(String id, Role role){
+        Date expiryDate = getExpiryDate(refreshExpiry);
         return new AuthToken(id, role, expiryDate, key);
     }
 
@@ -59,8 +67,8 @@ public class AuthTokenProvider{
     
     }
 
-    private Date getExpiryDate(){
-        return new Date(new Date().getTime() + Long.parseLong(tokenExpiry));
+    private Date getExpiryDate(String expiry){
+        return new Date(new Date().getTime() + Long.parseLong(expiry));
     }
     
 }
