@@ -42,7 +42,7 @@ public class BoardRepositoryTest {
 
         User writer = userRepository.save(
                 User.builder()
-                        .userId("userId")
+                        .email("email")
                         .password("password")
                         .build()
         );

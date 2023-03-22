@@ -14,7 +14,7 @@ public class RegistrationResponseDto {
 
     private Long id;
 
-    private String userEmail;
+    private String userId;
     private String userName;
 
     private RegistrationStatus status;
@@ -24,9 +24,9 @@ public class RegistrationResponseDto {
     private LocalDateTime createdDate;
 
     @QueryProjection
-    public RegistrationResponseDto(Long id, String userEmail, String userName, RegistrationStatus status, LocalDateTime createdDate){
+    public RegistrationResponseDto(Long id, String userId, String userName, RegistrationStatus status, LocalDateTime createdDate){
         this.id = id;
-        this.userEmail = userEmail;
+        this.userId = userId;
         this.userName = userName;
         this.status = status;
         this.statusName = status.getName();

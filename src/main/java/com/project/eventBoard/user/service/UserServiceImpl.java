@@ -7,6 +7,8 @@ import com.project.eventBoard.user.domain.dto.UserResponseDto;
 import com.project.eventBoard.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+
+import org.mapstruct.ObjectFactory;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -34,8 +36,16 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserResponseDto findByUserId(String userId){
-        User userEntity = userRepository.findByUserId(userId)
+    public UserResponseDto findById(String userId){
+        User userEntity = userRepository.findById(userId)
+            .orElseThrow(() -> new IllegalArgumentException());
+
+        return new UserResponseDto(userEntity);
+    }
+
+    @Override
+    public UserResponseDto findByEmail(String email){
+        User userEntity = userRepository.findByEmail(email)
             .orElseThrow(() -> new IllegalArgumentException());
 
         return new UserResponseDto(userEntity);
@@ -44,7 +54,7 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @Override
     public String join(UserRequestDto dto) {
-        if(userRepository.existsById(dto.getUserId()))
+        if(userRepository.existsById(dto.getId()))
             throw new CustomException(USER_ALREADY_EXIST.getCode(), USER_ALREADY_EXIST.getMessage());
 
         if(dto.getPassword() != null) dto.encodePassword(passwordEncoder.encode(dto.getPassword()));

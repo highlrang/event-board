@@ -11,7 +11,7 @@ import javax.validation.constraints.NotNull;
 public class RegistrationRequestDto {
 
     @NotNull(message = "사용자 정보가 누락되었습니다.")
-    private Long userId;
+    private String userId;
 
     @NotNull(message = "게시글 정보가 누락되었습니다.")
     private Long boardId;

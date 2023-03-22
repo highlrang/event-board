@@ -15,8 +15,8 @@ import java.time.LocalDate;
 @EntityListeners(AuditingEntityListener.class)
 public class User {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Id
+    private String id;
 
     private String userId;
 
@@ -43,7 +43,7 @@ public class User {
     }
 
     /** test ver */
-    public void setId(Long id){
+    public void setId(String id){
         this.id = id;
     }
 }

@@ -53,9 +53,10 @@ public class RegistrationApiControllerTest {
 
         // given
         Long mockId = 1L;
+        String mockStrId = "strId";
         RegistrationRequestDto requestDto = new RegistrationRequestDto();
         requestDto.setBoardId(mockId);
-        requestDto.setUserId(mockId);
+        requestDto.setUserId(mockStrId);
         String requestString = om.writeValueAsString(requestDto);
 
         Long returnId = 1L;
@@ -63,7 +64,7 @@ public class RegistrationApiControllerTest {
                 .willReturn(returnId);
 
         List<RegistrationResponseDto> responseList =
-                Arrays.asList(new RegistrationResponseDto(returnId, mockId, "user", RegistrationStatus.APPLY, LocalDateTime.now()));
+                Arrays.asList(new RegistrationResponseDto(returnId, mockStrId, "user", RegistrationStatus.APPLY, LocalDateTime.now()));
         given(registrationService.findByBoardId(anyLong()))
                 .willReturn(responseList);
 

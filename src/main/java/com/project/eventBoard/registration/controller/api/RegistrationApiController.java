@@ -28,12 +28,18 @@ public class RegistrationApiController {
 
     @Getter
     static class RegistrationBody{
-        private Long id;
+        private Long registrationId;
+        private String userId;
         private List<RegistrationResponseDto> registrations;
 
-        public RegistrationBody(List<RegistrationResponseDto> registrations, Long id){
+        public RegistrationBody(List<RegistrationResponseDto> registrations, long registrationId){
             this.registrations = registrations;
-            this.id = id;
+            this.registrationId = registrationId;
+        }
+
+        public RegistrationBody(List<RegistrationResponseDto> registrations, String userId){
+            this.registrations = registrations;
+            this.userId = userId;
         }
     }
 

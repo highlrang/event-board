@@ -23,6 +23,7 @@ import static com.project.eventBoard.common.StatusCode.REGISTRATION_RESTRICTION;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 
 @ExtendWith(MockitoExtension.class)
@@ -39,12 +40,12 @@ public class RegistrationServiceUnitTest {
         Long boardId = 1L;
 
         User givenUser = new User();
-        givenUser.setId(1L);
+        givenUser.setId("userId");
 
         Board givenBoard = Board.builder().build();
         givenBoard.setWriter(givenUser);
 
-        given(userRepository.findById(anyLong()))
+        given(userRepository.findById(anyString()))
                 .willReturn(Optional.of(givenUser));
         given(boardRepository.findById(anyLong()))
                 .willReturn(Optional.of(givenBoard));

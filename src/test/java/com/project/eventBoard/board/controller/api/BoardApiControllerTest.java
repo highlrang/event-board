@@ -54,7 +54,7 @@ public class BoardApiControllerTest {
         List<BoardResponseDto> boardList = new ArrayList<>();
         for(int i=1; i<size + 50; i++){
             BoardResponseDto boardResponseDto = new BoardResponseDto();
-            boardResponseDto.setWriterId(1L);
+            boardResponseDto.setWriterId("writerId");
             boardResponseDto.setId((long) i);
             boardList.add(boardResponseDto);
         }

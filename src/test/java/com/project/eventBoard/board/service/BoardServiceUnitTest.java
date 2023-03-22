@@ -52,7 +52,7 @@ public class BoardServiceUnitTest {
     public void requestDto(){
         BoardRequestDto dto = new BoardRequestDto();
         dto.setBoardType(BoardType.event.getName());
-        dto.setWriterId(1L);
+        dto.setWriterId("writerId");
         dto.setTitle("test tile");
         dto.setContent("test content");
         LocalDate givenDate = LocalDate.now();
@@ -86,7 +86,7 @@ public class BoardServiceUnitTest {
                 .endDate(LocalDate.now())
                 .build();
         User givenWriter = new User();
-        givenWriter.setId(1L);
+        givenWriter.setId("writerId");
         board.setWriter(givenWriter);
         Long boardId = 1L;
 
@@ -111,8 +111,8 @@ public class BoardServiceUnitTest {
         /** given */
         Long boardId = 1L;
         User givenWriter = new User();
-        givenWriter.setId(1L);
-        Long userId = givenWriter.getId();
+        givenWriter.setId("writerId");
+        String userId = givenWriter.getId();
 
         Board givenBoard = Board.builder().boardType(BoardType.event).build();
         givenBoard.setWriter(givenWriter);
@@ -138,8 +138,8 @@ public class BoardServiceUnitTest {
     public void detail_check_user2(){
         /** given */
         Long boardId = 1L;
-        Long userId = 1L;
-        Long writerId = 2L;
+        String userId = "userId";
+        String writerId = "writerId";
         User givenWriter = new User();
         givenWriter.setId(writerId);
 
@@ -167,16 +167,17 @@ public class BoardServiceUnitTest {
     @Test @DisplayName("게시글 상세 조회 시 등록 인원 정보 확인")
     public void detail_registrations(){
         /** given */
-        String mockId = "mockUserId";
+        Long mockId = 1L;
+        String mockStrId = "mockUserId";
         User givenWriter = new User();
-        givenWriter.setId(mockId);
+        givenWriter.setId(mockStrId);
         Board givenBoard = Board.builder().boardType(BoardType.event).build();
         givenBoard.setWriter(givenWriter);
         User givenUser = User.builder().email("testEmail").build();
         List<RegistrationResponseDto> givenRegistrations = new ArrayList<>();
         givenRegistrations.add(new RegistrationResponseDto(
                 mockId,
-                mockId,
+                mockStrId,
                 givenUser.getEmail(),
                 RegistrationStatus.APPLY,
                 LocalDateTime.now()
@@ -188,11 +189,11 @@ public class BoardServiceUnitTest {
                 .willReturn(givenRegistrations);
 
         /** when */
-        BoardResponseDto result = boardService.findById(mockId, mockId);
+        BoardResponseDto result = boardService.findById(mockId, mockStrId);
 
         /** then */
         assertThat(result.getUserInfo().getIsRegistered()).isEqualTo(true);
-        assertThat(result.getRegistrations().get(0).getUserName()).isEqualTo(givenUser.getUserId());
+        assertThat(result.getRegistrations().get(0).getUserName()).isEqualTo(givenUser.getId());
     }
 
     /** 게시글 수정 */

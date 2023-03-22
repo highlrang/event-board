@@ -47,7 +47,7 @@ class BoardServiceTest {
         dto.setTitle("test title");
         dto.setContent("test content");
 
-        User user = userRepository.save(User.builder().userId("test").password("test").build());
+        User user = userRepository.save(User.builder().email("test").password("test").build());
         dto.setWriterId(user.getId());
 
         LocalDate now = LocalDate.now();

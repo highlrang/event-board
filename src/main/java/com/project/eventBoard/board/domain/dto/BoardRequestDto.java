@@ -32,7 +32,7 @@ public class BoardRequestDto {
     private String boardType;
 
     @NotNull(message = "사용자에 대한 정보가 없습니다", groups = CreateGroup.class)
-    private Long writerId;
+    private String writerId;
 
     @NotEmpty(message = "제목을 입력해주세요")
     private String title;

@@ -18,8 +18,8 @@ public class SecurityUserService implements UserDetailsService {
     private final UserService userService;
 
     @Override
-    public UserDetails loadUserByUsername(String userId) throws UsernameNotFoundException {
-        return userService.findByUserId(userId);
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        return userService.findByEmail(email);
     }
     
     

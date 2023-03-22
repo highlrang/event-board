@@ -61,7 +61,7 @@ public class RegistrationRepositoryCustomImpl implements RegistrationRepositoryC
                         ps.setLong(1, dto.getBoardId());
                         ps.setString(2, LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
                         ps.setString(3, RegistrationStatus.APPLY.toString());
-                        ps.setLong(4, dto.getUserId());
+                        ps.setString(4, dto.getUserId());
                     }
 
                     @Override

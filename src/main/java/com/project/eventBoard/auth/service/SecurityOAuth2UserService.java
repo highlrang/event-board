@@ -52,7 +52,7 @@ public class SecurityOAuth2UserService extends DefaultOAuth2UserService {
 
         }
 
-        UserResponseDto userResponseDto = userService.findByUserId(clientId);
+        UserResponseDto userResponseDto = userService.findById(clientId);
         return userResponseDto;
 
     }

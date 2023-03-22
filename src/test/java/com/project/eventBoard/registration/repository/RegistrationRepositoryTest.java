@@ -39,7 +39,7 @@ public class RegistrationRepositoryTest {
     @Test @DisplayName("게시글 id에 해당하는 등록 목록 호출 테스트")
     public void listByBoard() throws BindException, IOException {
         // given
-        User writer = userRepository.save(User.builder().userId("writer").password("test1234").build());
+        User writer = userRepository.save(User.builder().email("writer").password("test1234").build());
 
         BoardRequestDto boardDto = new BoardRequestDto();
         boardDto.setBoardType(BoardType.event.toString());
@@ -54,7 +54,7 @@ public class RegistrationRepositoryTest {
         Board board = boardRepository.findById(boardId).get();
 
         for(int i=0; i<10; i++) {
-            User user = userRepository.save(User.builder().userId("test user " + i).password("test1234").build());
+            User user = userRepository.save(User.builder().email("test user " + i).password("test1234").build());
             registrationRepository.save(
                     Registration.builder().user(user).board(board).build()
             );

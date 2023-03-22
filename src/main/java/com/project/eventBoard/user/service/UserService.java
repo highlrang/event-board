@@ -10,6 +10,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 
 public interface UserService{
     Boolean existById(String id);
-    UserResponseDto findByUserId(String userId);
+    UserResponseDto findById(String userId);
+    UserResponseDto findByEmail(String email);
     String join(UserRequestDto dto);
 }

@@ -25,7 +25,7 @@ public class BoardResponseDto {
     private String title;
     private String content;
 
-    private Long writerId;
+    private String writerId;
     private String writerName;
 
     private int recruitingCnt;
@@ -87,7 +87,7 @@ public class BoardResponseDto {
         this.writerId = entity.getWriter().getId();
         this.writerName = entity.getWriter().getNickName() != null ?
                 entity.getWriter().getNickName()
-                : entity.getWriter().getUserId();
+                : entity.getWriter().getEmail();
         this.recruitingCnt = entity.getRecruitingCnt();
         this.views = entity.getViews();
         this.topFix = entity.getTopFix();
